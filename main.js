@@ -4546,6 +4546,11 @@ function buyBuilding(what, confirmed, fromAuto, forceAmt) {
 	//if (what == "Antenna" && (game.buildings.Antenna.purchased + purchaseAmt) > Math.floor((game.global.highestRadonLevelCleared - 100) / 5)) return false;
     if (typeof toBuy === 'undefined') return false;
 	var canAfford = ((forceAmt) ? canAffordBuilding(what, false, false, false, false, purchaseAmt) : canAffordBuilding(what));
+	
+	if (what == "Barn") purchaseAmt = Math.min(purchaseAmt, 999 - game.buildings.Barn.purchased);
+	if (what == "Shed") purchaseAmt = Math.min(purchaseAmt, 999 - game.buildings.Shed.purchased);
+	if (what == "Forge") purchaseAmt = Math.min(purchaseAmt, 999 - game.buildings.Forge.purchased);
+	
 	if (purchaseAmt == 0) return false;
 	if (canAfford){
 		if (what == "Wormhole" && !confirmed && game.options.menu.confirmhole.enabled && !fromAuto){
