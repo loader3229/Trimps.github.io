@@ -4090,6 +4090,7 @@ function addResCheckMax(what, number, noStat, fromGather, nonFilteredLoot, trans
 	}
 	if (res.max == -1) {
 		res.owned += number;
+		if (what == "gems" && res.owned > 1e300)res.owned = 1e300;
 		if (!noStat && what == "gems") game.stats.gemsCollected.value += number;
 		return;
 	}
