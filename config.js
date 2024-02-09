@@ -22,7 +22,7 @@ function newGame () {
 var toReturn = {
 	global: {
 		//New and accurate version
-		stringVersion: '5.9.2',
+		stringVersion: '5.10',
 		//Leave 'version' at 4.914 forever, for compatability with old saves
 		version: 4.914,
 		isBeta: false,
@@ -9730,7 +9730,7 @@ var toReturn = {
 			fire: function (fromTalent) {
 				var level = game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)].level;
 				var bionicTier = parseInt(((level - 125) / 15), 10) + 1;
-				if (level + 15 < (getObsidianStart() + 100) && bionicTier == game.global.bionicOwned) {
+				if (level + 15 < Math.min(getObsidianStart() + 100, 910) && bionicTier == game.global.bionicOwned) {
 					this.createMap(bionicTier);
 				}
 				if (fromTalent === true) return;
@@ -10882,6 +10882,8 @@ var toReturn = {
 			brokenPlanet: 1,
 			addClass: "brokenUpgrade",
 			world: -2,
+			startAt: 60,
+			lastAt: 800,
 			level: 39,
 			icon: "book",
 			title: "Megascience",
@@ -10998,6 +11000,8 @@ var toReturn = {
 			brokenPlanet: 1,
 			addClass: "brokenUpgrade",
 			world: -1,
+			startAt: 60,
+			lastAt: 800,
 			level: 79,
 			icon: "book",
 			title: "Megafarming",
@@ -11023,6 +11027,8 @@ var toReturn = {
 			brokenPlanet: 1,
 			addClass: "brokenUpgrade",
 			world: -1,
+			startAt: 60,
+			lastAt: 800,
 			level: 69,
 			icon: "book",
 			title: "Megalumber",
@@ -11059,6 +11065,8 @@ var toReturn = {
 			brokenPlanet: 1,
 			addClass: "brokenUpgrade",
 			world: -1,
+			startAt: 60,
+			lastAt: 800,
 			level: 59,
 			icon: "book",
 			title: "Megaminer",
@@ -11145,6 +11153,8 @@ var toReturn = {
 		Coordination: {
 			message: "You find an ancient book titled Coordination. Exciting.",
 			world: -1,
+			startAt: 1,
+			lastAt: 800,
 			level: 99,
 			get icon (){
 				return (game.global.world == mutations.Magma.start() - 1) ?  "*archive2" : "book";

@@ -4469,7 +4469,7 @@ var u2Mutations = {
             require: ['CritChance', 'AllRadon'],
             singleRequire: true,
             ring: 1,
-            description: "Divide Breed Speed by 50, multiply Health by 10.",
+            description: "Divide Breed Speed by 50 in U2, multiply Health by 10 in U2.",
         },
         GeneAttack: {
             pos: [18, 12],
@@ -4478,7 +4478,7 @@ var u2Mutations = {
             require: ['CritChance', 'AllRadon'],
             singleRequire: true,
             ring: 1,
-            description: "Divide Breed Speed by 50, multiply Attack by 10.",
+            description: "Divide Breed Speed by 50 in U2, multiply Attack by 10 in U2.",
         },
         Ragiffium: {
             pos: [23, 10],
@@ -4529,7 +4529,7 @@ var u2Mutations = {
             dn: 'Max Overkill',
             color: '#00b700',
             require: ['Decompress'],
-            description: "When Overkilling in U2, you can Overkill +1 Cell.",
+            description: "When Overkilling in U1 & U2, you can Overkill +1 Cell.",
             purchased: false
         },
         Liq1: {
@@ -4540,7 +4540,7 @@ var u2Mutations = {
             singleRequire: true,
             ring: 1,
             get description(){
-                return "You can Liquify Zones up to 10% of your Highest Zone. (Up to Z" + Math.floor(game.global.highestRadonLevelCleared * .1) + ")"
+                return "You can Liquify Zones up to 10% of your Highest Zone. (Up to Z" + Math.floor(game.global.highestRadonLevelCleared * .1) + "). This mutator also apply to U1 with halved effect (+" + Math.floor(game.global.highestLevelCleared * .05) + " Liquified U1 Zone)";
             },
             purchased: false,
         },
@@ -4558,7 +4558,7 @@ var u2Mutations = {
             color: '#00b700',
             require: ['Smashing'],
             get description(){
-                return "You can Liquify for an additional 10% of your Highest Zone (up to 20% of Highest Zone, or Z" + Math.floor(game.global.highestRadonLevelCleared * 0.2) + ")"
+                return "You can Liquify for an additional 10% of your Highest Zone (up to 20% of Highest Zone, or Z" + Math.floor(game.global.highestRadonLevelCleared * 0.2) + "). This mutator also apply to U1 with halved effect (+" + Math.floor(game.global.highestLevelCleared * .1) + " total Liquified U1 Zone)";
             },
             purchased: false
         },
@@ -4643,7 +4643,7 @@ var u2Mutations = {
             dn: 'Brains to Brawn',
             color: '#377cff',
             require: ['RandLoot2'],
-            get description() {return "Increases Trimp Attack by a number based on your total stored Science. Grants +30% Attack at " + prettify(1e25) + " Science, or +300% at " + prettify(1e250) + ". At your current total of " + prettify(game.resources.science.owned) + " Science, <b>you " + ((this.purchased) ? "are gaining" : "would gain") + " +" + prettify((this.getBonus() - 1) * 100) + "% Trimp Attack</b>"},
+            get description() {return "Increases Trimp Attack by a number based on your total stored Science. Grants +30% Attack at " + prettify(1e25) + " Science, or +300% at " + prettify(1e250) + ". At your current total of " + prettify(game.resources.science.owned) + " Science, <b>you " + ((this.purchased) ? "are gaining" : "would gain") + " +" + prettify((this.getBonus() - 1) * 100) + "% Trimp Attack</b>. Only applies to U2."},
             getBonus: function(){
 				if (game.resources.science.owned < 1) return 1;
 				var amt = 1 + (log10(game.resources.science.owned) / 83.3);
@@ -4658,7 +4658,7 @@ var u2Mutations = {
             dn: 'Mad Mapper',
             color: '#377cff',
             require: ['Runed', 'Brains'],
-            description: "100% of your damage can Overkill in maps at any level. Limited to 1 cell of Overkill if above World Overkill Zone.",
+            description: "100% of your damage can Overkill in maps at any level. Limited to 1 cell of Overkill if above World Overkill Zone. Only applies to U2.",
             purchased: false,
             ring: 1
         }

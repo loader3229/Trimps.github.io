@@ -2142,7 +2142,7 @@ function getObsidianStart(baseOnly){
 	var bonus = 0;
 	bonus += (radLevels > 100) ? 100 + (Math.floor((radLevels - 100) / 50) * 10) : Math.floor(radLevels / 10) * 10;
 	start += bonus;
-	if (start > 810) start = 810;
+	if (start > 891) start = 891;
 	return start;
 }
 
@@ -11027,6 +11027,7 @@ function startFight() {
 					if (game.empowerments.Ice.getLevel() >= 100) overkillerCount++;
 				}
 				if (getUberEmpowerment() == "Ice") overkillerCount += 2;
+				if (u2Mutations.tree.MaxOverkill.purchased) overkillerCount++;
 			}
 			else {
 				overkillerCount = 0;
@@ -12368,6 +12369,10 @@ function checkIfLiquidZone(){
 	if (game.talents.liquification2.purchased) spireCount++;
 	if (game.talents.liquification3.purchased) spireCount += 2;
 	spireCount += (Fluffy.isRewardActive("liquid") * 0.5);
+	
+	if (u2Mutations.tree.Liq1.purchased) spireCount++;
+	if (u2Mutations.tree.Liq2.purchased) spireCount++;
+	
 	var liquidAmount = ((spireCount) / 20);
 	if (game.global.world > ((getHighestLevelCleared(false, true) + 1) * liquidAmount) || checkIfSpireWorld()){
 		return false;
