@@ -11001,7 +11001,7 @@ var toReturn = {
 			addClass: "brokenUpgrade",
 			world: -1,
 			startAt: 60,
-			lastAt: 800,
+			lastAt: 750,
 			level: 79,
 			icon: "book",
 			title: "Megafarming",
@@ -11154,7 +11154,7 @@ var toReturn = {
 			message: "You find an ancient book titled Coordination. Exciting.",
 			world: -1,
 			startAt: 1,
-			lastAt: 800,
+			lastAt: 900,
 			level: 99,
 			get icon (){
 				return (game.global.world == mutations.Magma.start() - 1) ?  "*archive2" : "book";

@@ -1556,7 +1556,7 @@ function countChallengeSquaredReward(numberOnly, mesmerPreview, getUniverseArray
 		if (challenge.allowU2 && challenge.blockU1) rewardU2 += thisReward;
 		else reward += thisReward;
 	}
-	if (reward > 60000) reward = 60000;
+	if (reward > 90000) reward = 90000;
 	if (getUniverseArray) return [reward, rewardU2];
 	reward *= ((rewardU2 / 100) + 1);
 	if (reward >= 2000 && !mesmerPreview) giveSingleAchieve("Challenged");
@@ -1590,7 +1590,7 @@ function getIndividualSquaredReward(challengeName, forceHighest, mesmerPreview){
 			rewardGrowth *= 3;
 		}
 	}
-	var obsidianStartBase = getObsidianStart(true);
+	var obsidianStartBase = 700;//getObsidianStart(true);
 	for (var x = 0; x < loops; x++){
 		var count = (x == loops - 1) ? forceHighest - addedBonuses : thresh;
 		var toAdd = (count - (count % freq));
@@ -1603,6 +1603,7 @@ function getIndividualSquaredReward(challengeName, forceHighest, mesmerPreview){
 				extraBonus = ((overCap / (overCap + nonBonused)) * 4) + 1;
 			}
 		}
+		//console.log(bonus);
 		addedBonuses += count - (count % freq);
 		count = Math.floor(count / freq);
 		bonus += count * ((rewardGrowth * x) + reward) * extraBonus;
@@ -8722,7 +8723,7 @@ var mutations = {
 		tooltip: function () {
 			var text = "This enemy is rock solid, and there\\'s no way to get past.";
 			if (Fluffy.checkU2Allowed()){
-				if (game.global.world == 810) text += " This Zone is even more rocky and solid than anything you\\'ve seen before. You don\\'t think there\\'s any way to get past for now.";
+				if (game.global.world == 891) text += " This Zone is even more rocky and solid than anything you\\'ve seen before. You don\\'t think there\\'s any way to get past for now.";
 				else text += " Time to go to the Radon Universe and find a way to melt these Zones!";
 			}
 			else text += " Fluffy suggests that you find a way to get him to Evolution 8 Level 10 as quickly as possible so he can help you melt these Zones!";
@@ -12638,7 +12639,7 @@ function nextWorld() {
 		var next = (game.global.highestRadonLevelCleared >= 99) ? "50" : "10";
 		var text;
 		if (!Fluffy.checkU2Allowed()) text = " Fluffy has an idea for remelting the world, but it will take a tremendous amount of energy from a place Fluffy isn't yet powerful enough to send you. Fluffy asks you to help him reach the <b>10th Level of his 8th Evolution</b>, and he promises he'll make it worth your time.";
-		else if (game.global.world == 810) text = "";
+		else if (game.global.world == 891) text = "";
 		else text = " However, all is not lost! Every " + next + " Zones of progress you make in the Radon Universe will allow you to harness enough energy for Fluffy to slow down the hardening of your World for an extra 10 Zones in this Universe.";
 		message("The Magma has solidified into impenetrable Obsidian; your Trimps have no hope of progressing here right now." + text, "Notices", null, "obsidianMessage");
 	}
