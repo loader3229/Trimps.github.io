@@ -305,6 +305,9 @@ var toReturn = {
 		tutorialLg: false,
 		mazBw: -1,
 		expandingTauntimp: false,
+		
+		infblock: false,
+		
 		lastHeirlooms: {
 			u1: {
 				Shield: -1,
@@ -2542,7 +2545,7 @@ var toReturn = {
 				var number = (game.global.highestRadonLevelCleared >= 49) ? "2/3" : "2";
 				var totalDesc = (game.global.highestRadonLevelCleared >= 49) ? "<span class='icomoon icon-infinity'></span>" : "2";
 				var challengeList = (game.global.highestRadonLevelCleared >= 49) ? "Trappapalooza, " : "";
-				challengeList += "Trapper, Coordinate, Trimp, Obliterated or Eradicated"
+				challengeList += "Trapper, Coordinate, Trimp, Obliterated, Eradicated or Spired"
 				var text = "<p>Triples the Challenge<sup>" + number + "</sup> bonus for all Challenge<sup>" + number + "</sup>s that have normal reward scaling (Does not include " + challengeList + ").</p>";
 				var currentC2 = countChallengeSquaredReward(true);
 				text += "<p>You currently have a C<sup>" + totalDesc + "</sup> bonus of " + prettify(currentC2) + "%.";
@@ -3307,6 +3310,7 @@ var toReturn = {
 		Lead: 0,
 		Obliterated: 0,
 		Eradicated: 0,
+		Spired: 0,
 		//U2
 		Unlucky: 0,
 		Downsize: 0,
@@ -4006,6 +4010,28 @@ var toReturn = {
 			zoneScaleFreq: 2,
 			start: function(){
 				startTheMagma();
+			}
+		},
+		Spired: {
+			get squaredDescription() {
+				return "Travel to a dimension, that every zone is a Spire. Enemies are a lot stronger in this Challenge!"
+			},
+			filter: function () {
+				return game.global.spiresCompleted >= 7;
+			},
+			replaceSquareFreq: 1,
+			replaceSquareThresh: 10,
+			replaceSquareReward: 5,
+			replaceSquareGrowth: 1,
+			onlySquared: true,
+			allowSquared: true,
+			fireAbandon: true,
+			unlockString: "Complete Spire VII",
+			start: function(){
+				startSpire();
+			},
+			abandon: function(){
+				if(game.global.spireActive)endSpire();
 			}
 		},
 		Frigid: {
@@ -7947,17 +7973,17 @@ var toReturn = {
 			fireTrap: {
 				name: "Fire Trap Damage",
 				currentBonus: 0,
-				steps: [[10,25,1],[10,25,1],[10,25,1],[25,50,1],[50,100,2],[100,199,3],[200,400,4]]
+				steps: [[10,25,1],[10,25,1],[10,25,1],[25,50,1],[50,100,2],[100,199,3],[200,400,4],-1]
 			},
 			poisonTrap: {
 				name: "Poison Trap Damage",
 				currentBonus: 0,
-				steps: [-1,[10,25,1],[10,25,1],[25,50,1],[50,100,2],[100,199,3],[200,400,4]]
+				steps: [-1,[10,25,1],[10,25,1],[25,50,1],[50,100,2],[100,199,3],[200,400,4],-1]
 			},
 			lightningTrap: {
 				name: "Lightning Trap Power",
 				currentBonus: 0,
-				steps: [-1,-1,[1,10,1],[10,20,1],[20,50,2],[50,100,2],[100,199,3]],
+				steps: [-1,-1,[1,10,1],[10,20,1],[20,50,2],[50,100,2],[100,199,3],-1],
 				specialDescription: function (modifier) {
 					return "Increases the damage dealt by Lightning Trap" + ((playerSpireTraps.Lightning.level >= 4) ? ", Shocked, and its column boost to Fire and Poison Traps " : " and Shocked ") + "by " + prettify(modifier) + "%.";
 				},
@@ -7965,12 +7991,12 @@ var toReturn = {
 			runestones: {
 				name: "Runestone Drop Rate",
 				currentBonus: 0,
-				steps: [[10,25,1],[10,25,1],[10,25,1],[25,50,1],[50,100,2],[100,199,3],[200,400,4]]
+				steps: [[10,25,1],[10,25,1],[10,25,1],[25,50,1],[50,100,2],[100,199,3],[200,400,4],[500,500,5]]
 			},
 			strengthEffect: {
 				name: "Strength Tower Effect",
 				currentBonus: 0,
-				steps: [[1,10,1],[1,10,1],[1,10,1],[10,20,1],[20,50,2],[50,100,2],[100,199,3]],
+				steps: [[1,10,1],[1,10,1],[1,10,1],[10,20,1],[20,50,2],[50,100,2],[100,199,3],-1],
 				specialDescription: function (modifier) {
 					return "Increases the damage dealt by Fire Traps on the same Floor as a Strength Tower by " + prettify(modifier) + "%. Does not increase the world bonus to Trimps.";
 				},
@@ -7978,11 +8004,31 @@ var toReturn = {
 			condenserEffect: {
 				name: "Condenser Effect",
 				currentBonus: 0,
-				steps: [-1,[1,5,0.25],[1,5,0.25],[5,10,0.25],[5,15,0.5],[10,20,0.5],[20,30,0.5]],
+				steps: [-1,[1,5,0.25],[1,5,0.25],[5,10,0.25],[5,15,0.5],[10,20,0.5],[20,30,0.5],-1],
 				max: [-1,10,10,15,25,35,50],
 				specialDescription: function(modifier) {
 					return "Increases the amount of Poison damage compounded by the Condenser Tower by " + prettify(modifier) + "%. Does not increase the world bonus to Trimps.";
 				}
+			},
+			strengthBonus: {
+				name: "Strength Tower World Bonus",
+				currentBonus: 0,
+				steps: [-1,-1,-1,-1,-1,-1,-1,[5,5,5]]
+			},
+			condenserBonus: {
+				name: "Condenser Tower World Bonus",
+				currentBonus: 0,
+				steps: [-1,-1,-1,-1,-1,-1,-1,[5,5,5]]
+			},
+			knowledgeBonus: {
+				name: "Knowledge Tower World Bonus",
+				currentBonus: 0,
+				steps: [-1,-1,-1,-1,-1,-1,-1,[5,5,5]]
+			},
+			worldBonus: {
+				name: "All Tower World Bonus",
+				currentBonus: 0,
+				steps: [-1,-1,-1,-1,-1,-1,-1,[1,1,1]]
 			},
 		},
 		Staff: {
@@ -9214,8 +9260,8 @@ var toReturn = {
 			health: 6,
 			fast: true,
 			loot: function (level) {
-				if (game.global.spireActive) return;
 				if (!game.global.brokenPlanet && game.global.universe == 1) planetBreaker();
+				if (game.global.spireActive) return;
 				if (game.global.runningChallengeSquared) return;
 				var amt = (game.global.world >= mutations.Corruption.start(true)) ? 10 : 5;
 				if (game.global.universe == 2) amt = 1;
@@ -9277,6 +9323,30 @@ var toReturn = {
 					game.resources.trimps.soldiers = 0;
 					updateGoodBar();
 				}
+			}
+		},
+		Druopitinity: {
+			locked: 1,
+			location: "World",
+			last: true,
+			world: 59,
+			attack: Infinity,
+			health: Infinity,
+			fast: true,
+			loot: function (level) {
+				return;
+			}
+		},
+		Obsidimp: {
+			locked: 1,
+			location: "World",
+			last: true,
+			world: 59,
+			attack: Infinity,
+			health: Infinity,
+			fast: true,
+			loot: function (level) {
+				return;
 			}
 		},
 		Mutimp: {
@@ -9676,7 +9746,7 @@ var toReturn = {
 			},
 			Void: {
 				resourceType: "Any",
-				upgrade: ["AutoStorage", "Heirloom", "ImprovedAutoStorage", "MapAtZone", "AutoEquip"]
+				upgrade: ["AutoStorage", "Heirloom", "ImprovedAutoStorage", "MapAtZone", "AutoEquip", "InfBlock"]
 			},
 			Frozen: {
 				resourceType: "Any"
@@ -9850,6 +9920,24 @@ var toReturn = {
 				tooltip('confirm', null, 'update', text, null, 'Auspicious Presence Part IV', null, null, true);
 				game.global.autoEquipUnlocked = true;
 				toggleAutoEquip(true);
+				createHeirloom();
+				message("You found an Heirloom!", "Loot", "*archive", null, "secondary");
+			}
+		},
+		InfBlock: {
+			world: 850,
+			level: "last",
+			icon: "*eye4",
+			title: "Auspicious Presence Part V",
+			canRunOnce: true,
+			filterUpgrade: true,
+			specialFilter: function(world){
+				return !game.global.infblock;
+			},
+			fire: function(){
+				var text = "<p>From the void, an auspicious presence reaches out and fills your mind. You feel at peace with the world. It asks you what you desire most. Wait... This has DEFINITELY happened before... hasn't it? You're pretty sure it has, but you have no actual memory of it. But you do... but also you don't. Wait, who even are you? Where are you? What are you?</p><p>You sit on the ground and contemplate things for a few hours while the Auspicious Presence waits patiently. This time, you realized that you will let the presence to let your Trimps invincible! The presence agreed. You feel so excited to let your invincible Trimps fight!</p><p style='font-weight: bold'>From now on, your Trimps in U1 will have Infinite block! Also, enemy damage can't pierce through block now!</p>";
+				tooltip('confirm', null, 'update', text, null, 'Auspicious Presence Part V', null, null, true);
+				game.global.infblock = true;
 				createHeirloom();
 				message("You found an Heirloom!", "Loot", "*archive", null, "secondary");
 			}

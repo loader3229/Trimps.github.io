@@ -1071,6 +1071,9 @@ function load(saveString, autoLoad, fromPf) {
 	//Temporary until next patch
 
 	//End Temporary
+	
+	
+	
 	portalUniverse = game.global.universe;
 	Fluffy.handleBox();
 	if (!getCurrentMapObject()) {
@@ -1277,6 +1280,7 @@ function load(saveString, autoLoad, fromPf) {
 		updatePortalTimer();
 		document.getElementById("portalTimer").className = "timerPaused";
 	}
+	if (game.global.infblock) game.global.soldierCurrentBlock = Infinity;
 	return true;
 }
 
@@ -2141,7 +2145,7 @@ function getObsidianStart(baseOnly){
 	if (baseOnly) return start;
 	var radLevels = game.global.highestRadonLevelCleared;
 	var bonus = 0;
-	bonus += (radLevels > 100) ? 100 + (Math.floor((radLevels - 100) / 50) * 10) : Math.floor(radLevels / 10) * 10;
+	bonus += (radLevels > 100) ? 100 + (Math.floor((radLevels - 100) / 30) * 10) : Math.floor(radLevels / 10) * 10;
 	start += bonus;
 	if (start > 891) start = 891;
 	return start;
@@ -7521,7 +7525,7 @@ function createHeirloom(zone, fromBones, spireCore, forceBest){
 	if (spireCore){
 		type = "Core";
 		rarity = Math.round((zone - 200) / 100);
-		if (rarity > 6) rarity = 6;
+		if (rarity > 7) rarity = 7;
 		if (rarity < 0) rarity = 0;
 		game.stats.coresFound.value++;
 		seed = game.global.coreSeed;
@@ -9625,7 +9629,11 @@ function getRandomBadGuy(mapSuffix, level, totalCells, world, imports, mutation,
 		if (level == totalCells && badGuy.last && (locationMatch || (!mapSuffix && badGuy.location == "World")) && world >= badGuy.world) {
 			if (item == "Blimp" && (world != 5 && world  != 10 && world < 15)) continue;
 			if (!mapSuffix && ((game.global.brokenPlanet || (game.global.universe == 2 && game.global.world >= 20)) || game.global.world == 59) && item == "Blimp"){
-				if (mutations.Magma.active())
+				if (world > 900)
+					item = "Obsidimp";
+				else if (world == 900)
+					item = "Druopitinity";
+				else if (mutations.Magma.active())
 					item = "Omnipotrimp";
 				else
 					item = "Improbability";
@@ -10423,14 +10431,14 @@ function setNonMapBox(){
 	document.getElementById("mapsBtnText").innerHTML = "Maps";
 	if (game.global.totalVoidMaps > 0) addVoidAlert();
 	var worldNumElem = document.getElementById("worldNumber");
-	worldNumElem.style.display = (game.global.spireActive) ? 'none' : 'inline';
+	worldNumElem.style.display = (game.global.spireActive && (game.global.challengeActive != "Spired")) ? 'none' : 'inline';
 	document.getElementById("worldNumber").innerHTML = game.global.world;
 	var mapBonus = document.getElementById("mapBonus");
 	var bonus = game.global.mapBonus;
 	if (game.talents.mapBattery.purchased && bonus == 10) bonus *= 2;
 	if (bonus > 0) mapBonus.innerHTML = prettify(bonus * 20) + "% Map Bonus";
 	else mapBonus.innerHTML = "";
-	document.getElementById("worldName").innerHTML = (game.global.spireActive) ? ((checkIfSpireWorld(true) == 1) ? "Spire" : "Spire " + romanNumeral(checkIfSpireWorld(true))) : "Zone";	
+	document.getElementById("worldName").innerHTML = (game.global.spireActive && (game.global.challengeActive != "Spired")) ? ((checkIfSpireWorld(true) == 1) ? "Spire" : "Spire " + romanNumeral(checkIfSpireWorld(true))) : "Zone";	
 }
 
 function repeatClicked(updateOnly){
@@ -10621,7 +10629,7 @@ function checkAmalgamate(){
 		"You watch as your Amalgamator struggles to find enough free Trimps, panic searching in places such as under rocks or between the leaves of trees. It suddenly seems to remember that it doesn't have to be there, smacks you with a small stick to show dissatisfaction, and turns into nothing.",
 		"While in town, a Scientist approaches you to let you know that your Amalgamator is getting upset and to keep an eye out for him. Just as you're finishing the conversation, the Amalgamator appears in front of you. It smacks you both with a small stick to show dissatisfaction, then turns into a small puddle of water - which you ask the Scientist to clean up."];
 	if (game.global.challengeActive == "Trapper" || game.global.challengeActive == "Trappapalooza") return false;
-	if (game.global.spireActive) return false;
+	if (game.global.spireActive && game.global.challengeActive != "Spired") return false;
 	var ratio = (game.resources.trimps.realMax() / game.resources.trimps.getCurrentSend());
 	if (game.jobs.Amalgamator.owned > 0 && ratio < game.jobs.Amalgamator.getFireThresh()){
 		game.jobs.Amalgamator.owned--;
@@ -10672,6 +10680,7 @@ function getPierceAmt(){
 	if (challengeActive("Lead")) base += (Math.min(game.challenges.Lead.stacks, 200) * 0.001);
 	if (game.global.formation == 3) base *= 0.5;
 	if (game.talents.pierce.purchased) base *= 0.75;
+	if (game.global.infblock) base = 0;
 	return base;
 }
 
@@ -10730,13 +10739,25 @@ function startFight() {
 		if (game.global.challengeActive == "Coordinate") badName += "s (" + prettify(badCoord) + ")";
 		displayedName = "<span id='actualBadName'>" + badName + "</span>";
 	}
-	if ((cell.name == "Improbability") && game.global.spireActive){
+	if ((cell.name == "Improbability") && game.global.spireActive && (game.global.challengeActive != "Spired" || game.global.world >= 200)){
 		displayedName = "Druopitee";
 		if (game.global.challengeActive == "Coordinate") displayedName = "Druopitee and Pals";
+		if(game.global.world > 200){
+			displayedName = "Echo of Druopitee";
+			if (game.global.challengeActive == "Coordinate") displayedName = "<span class='smallEnemyName'>Echoes of Druopitee and Pals</span>";
+		}
 	}
 	else if (cell.name == "Omnipotrimp" && game.global.spireActive){
 		displayedName = "Echo of Druopitee";
 		if (game.global.challengeActive == "Coordinate") displayedName = "<span class='smallEnemyName'>Echoes of Druopitee and Pals</span>";
+	}
+	else if (cell.name == "Druopitinity" && game.global.spireActive){
+		displayedName = "Druopitinity";
+		if (game.global.challengeActive == "Coordinate") displayedName = "<span class='smallEnemyName'>Druopitinity and Pals</span>";
+	}
+	else if (cell.name == "Druopitinity" && !game.global.spireActive){
+		displayedName = "Obsidimp";
+		if (game.global.challengeActive == "Coordinate") displayedName = "Obsidimps";
 	}
 	else if (cell.name == "Improbability" && game.global.challengeActive == "Coordinate") {
 		displayedName = "Improbabilities";
@@ -11213,6 +11234,9 @@ function startFight() {
 		game.global.soldierHealthMax = calcHeirloomBonus("Shield", "trimpHealth", game.global.soldierHealthMax);
 		//block handled in getBaseBlock()
 		if (game.global.challengeActive == "Daily" && typeof game.global.dailyChallenge.pressure !== 'undefined') game.global.soldierHealthMax *= dailyModifiers.pressure.getMult(game.global.dailyChallenge.pressure.strength, game.global.dailyChallenge.pressure.stacks);
+			
+		if (game.global.universe == 1) game.global.soldierHealthMax = Math.min(game.global.soldierHealthMax,1e300);
+		
 		if (game.global.formation !== 0 && game.global.formation != 5){
 			game.global.soldierHealthMax *= (game.global.formation == 1) ? 4 : 0.5;
 			var formAttackMod = 0.5;
@@ -11245,6 +11269,7 @@ function startFight() {
 			game.global.soldierHealthMax *= game.challenges.Desolation.trimpHealthMult();
 		}
 		if (game.challenges.Nurture.boostsActive()) game.global.soldierHealthMax *= game.challenges.Nurture.getStatBoost();
+
 
 		//Soldier starting health is determined
 		game.global.soldierHealth = game.global.soldierHealthMax;
@@ -11549,6 +11574,7 @@ function getBaseBlock(){
 	if (game.global.formation !== 0 && game.global.formation !== 5){
 		baseBlock *= (game.global.formation == 3) ? 4 : 0.5;
 	}
+	if (game.global.infblock)baseBlock = Infinity;
 	return baseBlock;
 }
 
@@ -12219,6 +12245,10 @@ function getTotalTalentCost(){
 
 function checkIfSpireWorld(getNumber){
 	if (game.global.universe == 2) return false; //until 5.1.0
+	if (game.global.challengeActive == "Spired"){
+		if(getNumber)return Math.floor(Math.max(1,(game.global.world-100)/200));
+		return true;
+	}
 	if (game.global.world >= 200 && (game.global.world % 100) == 0){
 		var spireNumber = (Math.round(game.global.world / 100) - 1);
 		if (spireNumber > (game.global.lastSpireCleared + 1)){
@@ -12636,7 +12666,7 @@ function nextWorld() {
 	if (!game.portal.Observation.radLocked && game.global.universe == 2) game.portal.Observation.onNextWorld();
 	if (game.global.capTrimp) message("I'm terribly sorry, but your Trimp<sup>2</sup> run appears to have more than one Trimp fighting, which kinda defeats the purpose. Your score for this Challenge<sup>2</sup> will be capped at 230.", "Notices");
 	if (game.global.world >= getObsidianStart()){
-		var next = (game.global.highestRadonLevelCleared >= 99) ? "50" : "10";
+		var next = (game.global.highestRadonLevelCleared >= 99) ? "30" : "10";
 		var text;
 		if (!Fluffy.checkU2Allowed()) text = " Fluffy has an idea for remelting the world, but it will take a tremendous amount of energy from a place Fluffy isn't yet powerful enough to send you. Fluffy asks you to help him reach the <b>10th Level of his 8th Evolution</b>, and he promises he'll make it worth your time.";
 		else if (game.global.world == 891) text = "";
@@ -12967,10 +12997,17 @@ function handleExitSpireBtn(){
 }
 
 function getSpireStats(cellNum, name, what){
+	if(name == "Druopitinity" && what == "health") return 1e300;
 	var base = (what == "attack") ? game.global.getEnemyAttack(100, null, true) : (game.global.getEnemyHealth(100, null, true) * 2);
 	var mod = (what == "attack") ? 1.17 : 1.14;
 	var spireNum = checkIfSpireWorld(true);
-	if (spireNum > 1){
+	if(game.global.challengeActive == "Spired"){
+		if(game.global.world == 200 && name == "Improbability")return 1e165; // Druopitee's health in Spired challenge is fixed to 1e165
+		base *= 1e20;
+		mod = 1.1+game.global.world/100;
+		if(mod >= 2)mod = mod * 1.5 - 1;
+		if(mod >= 2.5)mod = mod * 3.4 - 6;
+	} else if (spireNum > 1){
 		var modRaiser = 0;
 		modRaiser += ((spireNum - 1) / 100);
 		if (what == "attack") modRaiser *= 8;
@@ -13005,12 +13042,14 @@ function endSpire(cancelEarly){
 	if (game.global.lastClearedCell == 98) {
 		var elem = document.getElementById("actualBadName");
 		if (!elem) elem = document.getElementById("badGuyName");
-		if (elem && cell.name == "Omnipotrimp") elem.innerHTML = elem.innerHTML.replace("Echo of Druopitee", "Omnipotrimp");
+		if (elem && cell.name == "Druopitinity") elem.innerHTML = elem.innerHTML.replace("Druopitinity", "Obsidimp");
+		else if (elem && cell.name == "Omnipotrimp") elem.innerHTML = elem.innerHTML.replace("Echo of Druopitee", "Omnipotrimp");
 		else if (elem) elem.innerHTML = elem.innerHTML.replace("Druopitee", "Improbability");
 	}
 	clearSpireMetals();
 	setNonMapBox();
 	handleExitSpireBtn();
+	if(game.global.challengeActive == "Spired")abandonChallenge();
 }
 
 function getCurrentWorldCell(){
@@ -13031,6 +13070,7 @@ function clearSpireMetals(){
 //Big storyline spoilers in the function below, be careful if you care
 
 function getSpireStory(spireNum, row){
+	if(game.global.challengeActive == "Spired")return '';
 	var spires = {
 		spire2: {
 			r2: "Everything in this Spire seems less tidy than the last, he never thought the first was something you could pass. You find a small note amongst some Nullifium.<br/><span class='spirePoem'>Healthy mutation bad...<br/>Slows delirium</span>Well that doesn't really sound like a bad thing. ",
@@ -13104,7 +13144,7 @@ function getSpireStory(spireNum, row){
 
 function giveSpireReward(level){
 	var spireWorld = checkIfSpireWorld(true);
-	if (level != 0 && level % 10 == 0) game.global.spireRows++;
+	if (level != 0 && level % 10 == 0 && game.global.world >= 200 && game.global.world % 100 == 0) game.global.spireRows++;
 	if (spireWorld == 1){
 		rewardSpire1(level);
 		return;
@@ -13247,21 +13287,21 @@ function rewardSpire1(level){
 		case 10:
 			text = "The voice booms again, and sounds as if it is coming from the walls themselves.<br/><br/><span class='spirePoem'>It has been forever, yet now we meet,<br/>I'm not surprised you don't remember me.<br/>I believe it is I who you currently seek,<br/>Lifetimes ago I was Druopitee.</span>";
 			if (game.portal.Toughness_II.locked) text += "<br/>You're glad you remembered his name correctly! You feel tougher as memories begin to flood back, and <b>unlocked Toughness II</b>!";
-			message(text, "Story");
+			if(game.global.challengeActive != "Spired" || game.global.world == 200)message(text, "Story");
 			game.portal.Toughness_II.locked = false;
 			break;
 		case 20:
-			message("<span class='spirePoem'>On our planet you and I studied time,<br/>We realized Warp Speed could affect that line.<br/>I took our work in a ship of my own design,<br/>To test the effects of our new paradigm.</span><br/>Oh yeah. That's where you knew him from! Wait doesn't he owe you some money? You feel fair taking a vial of <b>40 Nullifium</b> from a research table.", "Story");
+			if(game.global.challengeActive != "Spired" || game.global.world == 200)message("<span class='spirePoem'>On our planet you and I studied time,<br/>We realized Warp Speed could affect that line.<br/>I took our work in a ship of my own design,<br/>To test the effects of our new paradigm.</span><br/>Oh yeah. That's where you knew him from! Wait doesn't he owe you some money? You feel fair taking a vial of <b>40 Nullifium</b> from a research table.", "Story");
+			else message("You feel fair taking a vial of <b>40 Nullifium</b> from a research table.", "Story");
 			game.global.nullifium += 40;
 			break;
 		case 30:
 			text += "<span class='spirePoem'>My tests made other dimensions appear,<br/>I found this planet in one and flew here.<br/>There were hordes of enemies, if that wasn't clear,<br/>The finding was huge but the threat severe.</span><br/>Ah, so you're in a different dimension than your friends and family, comforting.";
 			if (game.portal.Power_II.locked) text += " Your desire to go home some day causes strength to flow through you, and you <b>unlocked Power II</b>!";
-			message(text, "Story");
+			if(game.global.challengeActive != "Spired" || game.global.world == 200)message(text, "Story");
 			game.portal.Power_II.locked = false;
 			break;
 		case 40:
-
 			text = "<span class='spirePoem'>To stay safe, I built many large towers.<br/>I'd climb up, and I'd peer out for hours.<br/>I searched for lifetimes, my mind became devoured,<br/>then one day I found a way to gain power.</span><br/>Dammit Druopitee. This is all going to end up being his fault, isn't it? ";
 			if (!game.global.runningChallengeSquared){
 				amt = giveHeliumReward(15);
@@ -13269,26 +13309,28 @@ function rewardSpire1(level){
 				}
 			else
 				text += "You look for something to steal to try and even the playing field, but can't find anything. Oh well.";
-			message(text, "Story");
+			if(game.global.challengeActive != "Spired" || game.global.world == 200)message(text, "Story");
 			break;
 		case 50:
 			text = "<span class='spirePoem'>After many lifetimes of observation,<br/>I had finally found my salvation.<br/>An airborne chemical to cause great mutation,<br/>the Corruption was my new creation.</span><br/>Yup, totally his fault.";
 			if (game.portal.Motivation_II.locked) text += "Your desire to stop him is so strong that you've <b>unlocked Motivation II</b>!"
-			message(text, "Story");
+			if(game.global.challengeActive != "Spired" || game.global.world == 200)message(text, "Story");
 			game.portal.Motivation_II.locked = false;
 			break;
 		case 60:
 			game.global.nullifium += 60;
-			message("<span class='spirePoem'>I pumped Corruption up from my spires,<br/>I watched as it spread outward like wildfires.<br/>They now bowed to me, their brains freshly rewired,<br/>I had almost all that I desired.</span><br/>You feel like anyone willing to pump something called 'Corruption' into a planet's atmosphere probably qualifies as a supervillain. You feel no remorse taking another vial filled with <b>60 Nullifium</b>!", "Story");
+			if(game.global.challengeActive != "Spired" || game.global.world == 200)message("<span class='spirePoem'>I pumped Corruption up from my spires,<br/>I watched as it spread outward like wildfires.<br/>They now bowed to me, their brains freshly rewired,<br/>I had almost all that I desired.</span><br/>You feel like anyone willing to pump something called 'Corruption' into a planet's atmosphere probably qualifies as a supervillain. You feel no remorse taking another vial filled with <b>60 Nullifium</b>!", "Story");
+			else message("You feel no remorse taking another vial filled with <b>60 Nullifium</b>!", "Story");
 			break;
 		case 70:
-			message("<span class='spirePoem'>But Trimps, who in numbers are tough as stone,<br/>weren't changed and I couldn't control them alone.<br/>So I got in my ship and I went to our home,<br/>I brought you here to the native Trimp Zones.</span><br/>You don't remember that, but are pretty sure you weren't OK with it. Kidnapping definitely justifies taking this research <b>Heirloom</b> you just found. ", "Story");
+			if(game.global.challengeActive != "Spired" || game.global.world == 200)message("<span class='spirePoem'>But Trimps, who in numbers are tough as stone,<br/>weren't changed and I couldn't control them alone.<br/>So I got in my ship and I went to our home,<br/>I brought you here to the native Trimp Zones.</span><br/>You don't remember that, but are pretty sure you weren't OK with it. Kidnapping definitely justifies taking this research <b>Heirloom</b> you just found. ", "Story");
+			else message("Gained a Z201 Heirloom!", "Story");
 			createHeirloom(201);
 			break;
 		case 80:
 			text = "<span class='spirePoem'>You disliked my plan and had to be forced,<br/>so I wiped your mind and plotted your course.<br/>I came up with plans for equipment and resorts,<br/>I wrote all I knew and left you reports.</span><br/>Oh HE wrote those? Now that you think about it, you can see a lot of ways the designs could be improved";
 			text += (game.portal.Carpentry_II.locked) ? ", and <b>unlocked Carpentry II</b>!" : ".";
-			message(text, "Story");
+			if(game.global.challengeActive != "Spired" || game.global.world == 200)message(text, "Story");
 			game.portal.Carpentry_II.locked = false;
 			break;
 		case 90:
@@ -13297,11 +13339,11 @@ function rewardSpire1(level){
 				amt = giveHeliumReward(30);
 				text += " You did however find " + prettify(amt) + " more Helium just sitting around, which you feel no qualms about taking.";
 			}
-			message(text, "Story");
+			if(game.global.challengeActive != "Spired" || game.global.world == 200)message(text, "Story");
 			break;
 		case 100:
 			if (game.global.spireDeaths == 0) giveSingleAchieve("Invincible");
-			text = "Druopitee collapses to the floor. You were hoping he'd be a little more sane, but whatever. You shut down the corruption device and hope the planet will repair itself soon, then you rummage through his stuff and find keys, surely for the ship!";
+			if(game.global.challengeActive != "Spired" || game.global.world == 200)text = "Druopitee collapses to the floor. You were hoping he'd be a little more sane, but whatever. You shut down the corruption device and hope the planet will repair itself soon, then you rummage through his stuff and find keys, surely for the ship!";
 			if (!game.global.runningChallengeSquared){
 				amt = giveHeliumReward(100);
 				text += " You also find a massive stockpile of <b>" + prettify(amt) + " Helium</b>.";

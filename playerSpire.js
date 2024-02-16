@@ -2167,6 +2167,8 @@ var playerSpireTraps = {
         getWorldBonus: function(singleOnly){
             var mod = 30;
             if (this.level > 1) mod += ((this.level - 1) * 15);
+			mod *= (1+game.heirlooms.Core.strengthBonus.currentBonus/100);
+			mod *= (1+game.heirlooms.Core.worldBonus.currentBonus/100);
             if (singleOnly) return mod;
             return (mod * this.owned);
         },
@@ -2215,6 +2217,8 @@ var playerSpireTraps = {
         getWorldBonus: function(singleOnly){
             var mod = 10;
             if (this.level > 1) mod += ((this.level - 1) * 5);
+			mod *= (1+game.heirlooms.Core.condenserBonus.currentBonus/100);
+			mod *= (1+game.heirlooms.Core.worldBonus.currentBonus/100);
             if (singleOnly) return mod;
             return (mod * this.owned);
         },
@@ -2268,6 +2272,8 @@ var playerSpireTraps = {
         getWorldBonus: function(singleOnly){
             var mod = 15;
             if (this.level > 1) mod += ((this.level - 1) * 7.5);
+			mod *= (1+game.heirlooms.Core.knowledgeBonus.currentBonus/100);
+			mod *= (1+game.heirlooms.Core.worldBonus.currentBonus/100);
             if (singleOnly) return mod;
             return (mod * this.owned);
         },
