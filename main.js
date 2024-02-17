@@ -12974,7 +12974,7 @@ function startSpire(confirmed){
 		game.global.spireActive = true;
 		setNonMapBox();
 		var spireSetting = game.options.menu.mapsOnSpire.enabled;
-		if (spireSetting && !checkMapAtZoneWorld()){
+		if (spireSetting && !checkMapAtZoneWorld() && game.global.world > 6){
 			var highestSpire = Math.floor((getHighestLevelCleared() - 99) / 100);
 			if (spireSetting == 1 || (spireSetting == 2 && spireNum >= highestSpire - 1) || (spireSetting == 3 && spireNum >= highestSpire)){
 				game.global.fighting = false;
