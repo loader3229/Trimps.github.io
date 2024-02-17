@@ -3087,6 +3087,15 @@ var cnItems = {
     ' and health multiplied by ': '倍，生命值变为',
     '. Run maps to warm up!': '倍。快运行地图暖和起来！',
     'You completed Desolation again, just for fun!': '您再度完成了荒凉挑战，但这并没有什么用，只是自娱自乐而已！',
+	
+	
+    'Spired': '尖塔化',
+    'Travel to a dimension, that every zone is a Spire. Enemies are a lot stronger in this Challenge! ': '这个维度里面每个区域都是尖塔。所有敌人的能力都变得非常强。',
+    'However, recycling all Spire Core Heirloom dropped in this Challenge': '但是，这个挑战',
+    ' will gain a lot of Spirestones!': '里面掉落的所有尖塔核心在回收时会提供大量的尖塔石！（这是loader3229的mod里面的一个新挑战！）',
+	
+	
+	
     //#endregion 挑战相关
     //#region 特权相关
     'Apply your skills at salvaging things from the Spire to increase all loot gained by 0.25% per level. The price for this perk increases additively, and each level will cost exactly 10000 more than the previous level.': '将您在尖塔中夺宝的本事用在外面，每级使战利品获取量增加0.25%。该特权价格线性增加，每级都比上一级贵10000。',
