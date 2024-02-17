@@ -3207,7 +3207,7 @@ QUnit.init = function() {
 		result.id = "qunit-testresult";
 		result.className = "result";
 		tests.parentNode.insertBefore( result, tests );
-		result.innerHTML = "Running...<br />&#160;";
+		result.innerHTML = "跑...<br />&#160;";
 	}
 };
 
@@ -3485,14 +3485,14 @@ function toolbarLooseFilter() {
 
 	addClass( filter, "qunit-filter" );
 
-	label.innerHTML = "Filter: ";
+	label.innerHTML = "过滤: ";
 
 	input.type = "text";
 	input.value = config.filter || "";
 	input.name = "filter";
 	input.id = "qunit-filter-input";
 
-	button.innerHTML = "Go";
+	button.innerHTML = "出发";
 
 	label.appendChild( input );
 
@@ -3651,7 +3651,7 @@ function appendTest( name, testId, moduleName ) {
 	title.innerHTML = getNameHtml( name, moduleName );
 
 	rerunTrigger = document.createElement( "a" );
-	rerunTrigger.innerHTML = "Rerun";
+	rerunTrigger.innerHTML = "返回";
 	rerunTrigger.href = setUrl({ testId: testId });
 
 	testBlock = document.createElement( "li" );
@@ -3930,7 +3930,7 @@ QUnit.testDone(function( details ) {
 	// Show the source of the test when showing assertions
 	if ( details.source ) {
 		sourceName = document.createElement( "p" );
-		sourceName.innerHTML = "<strong>Source: </strong>" + details.source;
+		sourceName.innerHTML = "<strong>资源: </strong>" + details.source;
 		addClass( sourceName, "qunit-source" );
 		if ( bad === 0 ) {
 			addClass( sourceName, "qunit-collapsed" );

@@ -499,7 +499,7 @@ body {
 }
 
 #scienceCollectBtn{
-	font-size: 1em;
+	font-size: 1.2em;
 }
 
 .portalBtn{
@@ -1426,8 +1426,8 @@ body {
 
 .fightBtn{
 	width: 100%;
-	font-size: 1.1vw !important;
-	padding: 0.15vw 0.3vw;
+	font-size: 0.9vw !important;
+	padding: 0.05vw 0.3vw;
 	display: block;
 }
 
@@ -1526,11 +1526,11 @@ body {
 }
 
 #battleSideTitle {
-    font-size: 1.1vw;
+    font-size: 0.9vw;
     text-align: center;
     background-color: rgba(0, 0, 0, 0.3);
-	padding-top: 5%;
-	padding-bottom: 5%;
+	padding-top: 2%;
+	padding-bottom: 2%;
 	
 }
 
@@ -3747,12 +3747,15 @@ background: linear-gradient(135deg,  #000000 0%, #400000 50%, #100000 100%);
 }
 
 #fluffyLevelBreakdown tbody tr td:first-child{
-	width: 8%;
+	width: 11%;
 	text-align: center;
 }
 
 #fluffyLevelBreakdown tbody tr td:nth-child(2){
 	padding: 0.5em;
+}
+#fluffyLevelBreakdown tbody tr td:nth-child(3){
+	width: 8%;
 }
 
 #fluffyLevelBreakdown tbody tr td{
@@ -6216,9 +6219,11 @@ sup{
 	text-decoration: italic;
 }
 
+/*
 #challengeTrappapalooza .thingName, #challengePandemonium .thingName{
 	font-size: 0.9vw;
 }
+*/
 
 .questMessage{
 	font-size: 1.1vw;
@@ -6746,6 +6751,8 @@ sup{
 }
 
 .alchemyPotionEffect{
+	display: block;
+	height: 8%;
 	font-style: italic;
 	font-size: 0.9em;
 }
