@@ -7259,9 +7259,9 @@ function getTotalHeirloomRefundValue(heirloom, ignoreBase){
 }
 
 function getHeirloomRecycleValue(heirloom){
-	if (heirloom.type == "Core") return (getHeirloomBaseValue(heirloom) / 2);
+	//if (heirloom.type == "Core") return (getHeirloomBaseValue(heirloom) / 2);
 	var baseValue;
-	if (game.heirlooms.recycleOverride[heirloom.rarity] != -1) baseValue = game.heirlooms.recycleOverride[heirloom.rarity];
+	if (game.heirlooms.recycleOverride[heirloom.rarity] != -1 && heirloom.type != "Core") baseValue = game.heirlooms.recycleOverride[heirloom.rarity];
 	else baseValue = (getHeirloomBaseValue(heirloom) / 2);
 	if (heirloom.nuMod) baseValue *= heirloom.nuMod;
 	return baseValue;
@@ -7524,7 +7524,7 @@ function createHeirloom(zone, fromBones, spireCore, forceBest){
 	var rarity;
 	if (spireCore){
 		type = "Core";
-		rarity = Math.round((zone - 200) / 100);
+		rarity = Math.floor((zone - 200) / 100);
 		if (rarity > 7) rarity = 7;
 		if (rarity < 0) rarity = 0;
 		game.stats.coresFound.value++;
@@ -7575,6 +7575,7 @@ function createHeirloom(zone, fromBones, spireCore, forceBest){
 	if (game.global.challengeActive == "Daily" && !fromBones){
 		buildHeirloom.nuMod *= (1 + (getDailyHeliumValue(countDailyWeight()) / 100));
 	}
+	if (game.global.challengeActive == "Spired" && spireCore)buildHeirloom.nuMod *= (game.global.world * game.global.world);
 	if (autoBattle.oneTimers.Nullicious.owned && game.global.universe == 2) buildHeirloom.nuMod *= autoBattle.oneTimers.Nullicious.getMult();
 	if (game.global.universe == 2 && u2Mutations.tree.Nullifium.purchased) buildHeirloom.nuMod *= 1.1;
 	game.global.heirloomsExtra.push(buildHeirloom);
@@ -13281,6 +13282,7 @@ function giveSpireReward(level){
 }
 
 function rewardSpire1(level){
+	if(game.global.challengeActive == "Spired" && level != 100 && game.global.world != 200)return;
 	var amt = 0;
 	var text = "";
 	switch(level){
@@ -13349,6 +13351,8 @@ function rewardSpire1(level){
 				text += " You also find a massive stockpile of <b>" + prettify(amt) + " Helium</b>.";
 			}
 			if (game.portal.Looting_II.locked) text += " Your skills at salvaging things from this Spire have helped you <b>unlock Looting II</b>.";
+				
+			if(game.global.challengeActive != "Spired" || game.global.world == 200){
 			if (game.global.spiresCompleted < 1){
 				text += "<br/><br/>You notice a small timeworn chest in the back of the room, where Druopitee had been storing the Skeletimp bones that he had collected over many timelines. You open it and find <b>20 Perfect Skeletimp Bones!</b> You can tell though that these bones won't be here next time. The Spire's power grants you a permanent 4x bonus to all Dark Essence you collect, you can carry an additional Heirloom back through the Portal, and your Portal has also modified itself to now Liquify Zones equal to 5% of your highest Zone reached. You're not quite sure what a liquify is, but you're excited to find out! "
 				game.global.b += 20;
@@ -13362,7 +13366,11 @@ function rewardSpire1(level){
 				createHeirloom(200, false, true);
 				text += "<br/><br/><b>You were able to properly remove the Core this time, and have found a Basic Spire Core Heirloom!</b>";
 			}
-			text += "<br/><br/>You've helped the Trimps establish a legendary population and economy, and have brought down the man responsible for the chaos in this world. You could leave now and the Universe will forever be better because you existed. Trimps will erect statues of you as long as their civilization survives. But you know there are still other spires out there, pumping Corruption into the planet. Maybe the statues would be bigger if you stayed and helped out?";
+			}else{
+				createHeirloom(200, false, true);
+				text += "<b>You gained a Spire Core Heirloom that worth "+(20*game.global.world*game.global.world)+" Spirestones!</b>";
+			}
+			if(game.global.challengeActive != "Spired" || game.global.world == 200)text += "<br/><br/>You've helped the Trimps establish a legendary population and economy, and have brought down the man responsible for the chaos in this world. You could leave now and the Universe will forever be better because you existed. Trimps will erect statues of you as long as their civilization survives. But you know there are still other spires out there, pumping Corruption into the planet. Maybe the statues would be bigger if you stayed and helped out?";
 			message(text, "Story");
 			game.portal.Looting_II.locked = false;
 			checkAchieve("spireTimed");

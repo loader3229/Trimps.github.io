@@ -4014,7 +4014,7 @@ var toReturn = {
 		},
 		Spired: {
 			get squaredDescription() {
-				return "Travel to a dimension, that every zone is a Spire. Enemies are a lot stronger in this Challenge!"
+				return "Travel to a dimension, that every zone is a Spire. Enemies are a lot stronger in this Challenge! <b>However, recycling all Spire Core Heirloom dropped in this Challenge<sup>2</sup> will gain a lot of Spirestones!</b>";
 			},
 			filter: function () {
 				return game.global.spiresCompleted >= 7;
@@ -4032,6 +4032,7 @@ var toReturn = {
 			},
 			abandon: function(){
 				if(game.global.spireActive)endSpire();
+				if(game.global.world<=200)game.global.lastSpireCleared=0;
 			}
 		},
 		Frigid: {
