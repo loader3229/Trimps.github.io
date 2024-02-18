@@ -4020,8 +4020,8 @@ var toReturn = {
 				return game.global.spiresCompleted >= 7;
 			},
 			replaceSquareFreq: 1,
-			replaceSquareThresh: 10,
-			replaceSquareReward: 5,
+			replaceSquareThresh: 5,
+			replaceSquareReward: 1,
 			replaceSquareGrowth: 1,
 			onlySquared: true,
 			allowSquared: true,
