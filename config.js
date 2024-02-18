@@ -8042,22 +8042,22 @@ var toReturn = {
 				}
 			},
 			strengthBonus: {
-				name: "Strength Tower World Bonus",
+				name: "力量塔世界加成",
 				currentBonus: 0,
 				steps: [-1,-1,-1,-1,-1,-1,[2,2,2],[20,20,20]]
 			},
 			condenserBonus: {
-				name: "Condenser Tower World Bonus",
+				name: "冷凝塔世界加成",
 				currentBonus: 0,
 				steps: [-1,-1,-1,-1,-1,-1,[2,2,2],[20,20,20]]
 			},
 			knowledgeBonus: {
-				name: "Knowledge Tower World Bonus",
+				name: "知识塔世界加成",
 				currentBonus: 0,
 				steps: [-1,-1,-1,-1,-1,-1,[2,2,2],[20,20,20]]
 			},
 			worldBonus: {
-				name: "All Tower World Bonus",
+				name: "所有的尖塔世界加成",
 				currentBonus: 0,
 				steps: [-1,-1,-1,-1,-1,-1,-1,[5,5,5]]
 			},
