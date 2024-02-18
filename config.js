@@ -8044,22 +8044,22 @@ var toReturn = {
 			strengthBonus: {
 				name: "Strength Tower World Bonus",
 				currentBonus: 0,
-				steps: [-1,-1,-1,-1,-1,-1,-1,[5,5,5]]
+				steps: [-1,-1,-1,-1,-1,-1,[2,2,2],[20,20,20]]
 			},
 			condenserBonus: {
 				name: "Condenser Tower World Bonus",
 				currentBonus: 0,
-				steps: [-1,-1,-1,-1,-1,-1,-1,[5,5,5]]
+				steps: [-1,-1,-1,-1,-1,-1,[2,2,2],[20,20,20]]
 			},
 			knowledgeBonus: {
 				name: "Knowledge Tower World Bonus",
 				currentBonus: 0,
-				steps: [-1,-1,-1,-1,-1,-1,-1,[5,5,5]]
+				steps: [-1,-1,-1,-1,-1,-1,[2,2,2],[20,20,20]]
 			},
 			worldBonus: {
 				name: "All Tower World Bonus",
 				currentBonus: 0,
-				steps: [-1,-1,-1,-1,-1,-1,-1,[1,1,1]]
+				steps: [-1,-1,-1,-1,-1,-1,-1,[5,5,5]]
 			},
 		},
 		Staff: {
