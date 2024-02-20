@@ -13367,7 +13367,7 @@ function rewardSpire1(level){
 			else{
 				createHeirloom(200, false, true);
 				if(game.global.challengeActive != "Spired")text += "<br/><br/><b>You were able to properly remove the Core this time, and have found a Basic Spire Core Heirloom!</b>";
-				else text += "<br/><br/><b>You have found a Spire Core Heirloom that worth 80000000 Spirestones!</b>";
+				else text += "<br/><br/><b>You have found a Spire Core Heirloom that worth 8000000 Spirestones!</b>";
 			}
 			}else{
 				createHeirloom(200, false, true);
