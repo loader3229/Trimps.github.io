@@ -7618,7 +7618,7 @@ function createHeirloom(zone, fromBones, spireCore, forceBest){
 	}
 	if (game.global.challengeActive == "Spired" && spireCore)buildHeirloom.nuMod *= (game.global.world * game.global.world);
 	if (game.global.challengeActive == "Spired" && spireCore && game.global.world >= 200 && (game.global.world % 100) == 0)buildHeirloom.nuMod *= 10;
-	if (game.global.challengeActive == "Spired" && spireCore && game.global.world >= 230)buildHeirloom.nuMod *= (game.global.world/200);
+	if (game.global.challengeActive == "Spired" && spireCore && game.global.world >= 230)buildHeirloom.nuMod *= (game.global.world/200*Math.pow(10,(game.global.world%100)/100));
 	if (autoBattle.oneTimers.Nullicious.owned && game.global.universe == 2) buildHeirloom.nuMod *= autoBattle.oneTimers.Nullicious.getMult();
 	if (game.global.universe == 2 && u2Mutations.tree.Nullifium.purchased) buildHeirloom.nuMod *= 1.1;
 	game.global.heirloomsExtra.push(buildHeirloom);
@@ -13142,7 +13142,7 @@ function clearSpireMetals(){
 //Big storyline spoilers in the function below, be careful if you care
 
 function getSpireStory(spireNum, row){
-	if(game.global.challengeActive == "Spired")return '';
+	if(game.global.challengeActive == "Spired" && game.global.world % 100 != 0)return '';
 	var spires = {
 		spire2: {
 			r2: "这个尖塔里的一切都更凌乱了，他大概觉得您连之前那个尖塔都过不去。您在一些虚空物质之间发现了一份小笔记。<br/><span class='spirePoem'>健康变异，很是不好……<br/>狂暴之速，因此减少……</span>不好吗？您可不这么认为。",
@@ -13221,6 +13221,7 @@ function giveSpireReward(level){
 		rewardSpire1(level);
 		return;
 	}
+	if(game.global.challengeActive == "Spired" && level != 100 && game.global.world % 100 != 0)return;
 	//Spire 2+ only here
 	var text = "";
 	switch(level){
@@ -13286,11 +13287,12 @@ function giveSpireReward(level){
 		case(100):
 			if (game.global.spireDeaths == 0) giveSingleAchieve("Invincible");
 			if (spireWorld >= 5 && game.global.spireDeaths == 0) giveSingleAchieve("Invisible");
+			if (spireWorld >= 7) giveSingleAchieve("Lucky Spirer");
 			var text = getSpireStory(spireWorld, 10);
 			if (!game.global.runningChallengeSquared){
 				var amt = giveHeliumReward(100);
 				text += "您发现了<b>" + prettify(amt) + "氦</b>和<b>一个崭新的尖塔核心</b>！";
-			}
+			}else if(game.global.challengeActive == "Spired")text += "您得到了一个尖塔核心传家宝，回收它可以得到"+Math.floor((game.global.world**3)*Math.pow(10,(game.global.world-300)/100)*(game.global.world%100==0?10:1))+"尖塔石！";
 			else text += "您发现了一个<b>崭新的尖塔核心</b>！";
 			if (spireWorld == 6){
 				var talentCount = countPurchasedTalents();
@@ -13414,6 +13416,8 @@ function rewardSpire1(level){
 			break;
 		case 100:
 			if (game.global.spireDeaths == 0) giveSingleAchieve("Invincible");
+			if (game.global.challengeActive == "Spired" && game.global.world >= 59) giveSingleAchieve("Broken Spire");
+			if (game.global.challengeActive == "Spired" && game.global.world >= 200) giveSingleAchieve("Spire-In-Spires");
 			if(game.global.challengeActive != "Spired" || game.global.world == 200)text = "德罗披提倒在地上，咽气了。到死他都没能恢复理智。您将腐化装置关闭了，希望这颗行星能尽快自我恢复。然后您在他留下的东西里翻找了一阵子，找到了飞船的钥匙。";
 			if (!game.global.runningChallengeSquared){
 				amt = giveHeliumReward(100);
@@ -13438,7 +13442,7 @@ function rewardSpire1(level){
 			}
 			}else{
 				createHeirloom(200, false, true);
-				if(game.global.world>=230)text += "您得到了一个尖塔核心传家宝，回收它可以得到"+Math.floor((game.global.world**3)/10)+"尖塔石！";
+				if(game.global.world>=230)text += "您得到了一个尖塔核心传家宝，回收它可以得到"+Math.floor((game.global.world**3)*Math.pow(10,(game.global.world-300)/100))+"尖塔石！";
 				else text += "您得到了一个尖塔核心传家宝，回收它可以得到"+(20*game.global.world*game.global.world)+"尖塔石！";
 			}
 			if(game.global.challengeActive != "Spired" || game.global.world == 200)text += "<br/><br/>在您的帮助下，脆皮们人口兴旺，经济繁荣，且打倒了让世界陷入混乱的罪魁祸首。因为您来过，这个宇宙才变得更好。只要脆皮的文明仍然存在，您的雕像就会永远竖立着。但您知道，世界上有着其他尖塔，还在将腐化注入行星的大气。如果您留下来帮忙，或许雕像还能更大一点？";

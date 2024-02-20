@@ -2064,6 +2064,15 @@ var cnItems = {
     ' Not Earnable!': '无法完成！',
     ' Still Earnable!': '待完成！',
     'You have completed every Achievement!': '您完成了所有的成就！',
+	
+	
+    'Lucky Spirer': '幸运螺旋者',
+    'The Limit of Bionic Wonderland': '仿生仙境的极限',
+    'Spire-In-Spires': '尖塔中的尖塔',
+    'Eradicated Warden': '杀绝监狱长',
+    'Eradicated Robotrimp': '杀绝脆皮机器人',
+    'Broken Spire': '破碎尖塔',
+	
     //#endregion 游戏成就相关
     //#region 游戏设置相关
     'Browse All': '查看全部选项',
