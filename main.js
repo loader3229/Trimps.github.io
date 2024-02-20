@@ -7577,7 +7577,7 @@ function createHeirloom(zone, fromBones, spireCore, forceBest){
 	}
 	if (game.global.challengeActive == "Spired" && spireCore)buildHeirloom.nuMod *= (game.global.world * game.global.world);
 	if (game.global.challengeActive == "Spired" && spireCore && game.global.world >= 200 && (game.global.world % 100) == 0)buildHeirloom.nuMod *= 10;
-	if (game.global.challengeActive == "Spired" && spireCore && game.global.world >= 230)buildHeirloom.nuMod *= (game.global.world/20);
+	if (game.global.challengeActive == "Spired" && spireCore && game.global.world >= 230)buildHeirloom.nuMod *= (game.global.world/200);
 	if (autoBattle.oneTimers.Nullicious.owned && game.global.universe == 2) buildHeirloom.nuMod *= autoBattle.oneTimers.Nullicious.getMult();
 	if (game.global.universe == 2 && u2Mutations.tree.Nullifium.purchased) buildHeirloom.nuMod *= 1.1;
 	game.global.heirloomsExtra.push(buildHeirloom);
