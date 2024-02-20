@@ -13434,7 +13434,7 @@ function rewardSpire1(level){
 			else{
 				createHeirloom(200, false, true);
 				if(game.global.challengeActive != "Spired")text += "<br/><br/><b>这次您成功地卸下了尖塔核心，获得了一个基础稀有度的尖塔核心传家宝！</b>";
-				else text += "<br/><br/><b>您得到了一个尖塔核心传家宝，回收它可以得到80000000尖塔石！</b>";
+				else text += "<br/><br/><b>您得到了一个尖塔核心传家宝，回收它可以得到8000000尖塔石！</b>";
 			}
 			}else{
 				createHeirloom(200, false, true);
