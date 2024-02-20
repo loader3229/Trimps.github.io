@@ -7613,10 +7613,12 @@ function createHeirloom(zone, fromBones, spireCore, forceBest){
 		if (b == "empty" || b > a) return -1;
 		return a > b
 	})
-	if (game.global.challengeActive == "Daily" && !fromBones){
+	if (game.global.challengeActive == "Daily" && !fromBones && !spireCore){
 		buildHeirloom.nuMod *= (1 + (getDailyHeliumValue(countDailyWeight()) / 100));
 	}
 	if (game.global.challengeActive == "Spired" && spireCore)buildHeirloom.nuMod *= (game.global.world * game.global.world);
+	if (game.global.challengeActive == "Spired" && spireCore && game.global.world >= 200 && (game.global.world % 100) == 0)buildHeirloom.nuMod *= 10;
+	if (game.global.challengeActive == "Spired" && spireCore && game.global.world >= 230)buildHeirloom.nuMod *= (game.global.world/20);
 	if (autoBattle.oneTimers.Nullicious.owned && game.global.universe == 2) buildHeirloom.nuMod *= autoBattle.oneTimers.Nullicious.getMult();
 	if (game.global.universe == 2 && u2Mutations.tree.Nullifium.purchased) buildHeirloom.nuMod *= 1.1;
 	game.global.heirloomsExtra.push(buildHeirloom);
@@ -7646,7 +7648,7 @@ function getRandomBySteps(steps, mod, seed){
 
 function getHeirloomZoneBreakpoint(zone, forBones){
 	var breakpoint = getUnbuffedHeirloomZoneBreakpoint(zone, forBones);
-	if (game.global.universe == 2 && u2Mutations.tree.Heirmazing.purchased && breakpoint < (game.heirlooms.rarities.length - 1)) breakpoint++;
+	if (game.global.universe == 2 && u2Mutations.tree.Heirmazing.purchased) breakpoint++;
 	return breakpoint;
 }
 
@@ -13431,11 +13433,13 @@ function rewardSpire1(level){
 			}
 			else{
 				createHeirloom(200, false, true);
-				text += "<br/><br/><b>这次您成功地卸下了尖塔核心，获得了一个基础稀有度的尖塔核心传家宝！</b>";
+				if(game.global.challengeActive != "Spired")text += "<br/><br/><b>这次您成功地卸下了尖塔核心，获得了一个基础稀有度的尖塔核心传家宝！</b>";
+				else text += "<br/><br/><b>您得到了一个尖塔核心传家宝，回收它可以得到80000000尖塔石！</b>";
 			}
 			}else{
 				createHeirloom(200, false, true);
-				text += "您得到了一个尖塔核心传家宝，回收它可以得到"+(20*game.global.world*game.global.world)+"尖塔石！";
+				if(game.global.world>=230)text += "您得到了一个尖塔核心传家宝，回收它可以得到"+Math.floor((game.global.world**3)/10)+"尖塔石！";
+				else text += "您得到了一个尖塔核心传家宝，回收它可以得到"+(20*game.global.world*game.global.world)+"尖塔石！";
 			}
 			if(game.global.challengeActive != "Spired" || game.global.world == 200)text += "<br/><br/>在您的帮助下，脆皮们人口兴旺，经济繁荣，且打倒了让世界陷入混乱的罪魁祸首。因为您来过，这个宇宙才变得更好。只要脆皮的文明仍然存在，您的雕像就会永远竖立着。但您知道，世界上有着其他尖塔，还在将腐化注入行星的大气。如果您留下来帮忙，或许雕像还能更大一点？";
 			message(text, "Story");
