@@ -7577,7 +7577,7 @@ function createHeirloom(zone, fromBones, spireCore, forceBest){
 	}
 	if (game.global.challengeActive == "Spired" && spireCore)buildHeirloom.nuMod *= (game.global.world * game.global.world);
 	if (game.global.challengeActive == "Spired" && spireCore && game.global.world >= 200 && (game.global.world % 100) == 0)buildHeirloom.nuMod *= 10;
-	if (game.global.challengeActive == "Spired" && spireCore && game.global.world >= 230)buildHeirloom.nuMod *= (game.global.world/200);
+	if (game.global.challengeActive == "Spired" && spireCore && game.global.world >= 230)buildHeirloom.nuMod *= (game.global.world/200*Math.pow(10,(game.global.world%100)/100));
 	if (autoBattle.oneTimers.Nullicious.owned && game.global.universe == 2) buildHeirloom.nuMod *= autoBattle.oneTimers.Nullicious.getMult();
 	if (game.global.universe == 2 && u2Mutations.tree.Nullifium.purchased) buildHeirloom.nuMod *= 1.1;
 	game.global.heirloomsExtra.push(buildHeirloom);
@@ -13073,7 +13073,7 @@ function clearSpireMetals(){
 //Big storyline spoilers in the function below, be careful if you care
 
 function getSpireStory(spireNum, row){
-	if(game.global.challengeActive == "Spired")return '';
+	if(game.global.challengeActive == "Spired" && game.global.world % 100 != 0)return '';
 	var spires = {
 		spire2: {
 			r2: "Everything in this Spire seems less tidy than the last, he never thought the first was something you could pass. You find a small note amongst some Nullifium.<br/><span class='spirePoem'>Healthy mutation bad...<br/>Slows delirium</span>Well that doesn't really sound like a bad thing. ",
@@ -13152,6 +13152,7 @@ function giveSpireReward(level){
 		rewardSpire1(level);
 		return;
 	}
+	if(game.global.challengeActive == "Spired" && level != 100 && game.global.world % 100 != 0)return;
 	//Spire 2+ only here
 	var text = "";
 	switch(level){
@@ -13217,11 +13218,12 @@ function giveSpireReward(level){
 		case(100):
 			if (game.global.spireDeaths == 0) giveSingleAchieve("Invincible");
 			if (spireWorld >= 5 && game.global.spireDeaths == 0) giveSingleAchieve("Invisible");
+			if (spireWorld >= 7) giveSingleAchieve("Lucky Spirer");
 			var text = getSpireStory(spireWorld, 10);
 			if (!game.global.runningChallengeSquared){
 				var amt = giveHeliumReward(100);
 				text += " You find a large stockpile of <b>" + prettify(amt) + " Helium</b> and <b>a brand new Spire Core</b>!";
-			}
+			}else if(game.global.challengeActive == "Spired")text += "You found a Spire Core Heirloom that worth "+Math.floor((game.global.world**3)*Math.pow(10,(game.global.world-300)/100))+" Spirestones!";
 			else text += " You find a <b>brand new Spire Core</b>!";
 			if (spireWorld == 6){
 				var talentCount = countPurchasedTalents();
@@ -13347,6 +13349,8 @@ function rewardSpire1(level){
 			break;
 		case 100:
 			if (game.global.spireDeaths == 0) giveSingleAchieve("Invincible");
+			if (game.global.challengeActive == "Spired" && game.global.world >= 59) giveSingleAchieve("Broken Spire");
+			if (game.global.challengeActive == "Spired" && game.global.world >= 200) giveSingleAchieve("Spire-In-Spires");
 			if(game.global.challengeActive != "Spired" || game.global.world == 200)text = "Druopitee collapses to the floor. You were hoping he'd be a little more sane, but whatever. You shut down the corruption device and hope the planet will repair itself soon, then you rummage through his stuff and find keys, surely for the ship!";
 			if (!game.global.runningChallengeSquared){
 				amt = giveHeliumReward(100);
@@ -13371,7 +13375,7 @@ function rewardSpire1(level){
 			}
 			}else{
 				createHeirloom(200, false, true);
-				if(game.global.world>=230)text += "You have found a Spire Core Heirloom that worth "+Math.floor((game.global.world**3)/10)+" Spirestones!";
+				if(game.global.world>=230)text += "You have found a Spire Core Heirloom that worth "+Math.floor((game.global.world**3)*Math.pow(10,(game.global.world-300)/100))+" Spirestones!";
 				else text += "You have found a Spire Core Heirloom that worth "+(20*game.global.world*game.global.world)+" Spirestones!";
 			}
 			if(game.global.challengeActive != "Spired" || game.global.world == 200)text += "<br/><br/>You've helped the Trimps establish a legendary population and economy, and have brought down the man responsible for the chaos in this world. You could leave now and the Universe will forever be better because you existed. Trimps will erect statues of you as long as their civilization survives. But you know there are still other spires out there, pumping Corruption into the planet. Maybe the statues would be bigger if you stayed and helped out?";
