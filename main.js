@@ -7572,10 +7572,12 @@ function createHeirloom(zone, fromBones, spireCore, forceBest){
 		if (b == "empty" || b > a) return -1;
 		return a > b
 	})
-	if (game.global.challengeActive == "Daily" && !fromBones){
+	if (game.global.challengeActive == "Daily" && !fromBones && !spireCore){
 		buildHeirloom.nuMod *= (1 + (getDailyHeliumValue(countDailyWeight()) / 100));
 	}
 	if (game.global.challengeActive == "Spired" && spireCore)buildHeirloom.nuMod *= (game.global.world * game.global.world);
+	if (game.global.challengeActive == "Spired" && spireCore && game.global.world >= 200 && (game.global.world % 100) == 0)buildHeirloom.nuMod *= 10;
+	if (game.global.challengeActive == "Spired" && spireCore && game.global.world >= 230)buildHeirloom.nuMod *= (game.global.world/20);
 	if (autoBattle.oneTimers.Nullicious.owned && game.global.universe == 2) buildHeirloom.nuMod *= autoBattle.oneTimers.Nullicious.getMult();
 	if (game.global.universe == 2 && u2Mutations.tree.Nullifium.purchased) buildHeirloom.nuMod *= 1.1;
 	game.global.heirloomsExtra.push(buildHeirloom);
@@ -7605,7 +7607,7 @@ function getRandomBySteps(steps, mod, seed){
 
 function getHeirloomZoneBreakpoint(zone, forBones){
 	var breakpoint = getUnbuffedHeirloomZoneBreakpoint(zone, forBones);
-	if (game.global.universe == 2 && u2Mutations.tree.Heirmazing.purchased && breakpoint < (game.heirlooms.rarities.length - 1)) breakpoint++;
+	if (game.global.universe == 2 && u2Mutations.tree.Heirmazing.purchased) breakpoint++;
 	return breakpoint;
 }
 
@@ -13364,11 +13366,13 @@ function rewardSpire1(level){
 			}
 			else{
 				createHeirloom(200, false, true);
-				text += "<br/><br/><b>You were able to properly remove the Core this time, and have found a Basic Spire Core Heirloom!</b>";
+				if(game.global.challengeActive != "Spired")text += "<br/><br/><b>You were able to properly remove the Core this time, and have found a Basic Spire Core Heirloom!</b>";
+				else text += "<br/><br/><b>You have found a Spire Core Heirloom that worth 80000000 Spirestones!</b>";
 			}
 			}else{
 				createHeirloom(200, false, true);
-				text += "<b>You gained a Spire Core Heirloom that worth "+(20*game.global.world*game.global.world)+" Spirestones!</b>";
+				if(game.global.world>=230)text += "You have found a Spire Core Heirloom that worth "+Math.floor((game.global.world**3)/10)+" Spirestones!";
+				else text += "You have found a Spire Core Heirloom that worth "+(20*game.global.world*game.global.world)+" Spirestones!";
 			}
 			if(game.global.challengeActive != "Spired" || game.global.world == 200)text += "<br/><br/>You've helped the Trimps establish a legendary population and economy, and have brought down the man responsible for the chaos in this world. You could leave now and the Universe will forever be better because you existed. Trimps will erect statues of you as long as their civilization survives. But you know there are still other spires out there, pumping Corruption into the planet. Maybe the statues would be bigger if you stayed and helped out?";
 			message(text, "Story");
