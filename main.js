@@ -13223,7 +13223,7 @@ function giveSpireReward(level){
 			if (!game.global.runningChallengeSquared){
 				var amt = giveHeliumReward(100);
 				text += " You find a large stockpile of <b>" + prettify(amt) + " Helium</b> and <b>a brand new Spire Core</b>!";
-			}else if(game.global.challengeActive == "Spired")text += "You found a Spire Core Heirloom that worth "+Math.floor((game.global.world**3)*Math.pow(10,(game.global.world-300)/100))+" Spirestones!";
+			}else if(game.global.challengeActive == "Spired")text += "You found a Spire Core Heirloom that worth "+Math.floor((game.global.world**3)*Math.pow(10,(game.global.world-300)/100)*(game.global.world%100==0?10:1))+" Spirestones!";
 			else text += " You find a <b>brand new Spire Core</b>!";
 			if (spireWorld == 6){
 				var talentCount = countPurchasedTalents();
