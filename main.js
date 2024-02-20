@@ -13054,7 +13054,10 @@ function startSpire(confirmed){
 			else handleExitSpireBtn();
 		}
 		else handleExitSpireBtn();
-		if (spireNum == 1){
+		if(game.global.challengeActive == "Spired" && (game.global.world <= 1 || game.global.world == 200)){
+			cancelTooltip();
+			tooltip("The Spire", null, 'update');
+		}else if (game.global.challengeActive != "Spired" && spireNum == 1){
 			cancelTooltip();
 			tooltip("The Spire", null, 'update');
 		}
