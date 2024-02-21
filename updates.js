@@ -6423,6 +6423,7 @@ function toggleSetting(setting, elem, fromPortal, updateOnly, backwards, fromHot
 			[", news of your achievement spreads throughout the multiverse", ". It's actually over 9000", ", everyone else is legitimately impressed", ", your great great grand achievements have achieved achievement", ".<br/>If achievement was a game, you would win", ". You achieved enlightenment, then your enlightenment started achieving", ", your Trimps tell all their friends how cool you are", ", you now gain your sustenance from achievements", ", your achievements bring all the Trimps to the Barn"]
 		];
 		var fluffLevel = getAchievementStrengthLevel();
+		if(fluffLevel > 7)fluffLevel = 7;
 		fluff = fluff[fluffLevel];
 		fluff = fluff[Math.floor(Math.random() * fluff.length)]
 		document.getElementById("achievementFluff").innerHTML = fluff;
@@ -6978,6 +6979,7 @@ function toggleSetting(setting, elem, fromPortal, updateOnly, backwards, fromHot
 				html += " Start with 1 extra Golden Upgrade after each Portal for every 500% earned between 2000% and " + prettify(10000);
 			else if (bonus <= 50000)
 				html += " Start with 1 extra Golden Upgrade after each Portal for every 2000% earned between " + prettify(10000) + " and " + prettify(50000);
+			else if (bonus <= 100000) html += " Frequency increases at " + prettify(100000) + "% bonus damage. Start with 1 extra Golden Upgrade after each Portal for every " + prettify(10000) + "% earned above " + prettify(50000);
 			else html += " Start with 1 extra Golden Upgrade after each Portal for every " + prettify(10000) + "% earned above " + prettify(50000);
 			html += "%. Currently gaining " + count + " extra Golden Upgrade" + ((count == 1) ? "" : "s") + ".";
 		}
@@ -6993,7 +6995,8 @@ function toggleSetting(setting, elem, fromPortal, updateOnly, backwards, fromHot
 		else if (percent < 1000) return 4;
 		else if (percent < 2000) return 5;
 		else if (percent < 10000) return 6;
-		return 7;
+		else if (percent < 100000) return 7;
+		return 8;
 	}
 
 	function countExtraAchievementGoldens(){
