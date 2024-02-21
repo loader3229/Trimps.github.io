@@ -2074,7 +2074,7 @@ var cnItems = {
     'Broken Spire': '破碎尖塔',
     'Break the Planet on Spired': '在尖塔化挑战中破碎行星',
     'Complete Bionic Wonderland LIII': '通过仿生仙境 LIII',
-    'Complete Bionic Wonderland 53': '通过仿生仙境 53',
+    'Complete Bionic Wonderland': '通过仿生仙境',
     'Complete The Prison on Eradicated': '在灭绝挑战中通过监狱',
     'Complete Bionic Wonderland on Eradicated': '在灭绝挑战中通过仿生仙境',
     'Complete The Real Spire(Z200) on Spired': '在尖塔化挑战中通过真正的尖塔(区域200)',
@@ -4346,9 +4346,19 @@ var cnItems = {
     'The Spire looms menacingly above you, and you take in a deep breath of corruption. You take a look back at your Trimps to help gather some courage, and you push the door open. You slowly walk inside and are greeted by an incredibly loud, deep, human voice.': '尖塔在您的面前露出了险恶的獠牙，您深深地吸了一口气，全是腐化的味道。您回头看了看脆皮们，下定决心，推开了门。随着您缓缓步入尖塔，极其响亮的低沉人声突然响了起来。',
     'Do you know what you face? If you are defeated ten times in this place, you shall be removed from this space. If you succeed, then you shall see the light of knowledge that you seek.': '您知道您面对的是什么样的存在吗？如果阵亡十次，您将被逐出此地。但如果走到了最后，那么将可以看到您所追寻的知识之光。',
     'This Zone is considerably more difficult than the previous and next Zones. If 10 groups of Trimps die in combat while in the spire, the world will return to normal.': '该区域比之前和之后的区域都要难很多。如果有10队脆皮在尖塔中阵亡，那么您将被迫退出尖塔，世界将恢复正常。',
+    'If 10 groups of Trimps die in combat while in a spire, the world will return to normal.': '如果有10队脆皮在尖塔中阵亡，那么您将被迫退出尖塔，世界将恢复正常。',
     'Each cell gives more and more helium. Every 10th cell gives a larger reward, and increases all loot gained until your next portal by 2% (including helium).': '每个格子掉落的氦将越来越多。每10个格子您还可以获得更高的奖励，并使本周目的战利品获取量增加2%(包括氦)。',
     'You were moved to Maps to protect your limited chances at the spire. You can disable this in settings!': '为了避免无谓的伤亡，您自动进入了地图库房。但您可以在设置中关闭该选项！',
     'The Universe Awaits': '舞台的大幕已经拉开',
+	
+	'Welcome to Spired': '欢迎进入尖塔化',
+	' Challenge! In this universe, all zones are copies of the Spires! Enemies are a lot stronger in this Challenge': '挑战！在这个挑战宇宙中，每个区域都是尖塔！敌人的属性变得更强了',
+	'You will get a Spire Core Heirloom for every zone cleared in this challenge': '在这个挑战',
+	'. It\'s Spirestone value is boosted depending on the zone number.': '中，每通过一个区域（尖塔），您可以得到一个尖塔核心传家宝。回收尖塔核心传家宝得到的尖塔石会随着掉落区域的增加而增加！',
+	'The Real Spire looms menacingly above you, and you take in a deep breath of corruption. You take a look back at your Trimps to help gather some courage, and you push the door open. You slowly walk inside and are greeted by an incredibly loud, deep, human voice.': '在众多尖塔中，真正的尖塔在您的面前露出了险恶的獠牙，您深深地吸了一口气，全是腐化的味道。您回头看了看脆皮们，下定决心，推开了门。随着您缓缓步入尖塔，极其响亮的低沉人声突然响了起来。',
+	'The Spirestone value of the Spire Core Heirloom drop for every Real Spire cleared in this challenge': '回收在这个挑战',
+    ' is massive boosted. Every 10th cell cleared in a Real Spire gives a larger reward, and increases all loot gained until your next portal by 2%.': '中通过真正的尖塔得到的尖塔核心传家宝得到的尖塔石被大量增加。在每个真正的尖塔里面，每10个格子您还可以获得更高的奖励，并使本周目的战利品获取量增加2%。',
+	
     'The Magma': '岩浆', //区域230
     'You stumble across a large locked chest, unlike anything you\'ve ever seen. The lock looks rusty, you smack it with a rock, and it falls right off. Immediately the ground shakes and cracks beneath your feet, intense heat hits your face, and Magma boils up from the core.': '您碰到了一个巨大的箱子，上着锁，跟您之前见过的所有箱子都不一样。锁看起来已经严重锈蚀，您找了块石头砸了一下，它就掉了下来。突然一阵地动山摇，空气变得酷热，岩浆从地核中渗出了。',
     'Where one minute ago there was dirt, grass, and noxious fog, there are now rivers of molten rock (and noxious fog). You\'d really like to try and repair the planet somehow, so you decide to keep pushing on. It\'s been working out well so far, there was some useful stuff in that chest!': '一分钟前，这里还有泥土，青草和毒雾，现在这里只剩下熔岩之河了(哦，还有毒雾)。您仍然想让行星恢复如初，所以准备继续前进。反正到目前为止一切都还算顺利。哦，等一下，箱子里有些能用上的东西……',
