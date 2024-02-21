@@ -6423,6 +6423,7 @@ function toggleSetting(setting, elem, fromPortal, updateOnly, backwards, fromHot
 			[", news of your achievement spreads throughout the multiverse", "。实际上它已经超过9000%了", ", everyone else is legitimately impressed", ", your great great grand achievements have achieved achievement", ".<br/>If achievement was a game, you would win", ". You achieved enlightenment, then your enlightenment started achieving", ", your Trimps tell all their friends how cool you are", ", you now gain your sustenance from achievements", ", your achievements bring all the Trimps to the Barn"]
 		];
 		var fluffLevel = getAchievementStrengthLevel();
+		if(fluffLevel > 7)fluffLevel = 7;
 		fluff = fluff[fluffLevel];
 		fluff = fluff[Math.floor(Math.random() * fluff.length)]
 		document.getElementById("achievementFluff").innerHTML = fluff;
@@ -6978,6 +6979,7 @@ function toggleSetting(setting, elem, fromPortal, updateOnly, backwards, fromHot
 				html += "伤害加成在2000%和" + prettify(10000) + "%之间时，每有500%伤害加成，每周目初始就获得一个金色升级";
 			else if (bonus <= 50000)
 				html += "伤害加成在" + prettify(10000) + "%和" + prettify(50000) + "%之间时，每有2000%伤害加成，每周目初始就获得一个金色升级";
+			else if (bonus <= 100000) html += "伤害加成到达" + prettify(100000) + "%以后，升级出现的频率将增加。伤害加成超过" + prettify(50000) + "%时，每有" + prettify(10000) + "%伤害加成，每周目初始就获得一个金色升级";
 			else html += "伤害加成超过" + prettify(50000) + "%时，每有" + prettify(10000) + "%伤害加成，每周目初始就获得一个金色升级";
 			html += "。您目前获得了" + count + "个金色升级。";
 		}
@@ -6993,7 +6995,8 @@ function toggleSetting(setting, elem, fromPortal, updateOnly, backwards, fromHot
 		else if (percent < 1000) return 4;
 		else if (percent < 2000) return 5;
 		else if (percent < 10000) return 6;
-		return 7;
+		else if (percent < 100000) return 7;
+		return 8;
 	}
 
 	function countExtraAchievementGoldens(){

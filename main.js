@@ -13517,7 +13517,8 @@ function getAvailableGoldenUpgrades(){
 }
 
 function getGoldenFrequency(fluffTier){
-	if (fluffTier > 6) fluffTier = 6;
+	if (fluffTier >= 8) return 20;
+	if (fluffTier >= 6) return 25;
 	return 50 - ((fluffTier - 1) * 5);
 }
 
