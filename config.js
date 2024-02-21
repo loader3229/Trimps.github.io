@@ -7825,9 +7825,9 @@ var toReturn = {
 			reverse: true,
 			timed: true,
 			showAll: true,
-			breakpoints: [100, 50, 10, 4],//In minutes
-			tiers: [9, 9, 10, 11],
-			names: ["Big Wall Crawler", "Big Wall Scholar", "Big Wall Mauler", "Big Wall Baller"],
+			breakpoints: [100, 50, 10, 4, 1],//In minutes
+			tiers: [9, 9, 10, 11, 12],
+			names: ["Big Wall Crawler", "Big Wall Scholar", "Big Wall Mauler", "Big Wall Baller", "Big Wall Teleporter"],
 			icon: "icomoon icon-clock2",
 			newStuff: []
 		},
@@ -7852,9 +7852,9 @@ var toReturn = {
 			reverse: true,
 			timed: true,
 			showAll: true,
-			breakpoints: [180, 90, 40, 12],//In minutes
-			tiers: [10, 10, 11, 12],
-			names: ["Peasant", "Jester", "Advisor", "Ruler"],
+			breakpoints: [180, 90, 40, 12, 1],//In minutes
+			tiers: [10, 10, 11, 12, 12],
+			names: ["Peasant", "Jester", "Advisor", "Ruler", "Prismer"],
 			icon: "icomoon icon-clock2",
 			newStuff: []
 		},
@@ -7879,9 +7879,9 @@ var toReturn = {
 			reverse: true,
 			timed: true,
 			showAll: true,
-			breakpoints: [240, 60, 20],//In minutes
-			tiers: [10, 11, 12],
-			names: ["Sinker", "Floater", "Swimmer"],
+			breakpoints: [240, 60, 20, 1],//In minutes
+			tiers: [10, 11, 12, 12],
+			names: ["Sinker", "Floater", "Swimmer", "Water Rusher"],
 			icon: "icomoon icon-clock2",
 			newStuff: []
 		},
@@ -7906,9 +7906,9 @@ var toReturn = {
 			reverse: true,
 			timed: true,
 			showAll: true,
-			breakpoints: [360, 100, 45, 30],//In minutes
-			tiers: [11, 12, 12, 12],
-			names: ["Thawed", "Tempered", "Melty", "Molten"],
+			breakpoints: [360, 100, 45, 30, 1],//In minutes
+			tiers: [11, 12, 12, 12, 12],
+			names: ["Thawed", "Tempered", "Melty", "Molten", "Smithporter"],
 			icon: "icomoon icon-clock2",
 			newStuff: []
 		},
