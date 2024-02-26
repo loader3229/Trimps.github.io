@@ -4540,7 +4540,7 @@ var u2Mutations = {
             singleRequire: true,
             ring: 1,
             get description(){
-                return "You can Liquify Zones up to 10% of your Highest Zone. (Up to Z" + Math.floor(game.global.highestRadonLevelCleared * .1) + ").<i></i>This mutator also apply to U1 with halved effect<i></i>(+" + Math.floor(game.global.highestLevelCleared * .05) + " Liquified U1 Zone)";
+                return "在宇宙2中，您可以液化数值等于最高区域10%的区域(即区域" + Math.floor(game.global.highestRadonLevelCleared * .1) + ")了。宇宙1的液化区域百分比在尖塔/专精/绒绒加成之后再增加10%(即增加" + Math.floor(game.global.highestLevelCleared * .1) + "区域)";
             },
             purchased: false,
         },
@@ -4558,7 +4558,7 @@ var u2Mutations = {
             color: '#00b700',
             require: ['Smashing'],
             get description(){
-                return "You can Liquify for an additional 10% of your Highest Zone (up to 20% of Highest Zone, or Z" + Math.floor(game.global.highestRadonLevelCleared * 0.2) + ").<i></i>This mutator also apply to U1 with halved effect<i></i>(+" + Math.floor(game.global.highestLevelCleared * .1) + " total Liquified U1 Zone)";
+                return "在宇宙2中，您可以液化数值等于最高区域20%的区域(即区域" + Math.floor(game.global.highestRadonLevelCleared * 0.2) + ")了。宇宙1的液化区域百分比在尖塔/专精/绒绒/源头活水突变因子加成之后<b>再</b>增加10%(即<b>再</b>增加" + Math.floor(game.global.highestLevelCleared * .1) + "区域)";
             },
             purchased: false
         },
