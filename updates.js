@@ -4256,6 +4256,7 @@ function resetGame(keepPortal, resetting) {
 	var permaBones;
 	var tutorialLg;
 	var tabForMastery;
+	var liquifiedChallDone;
 	if (keepPortal){
 		oldUniverse = game.global.universe;
 		if (oldUniverse == 2 && (game.global.world > 25 || game.stats.totalVoidMaps.value > 0)) lastU2Voids = game.stats.totalVoidMaps.value;
@@ -4281,6 +4282,7 @@ function resetGame(keepPortal, resetting) {
 		autoUpgradesAvailable = game.global.autoUpgradesAvailable;
 		tutorialLg = game.global.tutorialLg;
 		decayDone = game.global.decayDone;
+		liquifiedChallDone = game.global.liquifiedChallDone;
 		if (game.global.dailyHelium) {
 			if (game.global.universe == 1) game.global.tempHighHelium -= game.global.dailyHelium;
 			else if (game.global.universe == 2) game.global.tempHighRadon -= game.global.dailyHelium;
@@ -4513,6 +4515,7 @@ function resetGame(keepPortal, resetting) {
 		game.global.spentEssence = spentEssence;
 		game.talents = talents;
 		game.global.decayDone = decayDone;
+		game.global.liquifiedChallDone = liquifiedChallDone;
 		game.global.magmite = magmite;
 		game.generatorUpgrades = genUpgrades;
 		game.permanentGeneratorUpgrades = permanentGenUpgrades;

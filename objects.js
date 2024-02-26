@@ -4540,7 +4540,7 @@ var u2Mutations = {
             singleRequire: true,
             ring: 1,
             get description(){
-                return "在宇宙2中，您可以液化数值等于最高区域10%的区域(即区域" + Math.floor(game.global.highestRadonLevelCleared * .1) + ")了。宇宙1的液化区域百分比在尖塔/专精/绒绒加成之后再增加10%(即增加" + Math.floor(game.global.highestLevelCleared * .1) + "区域)";
+                return "在宇宙2中，您可以液化数值等于最高区域"+(game.global.liquifiedChallDone?17.5:10)+"%的区域(即区域" + Math.floor(game.global.highestRadonLevelCleared * (game.global.liquifiedChallDone?0.175:0.1)) + ")了。宇宙1的液化区域百分比在尖塔/专精/绒绒加成之后再增加"+(game.global.liquifiedChallDone?17.5:10)+"%(即增加" + Math.floor(game.global.highestLevelCleared * (game.global.liquifiedChallDone?0.175:0.1)) + "区域)";
             },
             purchased: false,
         },
@@ -4558,7 +4558,7 @@ var u2Mutations = {
             color: '#00b700',
             require: ['Smashing'],
             get description(){
-                return "在宇宙2中，您可以液化数值等于最高区域20%的区域(即区域" + Math.floor(game.global.highestRadonLevelCleared * 0.2) + ")了。宇宙1的液化区域百分比在尖塔/专精/绒绒/源头活水突变因子加成之后<b>再</b>增加10%(即<b>再</b>增加" + Math.floor(game.global.highestLevelCleared * .1) + "区域)";
+                return "在宇宙2中，您可以液化数值等于最高区域"+(game.global.liquifiedChallDone?35:20)+"%的区域(即区域" + Math.floor(game.global.highestRadonLevelCleared * (game.global.liquifiedChallDone?0.35:0.2)) + ")了。宇宙1的液化区域百分比在尖塔/专精/绒绒/源头活水突变因子加成之后<b>再</b>增加"+(game.global.liquifiedChallDone?17.5:10)+"%(即<b>再</b>增加" + Math.floor(game.global.highestLevelCleared * (game.global.liquifiedChallDone?0.175:0.1)) + "区域)";
             },
             purchased: false
         },
