@@ -307,6 +307,7 @@ var toReturn = {
 		expandingTauntimp: false,
 		
 		infblock: false,
+		liquifiedChallDone: false,
 		
 		lastHeirlooms: {
 			u1: {
@@ -4217,6 +4218,24 @@ var toReturn = {
 				}
 				return text;
 			}
+		},
+		Liquified: {
+			get description() {
+				var num = prettify(game.challenges.Eradicated.scaleModifier);
+				return "Travel to a Liquified Dimension. All zones in this dimension are Liquified, and Spires don't exist in this dimension! Also, Liquimps are much stronger in this challenge! Clearing <b>'The Prison' (80)</b> <span class=\"red\">won't</span> cause the world to return to normal, but will increase your Liquification Mutator's Bonuses to 17.5% (from 10%)."
+			},
+			filter: function () {
+				return (getHighestLevelCleared(true) >= 880);
+			},
+			fireAbandon: true,
+			unlockString: "reach Zone 881",
+			zoneScaling: 5.5,
+			zoneScaleFreq: 1,
+			mustRestart: true,
+			onComplete: function(){
+				game.global.liquifiedChallDone = true;
+				message("You have completed the Liquified challenge! Liquification Mutators are stronger now!", "Notices")	
+			},
 		},
 		Enlightened: {
 			squaredDescription: "Conditions are just right between the Meditate and Discipline dimensions, and the Portal can be configured in a way where you can visit both at the same time! Rules from both Challenges are active, and running this Challenge<sup>2</sup> will set your highest Zone and C<sup>2</sup> bonuses for both Discipline<sup>2</sup> and Meditate<sup>2</sup>. Kill two Squimps with one stone!",
@@ -9117,7 +9136,7 @@ var toReturn = {
 				checkAchieve("prisonTimed");
 				if (game.global.challengeActive == "Eradicated") giveSingleAchieve("Eradicated Warden");
 				if (game.global.runningChallengeSquared) return;
-				if (game.global.challengeActive == "Electricity" || game.global.challengeActive == "Mapocalypse") {
+				if (game.global.challengeActive == "Electricity" || game.global.challengeActive == "Mapocalypse" || game.global.challengeActive == "Liquified") {
 					game.challenges[game.global.challengeActive].onComplete();
 				}
 			}

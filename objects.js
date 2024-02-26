@@ -4540,7 +4540,7 @@ var u2Mutations = {
             singleRequire: true,
             ring: 1,
             get description(){
-                return "You can Liquify Zones up to 10% of your Highest Zone. (Up to Z" + Math.floor(game.global.highestRadonLevelCleared * .1) + " in U2). Also, this mutator is fully applied to U1 after Spire/Mastery/Fluffy Bonuses. (+" + Math.floor(game.global.highestLevelCleared * .1) + " Liquified U1 Zone after Spire/Mastery/Fluffy Bonuses)";
+                return "You can Liquify Zones up to "+(game.global.liquifiedChallDone?17.5:10)+"% of your Highest Zone in U2. (Up to Z" + Math.floor(game.global.highestRadonLevelCleared * (game.global.liquifiedChallDone?0.175:0.1)) + " in U2). +"+(game.global.liquifiedChallDone?17.5:10)+"% U1 Liquification bonus after Spire/Mastery/Fluffy Bonuses. (+" + Math.floor(game.global.highestLevelCleared * (game.global.liquifiedChallDone?0.175:0.1)) + " Liquified U1 Zone after Spire/Mastery/Fluffy Bonuses)";
             },
             purchased: false,
         },
@@ -4558,7 +4558,7 @@ var u2Mutations = {
             color: '#00b700',
             require: ['Smashing'],
             get description(){
-                return "You can Liquify for an additional 10% of your Highest Zone (up to 20% of Highest Zone, or Z" + Math.floor(game.global.highestRadonLevelCleared * 0.2) + " in U2). Also, this mutator is fully applied to U1 after Spire/Mastery/Fluffy Bonuses. (+" + Math.floor(game.global.highestLevelCleared * .2) + " total Liquified U1 Zone after Spire/Mastery/Fluffy Bonuses)";
+                return "You can Liquify for an additional "+(game.global.liquifiedChallDone?17.5:10)+"% of your Highest Zone in U2 (up to "+(game.global.liquifiedChallDone?35:20)+"% of Highest Zone, or Z" + Math.floor(game.global.highestRadonLevelCleared * (game.global.liquifiedChallDone?0.35:0.2)) + " in U2). +"+(game.global.liquifiedChallDone?17.5:10)+"% U1 Liquification bonus <b>again</b> after Spire/Mastery/Fluffy/Liquid Mutator Bonuses. (+" + Math.floor(game.global.highestLevelCleared * (game.global.liquifiedChallDone?0.175:0.1)) + " Liquified U1 Zone after Spire/Mastery/Fluffy/Liquid Mutator Bonuses)";
             },
             purchased: false
         },

@@ -1779,6 +1779,7 @@ function displayChallenges() {
 		else if (what == "Frigid") done = game.global.frigidCompletions >= game.challenges.Frigid.maxRuns;
 		else if (what == "Exterminate") done = game.global.exterminateDone;
 		else if (what == "Glass") done = game.global.glassDone;
+		else if (what == "Liquified") done = game.global.liquifiedChallDone;
 		done = (done) ? "finishedChallenge" : "";
 		if (challenge.heliumThrough || what == "Experience") done = "challengeRepeatable";
 		if (challengeSquaredMode) done = '" style="background-color: ' + getChallengeSquaredButtonColor(what);
@@ -10872,7 +10873,7 @@ function startFight() {
 			cell.health *= 4;
 			cell.attack *= 1.2;
 		}
-		if (game.global.challengeActive == "Obliterated" || game.global.challengeActive == "Eradicated"){
+		if (game.global.challengeActive == "Obliterated" || game.global.challengeActive == "Eradicated" || (game.global.challengeActive == "Liquified" && cell.name == "Liquimp")){
 			var oblitMult = (game.global.challengeActive == "Eradicated") ? game.challenges.Eradicated.scaleModifier : 1e12;
 			var zoneModifier = Math.floor(game.global.world / game.challenges[game.global.challengeActive].zoneScaleFreq);
 			oblitMult *= Math.pow(game.challenges[game.global.challengeActive].zoneScaling, zoneModifier);
@@ -11432,8 +11433,8 @@ function canU2Overkill(getMult){
 	if (u2Mutations.tree.Overkill2.purchased) allowed += 0.1;
 	if (u2Mutations.tree.Overkill3.purchased) allowed += 0.1;
 	if (u2Mutations.tree.Liq3.purchased || getMult){
-		allowed += 0.1;
-		if (u2Mutations.tree.Liq2.purchased) allowed += 0.1;
+		allowed += (game.global.liquifiedChallDone?0.175:0.1);
+		if (u2Mutations.tree.Liq2.purchased) allowed += (game.global.liquifiedChallDone?0.175:0.1);
 	}
 	if (getMult) return allowed;
 	if (game.global.world <= ((game.global.highestRadonLevelCleared + 1) * allowed)) return true;
@@ -12248,6 +12249,7 @@ function getTotalTalentCost(){
 
 
 function checkIfSpireWorld(getNumber){
+	if (game.global.challengeActive == "Liquified") return false;
 	if (game.global.universe == 2) return false; //until 5.1.0
 	if (game.global.challengeActive == "Spired"){
 		if(getNumber)return Math.floor(Math.max(1,(game.global.world-100)/200));
@@ -12394,8 +12396,8 @@ function rewardLiquidZone(){
 function checkIfLiquidZone(){
 	if (game.global.universe == 2) {
 		if (!u2Mutations.tree.Liq1.purchased) return;
-		var amt = 0.1;
-		if (u2Mutations.tree.Liq2.purchased) amt = 0.2;
+		var amt = (game.global.liquifiedChallDone?0.175:0.1);
+		if (u2Mutations.tree.Liq2.purchased) amt = (game.global.liquifiedChallDone?0.35:0.2);
 		if (game.global.world > ((getHighestLevelCleared(false, true) + 1) * amt)) return false;
 		return true;
 	}
@@ -12407,8 +12409,8 @@ function checkIfLiquidZone(){
 	if (game.talents.liquification3.purchased) spireCount += 2;
 	spireCount += (Fluffy.isRewardActive("liquid") * 0.5);
 	
-	if (u2Mutations.tree.Liq1.purchased) spireCount += 2;
-	if (u2Mutations.tree.Liq2.purchased) spireCount += 2;
+	if (u2Mutations.tree.Liq1.purchased) spireCount += (game.global.liquifiedChallDone?3.5:2);
+	if (u2Mutations.tree.Liq2.purchased) spireCount += (game.global.liquifiedChallDone?3.5:2);
 	
 	var liquidAmount = ((spireCount) / 20);
 	if (game.global.world > ((getHighestLevelCleared(false, true) + 1) * liquidAmount) || checkIfSpireWorld()){
