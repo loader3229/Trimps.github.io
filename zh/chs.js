@@ -3108,7 +3108,8 @@ var cnItems = {
     'Travel to a dimension, that every zone is a Spire. Enemies are a lot stronger in this Challenge! ': '这个维度里面每个区域都是尖塔。所有敌人的能力都变得非常强。',
     'However, recycling all Spire Core Heirloom dropped in this Challenge': '但是，这个挑战',
     ' will gain a lot of Spirestones!': '里面掉落的所有尖塔核心在回收时会提供大量的尖塔石！（这是loader3229的mod里面的一个新挑战！）',
-	
+	'Liquified': '液化',
+	'You have completed the Liquified challenge! Liquification Mutators are stronger now!': '您完成了液化挑战，液化突变因子的基础效果已经变为17.5%！',
 	
 	
     //#endregion 挑战相关
@@ -3988,7 +3989,7 @@ var cnItems = {
     'Decompress': '解压',
     'Compressed enemies gain 20% less attack and health from each cell they contain.': '压缩敌人从吃掉的格子中获得的攻击力和生命值减少20%。',
     'Max Overkill': '超杀上限',
-    'When Overkilling in U2, you can Overkill +1 Cell.': '宇宙2中超杀格子的上限+1。',
+    'When Overkilling in U1 & U2, you can Overkill +1 Cell.': '宇宙1和2中超杀格子的上限+1。',
     'Liquid': '源头活水',
     'Smashing': '巨力压平',
     'Liquidier': '水无常形',
@@ -4357,7 +4358,7 @@ var cnItems = {
 	'. It\'s Spirestone value is boosted depending on the zone number.': '中，每通过一个区域（尖塔），您可以得到一个尖塔核心传家宝。回收尖塔核心传家宝得到的尖塔石会随着掉落区域的增加而增加！',
 	'The Real Spire looms menacingly above you, and you take in a deep breath of corruption. You take a look back at your Trimps to help gather some courage, and you push the door open. You slowly walk inside and are greeted by an incredibly loud, deep, human voice.': '在众多尖塔中，真正的尖塔在您的面前露出了险恶的獠牙，您深深地吸了一口气，全是腐化的味道。您回头看了看脆皮们，下定决心，推开了门。随着您缓缓步入尖塔，极其响亮的低沉人声突然响了起来。',
 	'The Spirestone value of the Spire Core Heirloom drop for every Real Spire cleared in this challenge': '回收在这个挑战',
-    ' is massive boosted. Every 10th cell cleared in a Real Spire gives a larger reward, and increases all loot gained until your next portal by 2%.': '中通过真正的尖塔得到的尖塔核心传家宝得到的尖塔石被大量增加。在每个真正的尖塔里面，每10个格子您还可以获得更高的奖励，并使本周目的战利品获取量增加2%。',
+    ' is massive boosted. Every 10th cell cleared in a Real Spire gives a reward, and increases all loot gained until your next portal by 2%.': '中通过真正的尖塔得到的尖塔核心传家宝得到的尖塔石被大量增加。在每个真正的尖塔里面，每10个格子您还可以获得更高的奖励，并使本周目的战利品获取量增加2%。',
 	
     'The Magma': '岩浆', //区域230
     'You stumble across a large locked chest, unlike anything you\'ve ever seen. The lock looks rusty, you smack it with a rock, and it falls right off. Immediately the ground shakes and cracks beneath your feet, intense heat hits your face, and Magma boils up from the core.': '您碰到了一个巨大的箱子，上着锁，跟您之前见过的所有箱子都不一样。锁看起来已经严重锈蚀，您找了块石头砸了一下，它就掉了下来。突然一阵地动山摇，空气变得酷热，岩浆从地核中渗出了。',
@@ -4374,7 +4375,7 @@ var cnItems = {
     '10th Level of his 8th Evolution': '进化次数8等级10',
     ', and he promises he\'ll make it worth your time.': '，它保证这绝对物有所值。',
     'The Magma has solidified into impenetrable Obsidian; your Trimps have no hope of progressing here right now. However, all is not lost! Every 50 Zones of progress you make in the Radon Universe will allow you to harness enough energy for Fluffy to slow down the hardening of your World for an extra 10 Zones in this Universe.': '岩浆凝固成了致密的黑曜石，脆皮们暂无通过之策。但这只是暂时。您每在氡之宇宙中通过50个区域，就可以为绒绒收集到足够的能量，使这个世界岩浆的硬化延迟10个区域出现。',
-    'The Magma has solidified into impenetrable Obsidian; your Trimps have no hope of progressing here right now. However, all is not lost! Every 30 Zones of progress you make in the Radon Universe will allow you to harness enough energy for Fluffy to slow down the hardening of your World for an extra 10 Zones in this Universe.': '岩浆凝固成了致密的黑曜石，脆皮们暂无通过之策。但这只是暂时。您每在氡之宇宙中通过30个区域，就可以为绒绒收集到足够的能量，使这个世界岩浆的硬化延迟10个区域出现。',
+    'The Magma has solidified into impenetrable Obsidian; your Trimps have no hope of progressing here right now. However, all is not lost! Every 25 Zones of progress you make in the Radon Universe will allow you to harness enough energy for Fluffy to slow down the hardening of your World for an extra 10 Zones in this Universe.': '岩浆凝固成了致密的黑曜石，脆皮们暂无通过之策。但这只是暂时。您每在氡之宇宙中通过25个区域，就可以为绒绒收集到足够的能量，使这个世界岩浆的硬化延迟10个区域出现。',
     'The Magma has solidified into impenetrable Obsidian; your Trimps have no hope of progressing here right now. However, all is not lost! Every 10 Zones of progress you make in the Radon Universe will allow you to harness enough energy for Fluffy to slow down the hardening of your World for an extra 10 Zones in this Universe.': '岩浆凝固成了致密的黑曜石，脆皮们暂无通过之策。但这只是暂时。您每在氡之宇宙中通过10个区域，就可以为绒绒收集到足够的能量，使这个世界岩浆的硬化延迟10个区域出现。',
     'A Whole New World': '全新的世界', //绒绒进化次数8等级10
     'Fluffy has reached Evolution 8 Level 10! He levitates above the ground, then realizes he seems a bit like a showoff so he floats back down. He strikes a good balance between power and humility by just having his eyes glow a little bit; you have to admit it\'s a good look on him.': '绒绒终于到达了进化次数8等级10！它在天上飘了一阵子，然后反应过来自己有点飘了，于是又飘了回来。它已经在力量和谦卑之间寻到了平衡，因为它的眼睛只是微微发光。您得承认它确实很好看。',

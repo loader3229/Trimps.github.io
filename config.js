@@ -4222,7 +4222,7 @@ var toReturn = {
 		Liquified: {
 			get description() {
 				var num = prettify(game.challenges.Eradicated.scaleModifier);
-				return "Travel to a Liquified Dimension. All zones in this dimension are Liquified, and Spires don't exist in this dimension! Also, Liquimps are much stronger in this challenge! Clearing <b>'The Prison' (80)</b> <span class=\"red\">won't</span> cause the world to return to normal, but will increase your Liquification Mutator's Bonuses to 17.5% (from 10%)."
+				return "在这个挑战中，所有的区域都是液化区域，且液化无法关闭，尖塔也不会出现！液化者们也变得更强了！但是，只要在这个挑战中通过了<b>'The Prison' (80)</b>，液化突变因子的基础效果就会从10%变为17.5%。<span class=red>完成该挑战后世界并不会恢复正常！</span>（这是loader3229的mod里面的一个新挑战！）"
 			},
 			filter: function () {
 				return (getHighestLevelCleared(true) >= 880);
