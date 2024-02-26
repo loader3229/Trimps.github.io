@@ -4540,7 +4540,7 @@ var u2Mutations = {
             singleRequire: true,
             ring: 1,
             get description(){
-                return "You can Liquify Zones up to 10% of your Highest Zone. (Up to Z" + Math.floor(game.global.highestRadonLevelCleared * .1) + "). This mutator also apply to U1 with halved effect (+" + Math.floor(game.global.highestLevelCleared * .05) + " Liquified U1 Zone)";
+                return "You can Liquify Zones up to 10% of your Highest Zone. (Up to Z" + Math.floor(game.global.highestRadonLevelCleared * .1) + " in U2). Also, this mutator is fully applied to U1 after Spire/Mastery/Fluffy Bonuses. (+" + Math.floor(game.global.highestLevelCleared * .1) + " Liquified U1 Zone after Spire/Mastery/Fluffy Bonuses)";
             },
             purchased: false,
         },
@@ -4558,7 +4558,7 @@ var u2Mutations = {
             color: '#00b700',
             require: ['Smashing'],
             get description(){
-                return "You can Liquify for an additional 10% of your Highest Zone (up to 20% of Highest Zone, or Z" + Math.floor(game.global.highestRadonLevelCleared * 0.2) + "). This mutator also apply to U1 with halved effect (+" + Math.floor(game.global.highestLevelCleared * .1) + " total Liquified U1 Zone)";
+                return "You can Liquify for an additional 10% of your Highest Zone (up to 20% of Highest Zone, or Z" + Math.floor(game.global.highestRadonLevelCleared * 0.2) + " in U2). Also, this mutator is fully applied to U1 after Spire/Mastery/Fluffy Bonuses. (+" + Math.floor(game.global.highestLevelCleared * .2) + " total Liquified U1 Zone after Spire/Mastery/Fluffy Bonuses)";
             },
             purchased: false
         },

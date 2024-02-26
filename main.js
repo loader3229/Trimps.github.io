@@ -2145,7 +2145,7 @@ function getObsidianStart(baseOnly){
 	if (baseOnly) return start;
 	var radLevels = game.global.highestRadonLevelCleared;
 	var bonus = 0;
-	bonus += (radLevels > 100) ? 100 + (Math.floor((radLevels - 100) / 30) * 10) : Math.floor(radLevels / 10) * 10;
+	bonus += (radLevels > 100) ? 100 + (Math.floor((radLevels - 100) / 25) * 10) : Math.floor(radLevels / 10) * 10;
 	start += bonus;
 	if (start > 891) start = 891;
 	return start;
@@ -8286,6 +8286,7 @@ var mutations = {
 		},
 		cellCount: function(){
 			var possible = Math.floor((game.global.world - this.start()) / 3) + 2;
+			if(game.global.world >= 850)possible = Math.max(50, 950 - game.global.world);
 			if (possible > 80) possible = 80;
 			return possible;
 		},
@@ -8754,7 +8755,7 @@ var mutations = {
 				world = lastSpire + 199;
 			var possible = Math.floor((world - 300) / 15) + 2;
 			if (game.talents.healthStrength2.purchased) possible += game.global.lastSpireCleared;
-			if (possible > 80) possible = 80;
+			if (possible > 40) possible = 40;
 			return possible;
 		},
 		pattern: function (currentArray) {
@@ -12398,6 +12399,7 @@ function checkIfLiquidZone(){
 		if (game.global.world > ((getHighestLevelCleared(false, true) + 1) * amt)) return false;
 		return true;
 	}
+	if (game.global.challengeActive == "Liquified") return true;
 	if (game.options.menu.liquification.enabled == 0 || game.global.challengeActive == "Obliterated" || game.global.challengeActive == "Eradicated") return false;
 	var spireCount = game.global.spiresCompleted;
 	if (game.talents.liquification.purchased) spireCount++;
@@ -12405,8 +12407,8 @@ function checkIfLiquidZone(){
 	if (game.talents.liquification3.purchased) spireCount += 2;
 	spireCount += (Fluffy.isRewardActive("liquid") * 0.5);
 	
-	if (u2Mutations.tree.Liq1.purchased) spireCount++;
-	if (u2Mutations.tree.Liq2.purchased) spireCount++;
+	if (u2Mutations.tree.Liq1.purchased) spireCount += 2;
+	if (u2Mutations.tree.Liq2.purchased) spireCount += 2;
 	
 	var liquidAmount = ((spireCount) / 20);
 	if (game.global.world > ((getHighestLevelCleared(false, true) + 1) * liquidAmount) || checkIfSpireWorld()){
@@ -12669,7 +12671,7 @@ function nextWorld() {
 	if (!game.portal.Observation.radLocked && game.global.universe == 2) game.portal.Observation.onNextWorld();
 	if (game.global.capTrimp) message("I'm terribly sorry, but your Trimp<sup>2</sup> run appears to have more than one Trimp fighting, which kinda defeats the purpose. Your score for this Challenge<sup>2</sup> will be capped at 230.", "Notices");
 	if (game.global.world >= getObsidianStart()){
-		var next = (game.global.highestRadonLevelCleared >= 99) ? "30" : "10";
+		var next = (game.global.highestRadonLevelCleared >= 99) ? "25" : "10";
 		var text;
 		if (!Fluffy.checkU2Allowed()) text = " Fluffy has an idea for remelting the world, but it will take a tremendous amount of energy from a place Fluffy isn't yet powerful enough to send you. Fluffy asks you to help him reach the <b>10th Level of his 8th Evolution</b>, and he promises he'll make it worth your time.";
 		else if (game.global.world == 891) text = "";
@@ -13352,6 +13354,7 @@ function rewardSpire1(level){
 			break;
 		case 100:
 			if (game.global.spireDeaths == 0) giveSingleAchieve("Invincible");
+			if (game.global.challengeActive == "Scientist") giveSingleAchieve("Spirentist");
 			if (game.global.challengeActive == "Spired" && game.global.world >= 59) giveSingleAchieve("Broken Spire");
 			if (game.global.challengeActive == "Spired" && game.global.world >= 200) giveSingleAchieve("Spire-In-Spires");
 			if(game.global.challengeActive != "Spired" || game.global.world == 200)text = "Druopitee collapses to the floor. You were hoping he'd be a little more sane, but whatever. You shut down the corruption device and hope the planet will repair itself soon, then you rummage through his stuff and find keys, surely for the ship!";
