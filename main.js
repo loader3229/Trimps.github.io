@@ -1780,6 +1780,7 @@ function displayChallenges() {
 		else if (what == "Exterminate") done = game.global.exterminateDone;
 		else if (what == "Glass") done = game.global.glassDone;
 		else if (what == "Liquified") done = game.global.liquifiedChallDone;
+		else if (what == "Houseless") done = game.global.houselessChallDone;
 		done = (done) ? "finishedChallenge" : "";
 		if (challenge.heliumThrough || what == "Experience") done = "challengeRepeatable";
 		if (challengeSquaredMode) done = '" style="background-color: ' + getChallengeSquaredButtonColor(what);
@@ -3664,6 +3665,9 @@ function canCommitCarpentry(noInfinity){ //Uh, and Coordinated. This checks coor
 		newMax = game.global.totalGifts + game.unlocks.impCount.TauntimpAdded + 10;
 		newMax += countTotalHousingBuildings();
 	}
+	if (game.global.challengeActive == "Houseless"){
+		newMax = game.global.totalGifts + game.unlocks.impCount.TauntimpAdded + 10;
+	}
 	newMax *= game.resources.trimps.maxMod;
 	newMax = Math.floor(newMax * (Math.pow(1 + game.portal.Carpentry.modifier, getPerkLevel("Carpentry") + game.portal.Carpentry.levelTemp)));
 	if (typeof game.portal.Carpentry_II.levelTemp !== 'undefined') newMax = Math.floor(newMax * (1 + (game.portal.Carpentry_II.modifier * (getPerkLevel("Carpentry_II") + game.portal.Carpentry_II.levelTemp))));
@@ -4683,14 +4687,11 @@ function buildBuilding(what) {
 	}
 	numTab();
 	if (!game.buildings.Hub.locked){
-		var hubbable = ["Hut", "House", "Mansion", "Hotel", "Resort", "Gateway", "Collector"];
-		if (hubbable.indexOf(what) != -1) buildBuilding("Hub");
-		if (what == "Collector" && autoBattle.oneTimers.Collectology.owned){
-			var extraHubs = autoBattle.oneTimers.Collectology.getHubs() - 1;
-			for (var x = 0; x < extraHubs; x++){
-				buildBuilding("Hub");
-			}
+		var amount = game.buildings.Hub.getAmount();
+		if(amount > game.buildings.Hub.owned){
+			addMaxHousing(game.buildings.Hub.increase.by * (amount - game.buildings.Hub.owned), bwRewardUnlocked("AutoStructure"));
 		}
+		game.buildings.Hub.owned = amount;
 	}
 }
 
@@ -7580,7 +7581,7 @@ function createHeirloom(zone, fromBones, spireCore, forceBest){
 	if (game.global.challengeActive == "Spired" && spireCore && game.global.world >= 200 && (game.global.world % 100) == 0)buildHeirloom.nuMod *= 10;
 	if (game.global.challengeActive == "Spired" && spireCore && game.global.world >= 230)buildHeirloom.nuMod *= (game.global.world/200*Math.pow(10,(game.global.world%100)/100));
 	if (autoBattle.oneTimers.Nullicious.owned && game.global.universe == 2) buildHeirloom.nuMod *= autoBattle.oneTimers.Nullicious.getMult();
-	if (game.global.universe == 2 && u2Mutations.tree.Nullifium.purchased) buildHeirloom.nuMod *= 1.1;
+	if (u2Mutations.tree.Nullifium.purchased) buildHeirloom.nuMod *= 1.1;
 	game.global.heirloomsExtra.push(buildHeirloom);
 	if (game.options.menu.voidPopups.enabled != 2 || type == "Core" || (getHeirloomRarityRanges(zone, fromBones).length == (rarity + 1))){
 		displaySelectedHeirloom(false, 0, false, "heirloomsExtra", game.global.heirloomsExtra.length - 1, true);
@@ -17670,7 +17671,7 @@ var Fluffy = {
 	damageModifiers2: [1, 1.1, 1.3, 1.6, 2, 2.5, 3.1, 3.8, 4.6, 5.5, 25.5, 30.5, 38, 48, 61, 111, 171, 241, 321, 411, 511, 621, 741, 871, 1011, 1161, 1311, 1311],
 	rewards: ["stickler", "helium", "liquid", "purifier", "lucky", "void", "helium", "liquid", "eliminator", "overkiller"],
 	prestigeRewards: ["dailies", "voidance", "overkiller", "critChance", "megaCrit", "superVoid", "voidelicious", "naturesWrath", "voidSiphon", "plaguebrought"],
-	rewardsU2: ["trapper", "prism", "heirloopy", "radortle", "healthy", "wealthy", "critChance", "gatherer", "dailies", "exotic", "shieldlayer", "tenacity", "megaCrit", "critChance", "smithy", "biggerbetterheirlooms", "shieldlayer", "void", "moreVoid", "tenacity", "SADailies", "bigDust", "bigSeeds", "radortle2", "scruffBurst", "justdam", "justdam"],
+	rewardsU2: ["trapper", "prism", "heirloopy", "radortle", "healthy", "wealthy", "critChance", "gatherer", "dailies", "exotic", "shieldlayer", "tenacity", "megaCrit", "critChance", "smithy", "biggerbetterheirlooms", "shieldlayer", "void", "moreVoid", "tenacity", "SADailies", "Scruffy21", "bigSeeds", "justdam", "scruffBurst", "justdam", "justdam"],
 	prestigeRewardsU2: [],
 	checkU2Allowed: function(){
 		if (game.global.universe == 2) return true;
@@ -18188,7 +18189,7 @@ var Fluffy = {
 		return count;
 	},
 	getRadortleMult: function(){
-		var useLevel = Fluffy.isRewardActive('radortle2') ? (game.global.highestRadonLevelCleared + 1) : game.global.lastRadonPortal;
+		var useLevel = Fluffy.isRewardActive('Scruffy21') ? (game.global.highestRadonLevelCleared + 1) : game.global.lastRadonPortal;
 		return Math.pow(1.03, useLevel);
 	},
 	rewardConfig: {
@@ -18304,7 +18305,7 @@ var Fluffy = {
 		},
 		radortle: {
 			get description(){
-				if (!Fluffy.isRewardActive('radortle2')) return "Increases Radon gain from all sources by 3% for each Zone you reached on your last Portal in this Universe (compounding). You reached Z" + game.global.lastRadonPortal + " last Portal, worth +" + prettify((Fluffy.getRadortleMult() - 1) * 100) + "% Radon.";
+				if (!Fluffy.isRewardActive('Scruffy21')) return "Increases Radon gain from all sources by 3% for each Zone you reached on your last Portal in this Universe (compounding). You reached Z" + game.global.lastRadonPortal + " last Portal, worth +" + prettify((Fluffy.getRadortleMult() - 1) * 100) + "% Radon.";
 				return "Increases Radon gain from all sources by 3% for each Zone you reached on your best Portal in this Universe (compounding). Your highest Zone reached is Z" + (game.global.highestRadonLevelCleared + 1) + ", worth +" + prettify((Fluffy.getRadortleMult() - 1) * 100) + "% Radon.";
 			}
 		},
@@ -18338,8 +18339,8 @@ var Fluffy = {
 		bigSeeds: {
 			description: "Gain x10 Mutated Seed Drops."
 		},
-		bigDust: {
-			description: "Scruffy teaches Huffy how to find 5x Dust from SA enemies"
+		Scruffy21: {
+			description: "Scruffy's 4th bonus that increases Radon gain based on last Portal's highest Zone is no longer based on last Portal, and is now based on your highest Zone ever reached in Universe 2. Also, gain 5x Dust from SA enemies."
 		},
 		scruffBurst: {
 			description: "Gamma Burst requires 1 fewer attack before triggering."

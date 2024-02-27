@@ -308,6 +308,7 @@ var toReturn = {
 		
 		infblock: false,
 		liquifiedChallDone: false,
+		houselessChallDone: false,
 		
 		lastHeirlooms: {
 			u1: {
@@ -546,7 +547,7 @@ var toReturn = {
 			if (game.global.universe == 2){
 				var part1 = (world > 60) ? 60 : world;
 				var part2 = (world - 60);
-				var part3 = (world - 300);
+				var part3 = (world - 350);
 				if (part2 < 0) part2 = 0;
 				if (part3 < 0) part3 = 0;
 				amt *= Math.pow(1.4, part1);
@@ -3198,7 +3199,7 @@ var toReturn = {
 			radLocked: true,
 			priceBase: 5e18,
 			radLevel: 0,
-			max: 50,
+			max: 60,
 			radSpent: 0,
 			get tooltip(){
 				var useTemp = false;
@@ -3324,7 +3325,8 @@ var toReturn = {
 		Storm: 0,
 		Berserk:0,
 		Glass: 0,
-		Smithless: 0
+		Smithless: 0,
+		Houseless: 0,
 	},
 	challenges: {
 		Daily: {
@@ -6366,6 +6368,24 @@ var toReturn = {
 			allowSquared: false,
 			unlockString: " reach Zone 200",
 		},
+		Houseless: {
+			description: "Tweak the portal to bring you to an alternate reality, where housing buildings and battle territory bonuses are disabled. Clearing <b>Zone 260</b> in this Challenge will change Hub's count formula to a better one!",
+			squaredDescription: "Tweak the portal to bring you to an alternate reality, where housing buildings and battle territory bonuses are disabled. Highest zone reached above Z260 in this Challenge<sup>3</sup> will increase Houseless challenge's completion bonus!",
+			completed: false,
+			filter: function () {
+				return (getHighestLevelCleared(true) >= 299);
+			},
+			onComplete: function (){
+				game.global.challengeActive = "";
+				game.global.houselessChallDone = true;
+				message("You have completed the <b>Houseless Challenge!</b> Your housing buildings provide more hubs now!", "Notices");
+			},
+			allowU2: true,
+			blockU1: true,
+			allowSquared: true,
+			completeAfterZone: 260,
+			unlockString: "reach Zone 300"
+		},
 	},
 	stats:{
 		trimpsKilled: {
@@ -8264,6 +8284,9 @@ var toReturn = {
 					num = game.global.totalGifts + game.unlocks.impCount.TauntimpAdded + 10;
 					num += countTotalHousingBuildings();
 				}
+				if (game.global.challengeActive == "Houseless"){
+					num = game.global.totalGifts + game.unlocks.impCount.TauntimpAdded + 10;
+				}
 				num *= this.maxMod;
 				if (getPerkLevel("Carpentry") > 0) num = Math.floor(num * (Math.pow(1 + game.portal.Carpentry.modifier, getPerkLevel("Carpentry"))));
 				if (getPerkLevel("Carpentry_II") > 0) num = Math.floor(num * (1 + (game.portal.Carpentry_II.modifier * getPerkLevel("Carpentry_II"))));
@@ -9520,6 +9543,10 @@ var toReturn = {
 						amt += countTotalHousingBuildings();
 						amt = Math.ceil(amt * 0.003);
 					}
+					if (game.global.challengeActive == "Houseless"){
+						amt = game.global.totalGifts + game.unlocks.impCount.TauntimpAdded + 10;
+						amt = Math.ceil(amt * 0.003);
+					}
 					game.unlocks.impCount.TauntimpAdded += amt;
 					amt = (game.global.challengeActive == "Trapper" || game.global.challengeActive == "Trappapalooza") ? addMaxHousing(amt, false) : addMaxHousing(amt, true);
 					var msg = "It's nice, warm, and roomy in that dead " + name + ". ";
@@ -9806,7 +9833,7 @@ var toReturn = {
 			filterUpgrade: true,
 			specialFilter: function (world) {
 				var tier = Math.floor((world - 125) / 15);
-				return ((game.global.bionicOwned == tier + 1) || (game.global.roboTrimpLevel == tier));
+				return ((tier < 52 && game.global.bionicOwned == tier + 1) || (game.global.roboTrimpLevel == tier));
 			},
 			getShriekValue: function () {
 				var level = game.global.roboTrimpLevel;
@@ -11387,6 +11414,7 @@ var toReturn = {
 			repeat: 45,
 			fire: function () {
 				var amt = 5 + (game.portal.Trumps.modifier * getPerkLevel("Trumps"));
+				if (game.global.challengeActive == "Houseless")amt = 0;
 				game.global.totalGifts += amt;
 				amt = addMaxHousing(amt, bwRewardUnlocked("AutoStructure"));
 				message("You have cleared enough land to support " + prettify(amt) + " more Trimps!", "Loot", "gift", null, "secondary");
@@ -11691,15 +11719,27 @@ var toReturn = {
 				what: "trimps.max",
 				by: 25000
 			},
-			onUnlock: function(){
-				if (this.owned > 0) return;
+			getAmount(){
 				var buildings = game.buildings;
 				var collectors = buildings.Collector.owned;
 				if (autoBattle.oneTimers.Collectology.owned) collectors *= autoBattle.oneTimers.Collectology.getHubs();
 				var total = buildings.Hut.owned + buildings.House.owned + buildings.Mansion.owned + buildings.Hotel.owned + buildings.Resort.owned + buildings.Gateway.owned + collectors;
+				var c2Bonus = game.c2.Houseless;
+				if(!(c2Bonus > 260))c2Bonus = 260;
+				if(game.global.houselessChallDone)total *= Math.pow(1+buildings.Hut.owned/1000,c2Bonus/500);
+				if(game.global.houselessChallDone)total *= Math.pow(1+buildings.House.owned/1000,c2Bonus/500);
+				if(game.global.houselessChallDone)total *= Math.pow(1+buildings.Mansion.owned/1000,c2Bonus/500);
+				if(game.global.houselessChallDone)total *= Math.pow(1+buildings.Hotel.owned/1000,c2Bonus/500);
+				if(game.global.houselessChallDone)total *= Math.pow(1+buildings.Resort.owned/1000,c2Bonus/500);
+				if(game.global.houselessChallDone)total *= Math.pow(1+buildings.Gateway.owned/1000,c2Bonus/500);
+				if(game.global.houselessChallDone)total *= Math.pow(1+collectors/10000,c2Bonus/500);
+				return Math.floor(total);
+			},
+			onUnlock: function(){
+				if (this.owned > 0) return;
+				var total = this.getAmount();
 				addMaxHousing(this.increase.by * total, bwRewardUnlocked("AutoStructure"));
 				this.owned = total;
-				this.purchased = total;
 			}
 		},
 		Gym: {

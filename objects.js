@@ -4375,7 +4375,7 @@ var u2Mutations = {
             pos: [-7, 3],
             color: 'orange',
             require: ['Scruffy'],
-            description: "Gain 10% more Nullifium when recycling Heirlooms",
+            description: "Gain 10% more Nullifium when recycling Heirlooms. Applied to both U1 & U2.",
             purchased: false
         },
         Heirlots: {
@@ -5062,6 +5062,7 @@ var u2Mutations = {
                 var possible = this.cellCount();
                 var spread = (Math.floor(possible / 6) + 1) * 10;
                 if (spread > 100) spread = 100;
+				if(game.global.world == 400)spread = 60;
                 var addCorrupteds = getAmountInRange(spread, possible, true);
                 for (var a = 0; a < addCorrupteds.length; a++){
                  currentArray[addCorrupteds[a]].u2Mutation.push("RGE");
@@ -5128,6 +5129,7 @@ var u2Mutations = {
                     var startC = getRandomIntSeeded(game.global.u2MutationSeed++, min, max);
                     var startR = getRandomIntSeeded(game.global.u2MutationSeed++, min, max);
                     var start = (startR * 10) + startC;
+					if(game.global.world == 400)start = 22 + y * 5;
                     currentArray[start].u2Mutation.push('NVA');
                     var cells = [];
                     for (var x = 1; x < size + 1; x++){				
@@ -5150,6 +5152,7 @@ var u2Mutations = {
                 return stacks;
             },
             repeats: function(){
+				if(game.global.world == 400)return 2;
                 var max = 3;
                 var stacks = 1 + Math.floor((game.global.world - 201) / 75);
                 if (stacks > max) stacks = max;
@@ -5207,6 +5210,8 @@ var u2Mutations = {
                     var swapTo = getRandomIntSeeded(game.global.u2MutationSeed++, 0, tos.length);
                     swapFrom = froms.splice(swapFrom, 1)[0];
                     swapTo = tos.splice(swapTo, 1)[0];
+					if(game.global.world == 400)swapFrom = y*2;
+					if(game.global.world == 400)swapTo = y*2+1;
                     for (var x = 0; x < 10; x++){
                         var cellFrom = (swapFrom * 10) + x;
                         var cellTo = (swapTo * 10) + x;
@@ -5222,6 +5227,7 @@ var u2Mutations = {
                 return (u2Mutations.types.Rage.cellCount() / (this.repeats() * 20));
             },
             repeats: function(){
+				if(game.global.world == 400)return 3;
                 var max = 4;
                 var stacks = 1 + Math.floor((game.global.world - 201) / 50);
                 if (stacks > max) stacks = max;
@@ -5243,6 +5249,7 @@ var u2Mutations = {
                     var roll = getRandomIntSeeded(game.global.u2MutationSeed++, 0, 100);
                     if (roll < chance) repeat++;
                 }
+				if(game.global.world == 400)repeat = 5;
                 var allowedCells = 98 - count;
                 var repeatFreq = allowedCells / repeat;
                 var min = 0;
@@ -5253,6 +5260,7 @@ var u2Mutations = {
                     var start = getRandomIntSeeded(game.global.u2MutationSeed++, Math.ceil(min), Math.floor(max - count));
                     min += repeatFreq;
                     max += repeatFreq;
+					if(game.global.world == 400)start = [3,13,33,43,53][z];
                     currentArray[start].u2Mutation.push('CMP');
                     // [count, attack, health, RGE, NVA]
                     var contents = [count, 1, 1, 0, 0];
