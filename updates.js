@@ -1653,6 +1653,7 @@ function tooltip(what, isItIn, event, textString, attachFunction, numCheck, rena
 			if (tipSplit[1] == 'incby'){
 				var increase = toTip.increase.by;
 				if (toTip.increase.what == "trimps.max" && game.global.challengeActive == "Downsize") increase = 1;
+				if (toTip.increase.what == "trimps.max" && game.global.challengeActive == "Houseless") increase = 0;
 				if (getPerkLevel("Carpentry") && toTip.increase.what == "trimps.max") increase *= Math.pow(1.1, getPerkLevel("Carpentry"));
 				if (getPerkLevel("Carpentry_II") && toTip.increase.what == "trimps.max") increase *= (1 + (game.portal.Carpentry_II.modifier * getPerkLevel("Carpentry_II")));
 				if (game.global.expandingTauntimp) increase *= game.badGuys.Tauntimp.expandingMult();
@@ -3275,6 +3276,7 @@ function getMaxTrimps() {
 	//Add job count
 	var housing = trimps.max - game.global.totalGifts - game.unlocks.impCount.TauntimpAdded - base - game.global.trimpsGenerated;
 	if (game.global.challengeActive == "Downsize") housing = countTotalHousingBuildings();
+	if (game.global.challengeActive == "Houseless") housing = 0;
 	if (housing < 0) housing = 0;
 	var currentCalc = housing + base;
 	textString += "<tr><td class='bdTitle'>Housing</td><td class='bdPercent'>+ " + prettify(housing) + "</td><td class='bdNumber'>" + prettify(currentCalc) + "</td></tr>";
@@ -4257,6 +4259,7 @@ function resetGame(keepPortal, resetting) {
 	var tutorialLg;
 	var tabForMastery;
 	var liquifiedChallDone;
+	var houselessChallDone;
 	if (keepPortal){
 		oldUniverse = game.global.universe;
 		if (oldUniverse == 2 && (game.global.world > 25 || game.stats.totalVoidMaps.value > 0)) lastU2Voids = game.stats.totalVoidMaps.value;
@@ -4283,6 +4286,7 @@ function resetGame(keepPortal, resetting) {
 		tutorialLg = game.global.tutorialLg;
 		decayDone = game.global.decayDone;
 		liquifiedChallDone = game.global.liquifiedChallDone;
+		houselessChallDone = game.global.houselessChallDone;
 		if (game.global.dailyHelium) {
 			if (game.global.universe == 1) game.global.tempHighHelium -= game.global.dailyHelium;
 			else if (game.global.universe == 2) game.global.tempHighRadon -= game.global.dailyHelium;
@@ -4516,6 +4520,7 @@ function resetGame(keepPortal, resetting) {
 		game.talents = talents;
 		game.global.decayDone = decayDone;
 		game.global.liquifiedChallDone = liquifiedChallDone;
+		game.global.houselessChallDone = houselessChallDone;
 		game.global.magmite = magmite;
 		game.generatorUpgrades = genUpgrades;
 		game.permanentGeneratorUpgrades = permanentGenUpgrades;
