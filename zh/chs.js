@@ -3110,6 +3110,7 @@ var cnItems = {
     ' will gain a lot of Spirestones!': '里面掉落的所有尖塔核心在回收时会提供大量的尖塔石！（这是loader3229的mod里面的一个新挑战！）',
 	'Liquified': '液化',
 	'You have completed the Liquified challenge! Liquification Mutators are stronger now!': '您完成了液化挑战，液化突变因子的基础效果已经变为17.5%！',
+	'Houseless': '无住房',
 	
 	
     //#endregion 挑战相关

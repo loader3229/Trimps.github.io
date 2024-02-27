@@ -18445,7 +18445,7 @@ var Fluffy = {
 			description: "Gain x10 Mutated Seed Drops."
 		},
 		Scruffy21: {
-			description: "Scruffy's 4th bonus that increases Radon gain based on last Portal's highest Zone is no longer based on last Portal, and is now based on your highest Zone ever reached in Universe 2. Also, gain 5x Dust from SA enemies."
+			description: "Scruffy's 4th bonus that increases Radon gain based on last Portal's highest Zone is no longer based on last Portal, and is now based on your highest Zone ever reached in Universe 2.<i></i>并且尖塔突击奖励变为5倍。"
 		},
 		scruffBurst: {
 			description: "Gamma Burst requires 1 fewer attack before triggering."

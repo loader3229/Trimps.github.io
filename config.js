@@ -6399,8 +6399,8 @@ var toReturn = {
 			unlockString: "到达区域200",
 		},
 		Houseless: {
-			description: "Tweak the portal to bring you to an alternate reality, where housing buildings and battle territory bonuses are disabled. Clearing <b>Zone 260</b> in this Challenge will change Hub's count formula to a better one!",
-			squaredDescription: "Tweak the portal to bring you to an alternate reality, where housing buildings and battle territory bonuses are disabled. Highest zone reached above Z260 in this Challenge<sup>3</sup> will increase Houseless challenge's completion bonus!",
+			description: "这个挑战中住房和战斗领土加成完全失效，但是在这个挑战里面通过<b>区域260</b>可以使中心枢纽的数量公式变得更好！（这是loader3229的mod里面的一个新挑战！）",
+			squaredDescription: "这个挑战<sup>3</sup>中住房和战斗领土加成完全失效，但是在这个挑战<sup>3</sup>里面通过<b>区域260</b><span class=green>及以后的区域</span>可以使无住房挑战的加成变得更好！（这是loader3229的mod里面的一个新挑战！）",
 			completed: false,
 			filter: function () {
 				return (getHighestLevelCleared(true) >= 299);
@@ -6414,7 +6414,7 @@ var toReturn = {
 			blockU1: true,
 			allowSquared: true,
 			completeAfterZone: 260,
-			unlockString: "reach Zone 300"
+			unlockString: "到达区域300"
 		},
 	},
 	stats:{
