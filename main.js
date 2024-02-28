@@ -11300,15 +11300,6 @@ function startFight() {
 		//block handled in getBaseBlock()
 		if (game.global.challengeActive == "Daily" && typeof game.global.dailyChallenge.pressure !== 'undefined') game.global.soldierHealthMax *= dailyModifiers.pressure.getMult(game.global.dailyChallenge.pressure.strength, game.global.dailyChallenge.pressure.stacks);
 			
-		if (game.global.universe == 1) game.global.soldierHealthMax = Math.min(game.global.soldierHealthMax,1e300);
-		
-		if (game.global.formation !== 0 && game.global.formation != 5){
-			game.global.soldierHealthMax *= (game.global.formation == 1) ? 4 : 0.5;
-			var formAttackMod = 0.5;
-			if (game.global.formation == 2) formAttackMod = 4;
-			game.global.soldierCurrentAttack *= formAttackMod;
-			//block handled in getBaseBlock()
-		}
 		if (challengeActive("Balance")){
 			game.global.soldierHealthMax *= game.challenges.Balance.getHealthMult();
 		}
@@ -11335,6 +11326,15 @@ function startFight() {
 		}
 		if (game.challenges.Nurture.boostsActive()) game.global.soldierHealthMax *= game.challenges.Nurture.getStatBoost();
 
+		if (game.global.universe == 1) game.global.soldierHealthMax = Math.min(game.global.soldierHealthMax,1e300);
+
+		if (game.global.formation !== 0 && game.global.formation != 5){
+			game.global.soldierHealthMax *= (game.global.formation == 1) ? 4 : 0.5;
+			var formAttackMod = 0.5;
+			if (game.global.formation == 2) formAttackMod = 4;
+			game.global.soldierCurrentAttack *= formAttackMod;
+			//block handled in getBaseBlock()
+		}
 
 		//Soldier starting health is determined
 		game.global.soldierHealth = game.global.soldierHealthMax;
@@ -11399,6 +11399,14 @@ function startFight() {
 				game.global.voidPowerActive = true;
 			}
 		}
+		
+		
+		var formationModifier = 1;
+	
+		if (game.global.formation !== 0 && game.global.formation !== 5){
+			(formationModifier = ((game.global.formation == 1) ? 4 : 0.5));
+		}
+		
 		//Check differences in equipment, apply perks, bonuses, and formation
 		if (game.global.difs.health !== 0) {
 			var healthTemp = trimpsFighting * game.global.difs.health * ((game.portal.Toughness.modifier * getPerkLevel("Toughness")) + 1);
@@ -11426,7 +11434,7 @@ function startFight() {
 			if (game.global.universe == 2 && game.buildings.Antenna.owned >= 10) healthTemp *= game.jobs.Meteorologist.getExtraMult();
 			if (game.global.challengeActive == "Daily" && typeof game.global.dailyChallenge.pressure !== 'undefined') healthTemp *= dailyModifiers.pressure.getMult(game.global.dailyChallenge.pressure.strength, game.global.dailyChallenge.pressure.stacks);
 			if (game.global.formation !== 0 && game.global.formation !== 5){
-				healthTemp *= (game.global.formation == 1) ? 4 : 0.5;
+				healthTemp *= (formationModifier);
 			}
 			if (game.global.totalSquaredReward > 0)
 				healthTemp *= ((game.global.totalSquaredReward / 100) + 1);
@@ -11456,6 +11464,8 @@ function startFight() {
 			}
 			game.global.soldierHealthMax += healthTemp;
 			game.global.soldierHealth += healthTemp;
+			
+			
 			game.global.difs.health = 0;
 			if (game.global.soldierHealth <= 0) game.global.soldierHealth = 0;
 		}
@@ -11480,6 +11490,8 @@ function startFight() {
 			game.global.soldierCurrentBlock += blockTemp;
 			game.global.difs.block = 0;
 		}
+		
+			if (game.global.universe == 1) game.global.soldierHealthMax = Math.min(game.global.soldierHealthMax,1e300*formationModifier);
 	}
 	if (game.global.soldierHealth > game.global.soldierHealthMax) game.global.soldierHealth = game.global.soldierHealthMax;
 	if (!instaFight) updateAllBattleNumbers(game.resources.trimps.soldiers < currentSend);
@@ -12312,7 +12324,7 @@ function checkIfSpireWorld(getNumber){
 	if (game.global.challengeActive == "Liquified") return false;
 	if (game.global.universe == 2) return false; //until 5.1.0
 	if (game.global.challengeActive == "Spired"){
-		if(getNumber)return Math.floor(Math.max(1,(game.global.world-100)/200));
+		if(getNumber)return Math.floor(Math.max(1,(game.global.world-100)/100));
 		return true;
 	}
 	if (game.global.world >= 200 && (game.global.world % 100) == 0){

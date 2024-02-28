@@ -6399,7 +6399,7 @@ var toReturn = {
 			unlockString: "到达区域200",
 		},
 		Houseless: {
-			description: "这个挑战中住房和战斗领土加成完全失效，但是在这个挑战里面通过<b>区域260</b>可以使中心枢纽的数量公式变得更好！（这是loader3229的mod里面的一个新挑战！）",
+			description: "这个挑战中住房和战斗领土加成完全失效，但是在这个挑战里面通过<b>区域260</b>可以使中心枢纽的数量公式变得更好，永久在宇宙1和宇宙2解锁中心枢纽，并且宇宙1中心枢纽的数量公式受到千兆核心加成！（这是loader3229的mod里面的一个新挑战！）",
 			squaredDescription: "这个挑战<sup>3</sup>中住房和战斗领土加成完全失效，但是在这个挑战<sup>3</sup>里面通过<b>区域260</b><span class=green>及以后的区域</span>可以使无住房挑战的加成变得更好！（这是loader3229的mod里面的一个新挑战！）",
 			completed: false,
 			filter: function () {
@@ -9593,7 +9593,7 @@ var toReturn = {
 			},
 			expandingBase: function(){
 				var mult = 0.003;
-				if (game.portal.Expansion.radLevel > 0) mult += (0.0001 * game.portal.Expansion.radLevel);
+				if (game.global.universe == 2 && game.portal.Expansion.radLevel > 0) mult += (0.0001 * game.portal.Expansion.radLevel);
 				return mult;
 			},
 			expandingMult: function(){			
@@ -11793,6 +11793,7 @@ var toReturn = {
 				if(game.global.houselessChallDone)total *= Math.pow(1+buildings.Resort.owned/1000,c2Bonus/500);
 				if(game.global.houselessChallDone)total *= Math.pow(1+buildings.Gateway.owned/1000,c2Bonus/500);
 				if(game.global.houselessChallDone)total *= Math.pow(1+collectors/10000,c2Bonus/500);
+				if(game.global.universe == 1 && game.global.houselessChallDone)total *= Math.pow(1.2+c2Bonus/2000,game.upgrades.Gigastation.done);
 				return Math.floor(total);
 			},
 			onUnlock: function(){

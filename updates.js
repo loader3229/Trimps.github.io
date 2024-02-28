@@ -4736,6 +4736,9 @@ function resetGame(keepPortal, resetting) {
 	if (game.global.universe == 2 && game.global.stormDone){
 		unlockBuilding('Antenna');
 	}
+	if (game.global.houselessChallDone){
+		unlockBuilding("Hub");
+	}
 	if (bwRewardUnlocked("Foremany")) game.bwRewards.Foremany.fire();
 	if (oldUniverse != game.global.universe){
 		var oldSetting;
