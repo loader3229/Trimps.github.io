@@ -6369,7 +6369,7 @@ var toReturn = {
 			unlockString: " reach Zone 200",
 		},
 		Houseless: {
-			description: "Tweak the portal to bring you to an alternate reality, where housing buildings and battle territory bonuses are disabled. Clearing <b>Zone 260</b> in this Challenge will change Hub's count formula to a better one!",
+			description: "Tweak the portal to bring you to an alternate reality, where housing buildings and battle territory bonuses are disabled. Clearing <b>Zone 260</b> in this Challenge will change Hub's count formula to a better one, and Permanently unlock Hub in U1 & U2, U1 Hub count formula is boosted by Gigastations!",
 			squaredDescription: "Tweak the portal to bring you to an alternate reality, where housing buildings and battle territory bonuses are disabled. Highest zone reached above Z260 in this Challenge<sup>3</sup> will increase Houseless challenge's completion bonus!",
 			completed: false,
 			filter: function () {
@@ -9563,7 +9563,7 @@ var toReturn = {
 			},
 			expandingBase: function(){
 				var mult = 0.003;
-				if (game.portal.Expansion.radLevel > 0) mult += (0.0001 * game.portal.Expansion.radLevel);
+				if (game.global.universe == 2 && game.portal.Expansion.radLevel > 0) mult += (0.0001 * game.portal.Expansion.radLevel);
 				return mult;
 			},
 			expandingMult: function(){			
@@ -11733,6 +11733,7 @@ var toReturn = {
 				if(game.global.houselessChallDone)total *= Math.pow(1+buildings.Resort.owned/1000,c2Bonus/500);
 				if(game.global.houselessChallDone)total *= Math.pow(1+buildings.Gateway.owned/1000,c2Bonus/500);
 				if(game.global.houselessChallDone)total *= Math.pow(1+collectors/10000,c2Bonus/500);
+				if(game.global.universe == 1 && game.global.houselessChallDone)total *= Math.pow(1.2+c2Bonus/2000,game.upgrades.Gigastation.done);
 				return Math.floor(total);
 			},
 			onUnlock: function(){
