@@ -2640,6 +2640,11 @@ function getBattleStatBd(what) {
 		}
 		textString += "<tr><td colspan='5' style='font-weight: bold'>Your Prismatic Shield is equal to " + Math.round(currentCalc * 100) + "% of your Trimps' maximum Health. All enemy damage hits your Prismatic Shield before Health, and Prismatic Shield always regenerates to full after an enemy is killed.</td></tr>";
 	}
+	//Add Finale
+	if (game.global.challengeActive == "Finale"){
+		currentCalc *= (what == "attack" ? 1e5 : (what == "block" ? Infinity : 1e200));
+		textString += "<tr><td class='bdTitle'>Finale</td><td></td><td></td><td>x "+prettify((what == "attack" ? 1e5 : (what == "block" ? Infinity : 1e200)))+"</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+	}
 	//Add coordination
 	if (what != "shield"){
 		currentCalc  *= game.resources.trimps.maxSoldiers;
@@ -4614,8 +4619,8 @@ function resetGame(keepPortal, resetting) {
 			game.global.infblock = true;
 			unlockBuilding("Hut");
 			unlockBuilding("House");
-			game.global.health = 1e300;
-			game.global.attack = 1e7;
+			game.global.health = 5e201;
+			game.global.attack = 6e5;
 		}
 		if (game.global.autoUpgradesAvailable) document.getElementById("autoUpgradeBtn").style.display = "block";
 		if (game.global.autoStorageAvailable) {
