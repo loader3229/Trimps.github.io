@@ -2395,7 +2395,7 @@ function countStackedVoidMaps(){
 }
 
 function getTrimpPs() {
-	if (game.global.challengeActive == "Trapper" || game.global.challengeActive == "Trappapalooza") return;
+	if (game.global.challengeActive == "Trapper" || game.global.challengeActive == "Trappapalooza" || game.global.challengeActive == "Finale") return;
 	var trimps = game.resources.trimps;
 	var base = 0.0085;
 	var textString =  "<table class='bdTable table table-striped'><tbody>";
@@ -4606,6 +4606,14 @@ function resetGame(keepPortal, resetting) {
 		}
 		if (sLevel >= 4) document.getElementById("autoPrestigeBtn").style.display = "block";
 		if (afterPortalSLevel >= 5) applyS5();
+		if (game.global.challengeActive == "Finale"){
+			game.global.playerModifier = 0;
+			game.resources.trimps.owned = 1;
+			game.upgrades.Battle.locked = 0;
+			game.global.infblock = true;
+			unlockBuilding("Hut");
+			unlockBuilding("House");
+		}
 		if (game.global.autoUpgradesAvailable) document.getElementById("autoUpgradeBtn").style.display = "block";
 		if (game.global.autoStorageAvailable) {
 			document.getElementById("autoStorageBtn").style.display = "block";
@@ -4627,7 +4635,7 @@ function resetGame(keepPortal, resetting) {
 		for (var cItem in c2s){
 			game.c2[cItem] = c2s[cItem];
 		}
-		if (game.global.challengeActive == "Trapper" || game.global.challengeActive == "Trappapalooza"){
+		if (game.global.challengeActive == "Trapper" || game.global.challengeActive == "Trappapalooza" || game.global.challengeActive == "Finale"){
 			getAutoJobsSetting().enabled = false;
 		}
 		alchObj.portal();
@@ -4851,7 +4859,7 @@ function applyS1(){
 
 function applyS2(){
 	game.triggers.upgrades.fire();
-	if (game.global.challengeActive != "Frugal"){
+	if (game.global.challengeActive != "Frugal" && game.global.challengeActive != "Finale"){
 		var toUnlock = ["Supershield", "Dagadder", "Bootboost", "Megamace", "Hellishmet", "Polierarm", "Pantastic", "Axeidic", "Smoldershoulder", "Greatersword", "Bestplate"];
 		if (game.global.slowDone){
 			toUnlock.push("Harmbalest");
