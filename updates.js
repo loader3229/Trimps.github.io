@@ -2471,11 +2471,11 @@ function getTrimpPs() {
 		currentCalc *= potencyMod;
 		textString += "<tr style='color: red'><td class='bdTitle'>Toxic Air</td><td class='bdPercent'>x  " + potencyMod.toFixed(3) + "</td><td class='bdNumber'>" + prettify(currentCalc) + "</td></tr>"
 	}
-	if (game.global.universe == 2 && u2Mutations.tree.GeneHealth.purchased){
+	if (u2Mutations.tree.GeneHealth.purchased){
 		currentCalc /= 50;
 		textString += "<tr style='color: red'><td class='bdTitle'>Gene Health</td><td class='bdPercent'>/ 50</td><td class='bdNumber'>" + prettify(currentCalc) + "</td></tr>"
 	}
-	if (game.global.universe == 2 && u2Mutations.tree.GeneAttack.purchased){
+	if (u2Mutations.tree.GeneAttack.purchased){
 		currentCalc /= 50;
 		textString += "<tr style='color: red'><td class='bdTitle'>Gene Attack</td><td class='bdPercent'>/ 50</td><td class='bdNumber'>" + prettify(currentCalc) + "</td></tr>"
 	}
@@ -3123,15 +3123,15 @@ function getBattleStatBd(what) {
 		currentCalc *= 1.5;
 		textString += "<tr><td class='bdTitle'>Attack Mutator</td><td>x 1.5</td><td></td><td>x 1.5</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>"
 	}
-	if (what == "health" && game.global.universe == 2 && u2Mutations.tree.GeneHealth.purchased)	{
+	if (what == "health" && u2Mutations.tree.GeneHealth.purchased)	{
 		currentCalc *= 10;
 		textString += "<tr><td class='bdTitle'>Gene Health Mutator</td><td>x 10</td><td class='bdNumberSm'></td><td class='bdNumberSm'>x 10</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td></tr>";
 	}
-	if (what == "attack" && game.global.universe == 2 && u2Mutations.tree.GeneAttack.purchased){
+	if (what == "attack" && u2Mutations.tree.GeneAttack.purchased){
 		currentCalc *= 10;
 		textString += "<tr><td class='bdTitle'>Gene Attack Mutator</td><td>x 10</td><td></td><td>x 10</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>"
 	}
-	if (what == "attack" && game.global.universe == 2 && u2Mutations.tree.Brains.purchased){
+	if (what == "attack" && u2Mutations.tree.Brains.purchased){
 		mult = u2Mutations.tree.Brains.getBonus();
 		currentCalc *= mult;
 		textString += "<tr><td class='bdTitle'>Brains to Brawn</td><td>x " + prettify(mult) + "</td><td></td><td>x " + prettify(mult) + "</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>"
@@ -6990,8 +6990,11 @@ function toggleSetting(setting, elem, fromPortal, updateOnly, backwards, fromHot
 				html += " Start with 1 extra Golden Upgrade after each Portal for every 500% earned between 2000% and " + prettify(10000);
 			else if (bonus <= 50000)
 				html += " Start with 1 extra Golden Upgrade after each Portal for every 2000% earned between " + prettify(10000) + " and " + prettify(50000);
-			else if (bonus <= 100000) html += " Frequency increases at " + prettify(100000) + "% bonus damage. Start with 1 extra Golden Upgrade after each Portal for every " + prettify(10000) + "% earned above " + prettify(50000);
-			else html += " Start with 1 extra Golden Upgrade after each Portal for every " + prettify(10000) + "% earned above " + prettify(50000);
+			else{
+				if (bonus <= 100000) html += " Frequency increases at " + prettify(100000) + "% bonus damage.";
+				else if (bonus <= 120000) html += " Frequency increases at " + prettify(120000) + "% bonus damage.";
+				html += " Start with 1 extra Golden Upgrade after each Portal for every " + prettify(10000) + "% earned above " + prettify(50000);
+			}
 			html += "%. Currently gaining " + count + " extra Golden Upgrade" + ((count == 1) ? "" : "s") + ".";
 		}
 		elem.innerHTML = html;
@@ -7007,7 +7010,8 @@ function toggleSetting(setting, elem, fromPortal, updateOnly, backwards, fromHot
 		else if (percent < 2000) return 5;
 		else if (percent < 10000) return 6;
 		else if (percent < 100000) return 7;
-		return 8;
+		else if (percent < 120000) return 8;
+		return 9;
 	}
 
 	function countExtraAchievementGoldens(){

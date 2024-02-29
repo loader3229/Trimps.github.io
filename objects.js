@@ -4352,7 +4352,7 @@ var u2Mutations = {
         Scruffy: {
             pos: [-3, 2],
             color: 'orange',
-            description: "Scruffy gains 30% more experience from all sources.",
+            description: "Fluffy/Scruffy gains 30% more experience from all sources.",
             purchased: false
         },
         NovaScruff: {
@@ -4375,7 +4375,7 @@ var u2Mutations = {
             pos: [-7, 3],
             color: 'orange',
             require: ['Scruffy'],
-            description: "Gain 10% more Nullifium when recycling Heirlooms. Applied to both U1 & U2.",
+            description: "Gain 10% more Nullifium/Spirestones when recycling Heirlooms.",
             purchased: false
         },
         Heirlots: {
@@ -4389,7 +4389,7 @@ var u2Mutations = {
             pos: [-13, 16],
             color: 'orange',
             require: ['Heirlots'],
-            description: "In U2, you find all Heirlooms at 1 reward tier higher than normal.",
+            description: "You find all Heirlooms at 1 reward tier higher than normal.",
             ring: 1,
             purchased: false
         },
@@ -4469,7 +4469,7 @@ var u2Mutations = {
             require: ['CritChance', 'AllRadon'],
             singleRequire: true,
             ring: 1,
-            description: "Divide Breed Speed by 50 in U2, multiply Health by 10 in U2.",
+            description: "Divide Breed Speed by 50, multiply Health by 10.",
         },
         GeneAttack: {
             pos: [18, 12],
@@ -4478,7 +4478,7 @@ var u2Mutations = {
             require: ['CritChance', 'AllRadon'],
             singleRequire: true,
             ring: 1,
-            description: "Divide Breed Speed by 50 in U2, multiply Attack by 10 in U2.",
+            description: "Divide Breed Speed by 50, multiply Attack by 10.",
         },
         Ragiffium: {
             pos: [23, 10],
@@ -4643,7 +4643,7 @@ var u2Mutations = {
             dn: 'Brains to Brawn',
             color: '#377cff',
             require: ['RandLoot2'],
-            get description() {return "Increases Trimp Attack by a number based on your total stored Science. Grants +30% Attack at " + prettify(1e25) + " Science, or +300% at " + prettify(1e250) + ". At your current total of " + prettify(game.resources.science.owned) + " Science, <b>you " + ((this.purchased) ? "are gaining" : "would gain") + " +" + prettify((this.getBonus() - 1) * 100) + "% Trimp Attack</b>. Only applies to U2."},
+            get description() {return "Increases Trimp Attack by a number based on your total stored Science. Grants +30% Attack at " + prettify(1e25) + " Science, or +300% at " + prettify(1e250) + ". At your current total of " + prettify(game.resources.science.owned) + " Science, <b>you " + ((this.purchased) ? "are gaining" : "would gain") + " +" + prettify((this.getBonus() - 1) * 100) + "% Trimp Attack</b>."},
             getBonus: function(){
 				if (game.resources.science.owned < 1) return 1;
 				var amt = 1 + (log10(game.resources.science.owned) / 83.3);
