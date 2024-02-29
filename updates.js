@@ -6258,7 +6258,7 @@ function toggleSetting(setting, elem, fromPortal, updateOnly, backwards, fromHot
 	function giveSingleAchieve(index){
 		var name = index;
 		var area = (game.global.universe == 2) ? "oneOffs2" : "oneOffs";
-		if (index == "Huffstle" || index == "Just Smack It" || index == "Heavy Trinker" || index == "Peace") area = "oneOffs2"; //U2 achievements but completable in U1
+		if (index == "Huffstle" || index == "Just Smack It" || index == "Heavy Trinker" || index == "Peace" || index == "Superchallenged") area = "oneOffs2"; //U2 achievements but completable in U1
 		var achievement = game.achievements[area];
 		index = game.achievements[area].names.indexOf(index);
 		if (index == -1 || achievement.finished[index]) return;

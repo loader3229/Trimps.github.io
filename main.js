@@ -1561,9 +1561,10 @@ function countChallengeSquaredReward(numberOnly, mesmerPreview, getUniverseArray
 		else reward += thisReward;
 	}
 	if (reward > 90000) reward = 90000;
+	if (reward >= 2000 && !mesmerPreview) giveSingleAchieve("Challenged");
+	if (rewardU2 >= 2000 && !mesmerPreview) giveSingleAchieve("Superchallenged");
 	if (getUniverseArray) return [reward, rewardU2];
 	reward *= ((rewardU2 / 100) + 1);
-	if (reward >= 2000 && !mesmerPreview) giveSingleAchieve("Challenged");
 	if (numberOnly) return reward;
 	game.global.totalSquaredReward = reward;
 }

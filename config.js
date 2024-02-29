@@ -7976,24 +7976,24 @@ var toReturn = {
 		},
 		oneOffs2: {
 			//Turns out this method of handling the feats does NOT scale well... adding stuff to the middle is a nightmare. Yet I copy/pasted it again for Universe 2 and probably will do the same for U3. Oh well.
-			finished: [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
+			finished: [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
 			title: "U2 Feats",
 			display: function(){
 				return (Fluffy.checkU2Allowed());
 			},
 			get descriptions () {
-				return ["Reach exactly 1337 Rn/Hr", "One-shot a Dimension of Rage enemy on Unlucky while Unlucky", "Complete Downsize with an equal amount of Huts, Houses, Mansions, Hotels and Resorts", "Complete Transmute without hiring a single Trimp", "Complete Unbalance with 500 stacks of Unbalance", "Complete Bublé without using Prismal or respeccing Perks", "Complete Duel without ever falling below 20 points", "Complete Melt without ever having more than 150 stacks", "Complete Trappapalooza without Trapping on or above Z50", "Complete Wither with " + prettify(10000) + " stacks of Hardened", "Reach a session score of 100-0 at L5+ in SA", "Kill a L20+ SA Enemy without Shock, Bleed or Poison", "Complete Revenge with exactly 19 stacks", "Complete 80/80 quests on Quest", "Complete Archaeology without ever having more than 0 of one Relic", "Complete Storm without ever encountering a Stormcloud", "Complete Insanity with 500 stacks without running a map above lvl 50", "Finish Berserk after reaching 20 Weakened Stacks before Z100", "Reach 100 Swarm Stacks before Z120 then complete Exterminate", "Reach L19 Cruffys by Z70 then complete Nurture", "Collect 7500 Runetrinkets", "Complete all 25 Mayhems", "Complete a Z155 Void Map with 10 Gas Brews and 0 Void Pots", "Complete Hypothermia with at least 400 Embers", "Complete Glass without ever having more than 2 stacks", "Beat a level 100 SA Enemy", "Kill a Bad Guy with two different Mutations"];
+				return ["Reach exactly 1337 Rn/Hr", "One-shot a Dimension of Rage enemy on Unlucky while Unlucky", "Complete Downsize with an equal amount of Huts, Houses, Mansions, Hotels and Resorts", "Complete Transmute without hiring a single Trimp", "Complete Unbalance with 500 stacks of Unbalance", "Complete Bublé without using Prismal or respeccing Perks", "Complete Duel without ever falling below 20 points", "Complete Melt without ever having more than 150 stacks", "Complete Trappapalooza without Trapping on or above Z50", "Complete Wither with " + prettify(10000) + " stacks of Hardened", "Reach a session score of 100-0 at L5+ in SA", "Kill a L20+ SA Enemy without Shock, Bleed or Poison", "Complete Revenge with exactly 19 stacks", "Complete 80/80 quests on Quest", "Complete Archaeology without ever having more than 0 of one Relic", "Complete Storm without ever encountering a Stormcloud", "Complete Insanity with 500 stacks without running a map above lvl 50", "Finish Berserk after reaching 20 Weakened Stacks before Z100", "Reach 100 Swarm Stacks before Z120 then complete Exterminate", "Reach L19 Cruffys by Z70 then complete Nurture", "Collect 7500 Runetrinkets", "Complete all 25 Mayhems", "Complete a Z155 Void Map with 10 Gas Brews and 0 Void Pots", "Complete Hypothermia with at least 400 Embers", "Complete Glass without ever having more than 2 stacks", "Beat a level 100 SA Enemy", "Kill a Bad Guy with two different Mutations",  "Earn a Challenge<sup>3</sup> bonus of 2000%"];
 			},
-			tiers: [10,10,10,11,11,11,11,11,12,12,12,12,12,12,12,13,13,13,13,13,13,13,13,14,14,14,14],
+			tiers: [10,10,10,11,11,11,11,11,12,12,12,12,12,12,12,13,13,13,13,13,13,13,13,14,14,14,14,14],
 			description: function (number) {
 				return this.descriptions[number];
 			},
-			filters: [-1,14,19,24,34,39,44,49,59,69,75,75,79,84,89,104,109,114,119,135,135,100,154,174,174,224,244],
+			filters: [-1,14,19,24,34,39,44,49,59,69,75,75,79,84,89,104,109,114,119,135,135,100,154,174,174,224,244,100],
 			filterLevel: function(){
 				return game.global.highestRadonLevelCleared;
 			},
 			icon: "glyphicon glyphicon-flag",
-			names: ["Eliter Feat", "Don't Need Luck", "Perfectly Balanced", "Resourceyphobe", "Upsized", "Unpoppable", "Pwnd", "Solid", "Coastapalooza", "Witherproof", "Huffstle", "Just Smack It", "Close Call", "Level Up", "Unassisted", "Clear Skies", "Actually Insane", "You're Doing it Wrong", "The Tortoise and the Bugs", "Nurtured AF", "Heavy Trinker", "Peace", "Mad Scientist", "Burn Baby Burn", "Unbreakable", "Heroic Huffy", "Double Trouble"],
+			names: ["Eliter Feat", "Don't Need Luck", "Perfectly Balanced", "Resourceyphobe", "Upsized", "Unpoppable", "Pwnd", "Solid", "Coastapalooza", "Witherproof", "Huffstle", "Just Smack It", "Close Call", "Level Up", "Unassisted", "Clear Skies", "Actually Insane", "You're Doing it Wrong", "The Tortoise and the Bugs", "Nurtured AF", "Heavy Trinker", "Peace", "Mad Scientist", "Burn Baby Burn", "Unbreakable", "Heroic Huffy", "Double Trouble", "Superchallenged"],
 			newStuff: []
 		},
 	},
