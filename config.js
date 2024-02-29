@@ -3315,6 +3315,7 @@ var toReturn = {
 		Obliterated: 0,
 		Eradicated: 0,
 		Spired: 0,
+		Finale: 0,
 		//U2
 		Unlucky: 0,
 		Downsize: 0,
@@ -4240,6 +4241,32 @@ var toReturn = {
 				game.global.liquifiedChallDone = true;
 				message("You have completed the Liquified challenge! Liquification Mutators are stronger now!", "Notices")	
 			},
+		},
+		Finale: {
+			description: "Druopitee realized that you terminated his plan too many times in the past timelines. Now he think, if he erased all Trimps, upgrades, maps and equipments in this planet before you teleported to this planet, would his plan successful? Luckily, your pet Fluffy will fight with you and help you to terminate Druopitee's plan again in this case! In this challenge, all equipments and battle rewards are disabled, you can't run maps, and you can't gain Trimps except Fluffy. But Fluffy's block is Infinite and Enemy damage won't pierce through block now!",
+			squaredDescription: "Druopitee realized that you terminated his plan too many times in the past timelines. Now he think, if he erased all Trimps, upgrades, maps and equipments in this planet before you teleported to this planet, would his plan successful? Luckily, your pet Fluffy will fight with you and help you to terminate Druopitee's plan again in this case! In this challenge, all equipments and battle rewards are disabled, you can't run maps, and you can't gain Trimps except Fluffy. But Fluffy's block is Infinite and Enemy damage won't pierce through block now!",
+			completed: false,
+			filter: function () {
+				return (getHighestLevelCleared(true) >= 889);
+			},
+			start: function () {
+				document.getElementById("realTrimpName").innerHTML = "Fluffy";
+				game.global.runningChallengeSquared = true;
+				fadeIn("upgradesTab", 10);
+				fadeIn("science", 10);
+				fadeIn("fragments", 10);
+				fadeIn("gems", 10);
+				document.getElementById("upgradesTitleDiv").style.display = "block";
+				document.getElementById("upgradesTitleSpan").innerHTML = "Upgrades";
+			},
+			onLoad: function () {
+				this.start();
+			},
+			allowU1: true,
+			blockU2: true,
+			allowSquared: true,
+			mustRestart: true,
+			unlockString: "reach Zone 890"
 		},
 		Enlightened: {
 			squaredDescription: "Conditions are just right between the Meditate and Discipline dimensions, and the Portal can be configured in a way where you can visit both at the same time! Rules from both Challenges are active, and running this Challenge<sup>2</sup> will set your highest Zone and C<sup>2</sup> bonuses for both Discipline<sup>2</sup> and Meditate<sup>2</sup>. Kill two Squimps with one stone!",
@@ -9537,7 +9564,7 @@ var toReturn = {
 				if (game.global.expandingTauntimp){
 					var newMax = game.resources.trimps.realMax();
 					var added = newMax - oldMax;
-					if (game.global.challengeActive != "Trapper" && game.global.challengeActive != "Trappapalooza") {
+					if (game.global.challengeActive != "Trapper" && game.global.challengeActive != "Trappapalooza" && game.global.challengeActive != "Finale") {
 						if (game.resources.trimps.owned == oldMax){
 							game.resources.trimps.owned = newMax;
 						}
@@ -9559,9 +9586,9 @@ var toReturn = {
 						amt = Math.ceil(amt * 0.003);
 					}
 					game.unlocks.impCount.TauntimpAdded += amt;
-					amt = (game.global.challengeActive == "Trapper" || game.global.challengeActive == "Trappapalooza") ? addMaxHousing(amt, false) : addMaxHousing(amt, true);
+					amt = (game.global.challengeActive == "Trapper" || game.global.challengeActive == "Trappapalooza" || game.global.challengeActive == "Finale") ? addMaxHousing(amt, false) : addMaxHousing(amt, true);
 					var msg = "It's nice, warm, and roomy in that dead " + name + ". ";
-					if (game.global.challengeActive != "Trapper" && game.global.challengeActive != "Trappapalooza"){
+					if (game.global.challengeActive != "Trapper" && game.global.challengeActive != "Trappapalooza" && game.global.challengeActive != "Finale"){
 						msg += "You found ";
 						if (amt == 1) msg += prettify(amt) + " Trimp inside, and it looks hella bored.";
 						else msg += prettify(amt) + " Trimps inside, and they all seem content to stay living there!";
@@ -10943,7 +10970,7 @@ var toReturn = {
 			icon: "book",
 			title: "Trimpma Sutra",
 			fire: function () {
-				if (game.global.challengeActive == "Trapper" || game.global.challengeActive == "Trappapalooza"){
+				if (game.global.challengeActive == "Trapper" || game.global.challengeActive == "Trappapalooza" || game.global.challengeActive == "Finale"){
 					message("Your Scientists let you know that your Trimps won't understand the book, but they offer to hold on to it for you for later. How nice of them!", "Notices");
 					game.challenges[game.global.challengeActive].heldBooks++;
 					return;
@@ -12402,15 +12429,16 @@ var toReturn = {
 				drawGrid();
 				game.global.BattleClock = -1;
 				fadeIn("metal", 10);
-				if (game.global.slowDone) {
+				if (game.global.slowDone && game.global.challengeActive != "Finale") {
 					unlockEquipment("Gambeson");
 					unlockEquipment("Arbalest");
 				}
 				if (bwRewardUnlocked("AutoJobs")){
 					unlockJob("Lumberjack");
-					buyAutoJobs(true);
+					if(game.global.challengeActive != "Finale")buyAutoJobs(true);
+					else unlockJob("Miner"),unlockJob("Scientist"),unlockJob("Explorer");
 				}
-				if (getEnergyShieldMult() > 0) document.getElementById("blockDiv").style.visibility = "visible"
+				if (getEnergyShieldMult() > 0 || game.global.challengeActive == "Finale") document.getElementById("blockDiv").style.visibility = "visible"
 			}
 		},
 		Bloodlust: { //1
@@ -13423,7 +13451,7 @@ var toReturn = {
 		breeding: {
 			done: 0,
 			message: function () {
-				if (game.global.challengeActive == "Trapper" || game.global.challengeActive == "Trappapalooza") return "Your Trimps look really bored.";
+				if (game.global.challengeActive == "Trapper" || game.global.challengeActive == "Trappapalooza" || game.global.challengeActive == "Finale") return "Your Trimps look really bored.";
 				else if (game.global.universe == 2) return "Better hurry up to the fighting Zones so you don't have to sit around here all day watching Trimps breed.";
 				else return "Apparently the Trimps breed if they're not working. Doesn't look pleasant.";
 			},

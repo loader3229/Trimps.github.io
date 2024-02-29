@@ -1082,6 +1082,7 @@ function load(saveString, autoLoad, fromPf) {
 		game.global.lastClearedMapCell = -1;
 	}
 
+	if (game.global.challengeActive == "Finale") document.getElementById("blockDiv").style.visibility = "visible";
 	if (game.buildings.Gym.locked === 0) document.getElementById("blockDiv").style.visibility = "visible";
 	if (getEnergyShieldMult() > 0 && game.upgrades.Battle.done) document.getElementById("blockDiv").style.visibility = "visible"
 
@@ -4772,7 +4773,7 @@ function toggleAutoTooltipHelp(){
 
 var lastAutoJob = 0;
 function buyAutoJobs(allowRatios){
-	if (game.options.menu.pauseGame.enabled)
+	if (game.options.menu.pauseGame.enabled || game.global.challengeActive == "Finale")
 		return;
 	var setting = getAutoJobsSetting();
 	if (!setting.enabled || !bwRewardUnlocked("AutoJobs")) return;
@@ -5239,7 +5240,7 @@ function breed() {
 	if (missingTrimps.cmp(0) < 0) missingTrimps = new DecimalBreed(0);
 	var decimalOwned = missingTrimps.add(trimps.owned);
 	var breeding = decimalOwned.minus(employedTrimps);
-    if (breeding.cmp(2) == -1 || game.global.challengeActive == "Trapper" || game.global.challengeActive == "Trappapalooza") {
+    if (breeding.cmp(2) == -1 || game.global.challengeActive == "Trapper" || game.global.challengeActive == "Trappapalooza" || game.global.challengeActive == "Finale") {
         updatePs(0, true);
 		document.getElementById("trimpsTimeToFill").innerHTML = "";
 		srLastBreedTime = "";
@@ -8977,6 +8978,7 @@ function startTheMagma(){
 	}
 	drawAllBuildings();
 	if (game.global.challengeActive == "Eradicated") return;
+	if (game.global.challengeActive == "Finale") return;
 	if (game.global.challengeActive != 'Trimp')
 		game.upgrades.Coordination.allowed += 100;
 	else game.challenges.Trimp.heldBooks += 100;
@@ -9470,7 +9472,7 @@ function addMaxHousing(amt, giveTrimps){
 	var wasFull = (game.resources.trimps.owned == game.resources.trimps.realMax());
 	game.resources.trimps.max += amt;
 	amt = scaleNumberForBonusHousing(amt);
-	if (game.global.challengeActive == "Trapper" || game.global.challengeActive == "Trappapalooza") return amt;
+	if (game.global.challengeActive == "Trapper" || game.global.challengeActive == "Trappapalooza" || game.global.challengeActive == "Finale") return amt;
 	if (!giveTrimps) return amt;
 	if (wasFull){
 		game.resources.trimps.owned = game.resources.trimps.realMax();
@@ -9750,6 +9752,7 @@ function addSpecialToNthLast(special, array, item, n){
 }
 
 function addSpecials(maps, countOnly, map, getPrestiges) { //countOnly must include map. Only counts upgrades set to spawn on "last".
+	if(game.global.challengeActive == "Finale")return;
 	var specialCount = 0;
 	var array;
 	var unlocksObj;
@@ -9975,6 +9978,7 @@ function findHomeForSpecial(special, item, array, max){
 }
 
 function dropPrestiges(){
+	if(game.global.challengeActive == "Finale")return;
 	var toDrop = addSpecials(true, true, null, true);
 	for (var x = 0; x < toDrop.length; x++){
 		unlockUpgrade(toDrop[x]);
@@ -10606,7 +10610,7 @@ function battle(force) {
 		if (game.global.lastBreedTime / 1000 >= game.global.GeneticistassistSetting)
 			force = true;
 	}
-    if (force || game.global.challengeActive == "Trapper" || game.global.challengeActive == "Trappapalooza") {
+    if (force || game.global.challengeActive == "Trapper" || game.global.challengeActive == "Trappapalooza" || game.global.challengeActive == "Finale") {
         trimps.soldiers = currentSend;
         trimps.owned -= currentSend;
     } else {
@@ -10635,7 +10639,7 @@ function checkAmalgamate(){
 		"While walking through your town, you notice your Amalgamator throwing a fit, kicking over food carts and anything else not tied down. You approach it but before you can ask what's wrong, it smacks you with a small stick to show dissatisfaction, then it scurries away.", 
 		"You watch as your Amalgamator struggles to find enough free Trimps, panic searching in places such as under rocks or between the leaves of trees. It suddenly seems to remember that it doesn't have to be there, smacks you with a small stick to show dissatisfaction, and turns into nothing.",
 		"While in town, a Scientist approaches you to let you know that your Amalgamator is getting upset and to keep an eye out for him. Just as you're finishing the conversation, the Amalgamator appears in front of you. It smacks you both with a small stick to show dissatisfaction, then turns into a small puddle of water - which you ask the Scientist to clean up."];
-	if (game.global.challengeActive == "Trapper" || game.global.challengeActive == "Trappapalooza") return false;
+	if (game.global.challengeActive == "Trapper" || game.global.challengeActive == "Trappapalooza" || game.global.challengeActive == "Finale") return false;
 	if (game.global.spireActive && game.global.challengeActive != "Spired") return false;
 	var ratio = (game.resources.trimps.realMax() / game.resources.trimps.getCurrentSend());
 	if (game.jobs.Amalgamator.owned > 0 && ratio < game.jobs.Amalgamator.getFireThresh()){
@@ -12416,7 +12420,7 @@ function checkIfLiquidZone(){
 		return true;
 	}
 	if (game.global.challengeActive == "Liquified") return true;
-	if (game.options.menu.liquification.enabled == 0 || game.global.challengeActive == "Obliterated" || game.global.challengeActive == "Eradicated") return false;
+	if (game.options.menu.liquification.enabled == 0 || game.global.challengeActive == "Obliterated" || game.global.challengeActive == "Eradicated" || game.global.challengeActive == "Finale") return false;
 	var spireCount = game.global.spiresCompleted;
 	if (game.talents.liquification.purchased) spireCount++;
 	if (game.talents.liquification2.purchased) spireCount++;
@@ -12994,7 +12998,7 @@ function startSpire(confirmed){
 		game.global.spireActive = true;
 		setNonMapBox();
 		var spireSetting = game.options.menu.mapsOnSpire.enabled;
-		if (spireSetting && !checkMapAtZoneWorld() && game.global.world > 6){
+		if (spireSetting && !checkMapAtZoneWorld() && game.global.world > 6 && game.global.challengeActive != "Finale"){
 			var highestSpire = Math.floor((getHighestLevelCleared() - 99) / 100);
 			if (spireSetting == 1 || (spireSetting == 2 && spireNum >= highestSpire - 1) || (spireSetting == 3 && spireNum >= highestSpire)){
 				game.global.fighting = false;
@@ -16395,7 +16399,7 @@ function purchaseMisc(what){
 
 function purchaseSingleRunBonus(what){
 	if (what == "heliumy" && game.global.runningChallengeSquared) return;
-	if (what == "quickTrimps" && (game.global.challengeActive == "Trapper" || game.global.challengeActive == "Trappapalooza")) return;
+	if (what == "quickTrimps" && (game.global.challengeActive == "Trapper" || game.global.challengeActive == "Trappapalooza" || game.global.challengeActive == "Finale")) return;
 	var bonus = game.singleRunBonuses[what];
 	if (!bonus) return;
 	if (bonus.owned) return;
@@ -16428,7 +16432,7 @@ function displaySingleRunBonuses(){
 				btnClass = 'boneBtnStateOff';
 				btnText = "Disabled on C<sup>" + ((game.global.universe == 1) ? 2 : 3) + "</sup>";
 			}
-			else if (item == "quickTrimps" && (game.global.challengeActive == "Trapper" || game.global.challengeActive == "Trappapalooza")){
+			else if (item == "quickTrimps" && (game.global.challengeActive == "Trapper" || game.global.challengeActive == "Trappapalooza" || game.global.challengeActive == "Finale")){
 				btnClass = 'boneBtnStateOff';
 				btnText = "Disabled on " + game.global.challengeActive;
 			}
