@@ -4243,14 +4243,14 @@ var toReturn = {
 			},
 		},
 		Finale: {
-			description: "Druopitee realized that you terminated his plan too many times in the past timelines. Now he think, if he erased all Trimps, upgrades, maps and equipments in this planet before you teleported to this planet, would his plan successful? Luckily, your pet Fluffy will fight with you and help you to terminate Druopitee's plan again in this case! In this challenge, all equipments and battle rewards are disabled, you can't run maps, and you can't gain Trimps except Fluffy. But Fluffy's block is Infinite and Enemy damage won't pierce through block now!",
-			squaredDescription: "Druopitee realized that you terminated his plan too many times in the past timelines. Now he think, if he erased all Trimps, upgrades, maps and equipments in this planet before you teleported to this planet, would his plan successful? Luckily, your pet Fluffy will fight with you and help you to terminate Druopitee's plan again in this case! In this challenge, all equipments and battle rewards are disabled, you can't run maps, and you can't gain Trimps except Fluffy. But Fluffy's block is Infinite and Enemy damage won't pierce through block now!",
+			description: "德罗披提意识到在以前的时间线里面，您终止了他的计划非常多次。他现在正在想，如果他比您先一步将这个行星上所有的脆皮，装备和地图全都抹除，他的计划会成功吗？但是，他并没有想到，您可以将绒绒带进传送门并且和您一起战斗，并且彻底破坏德罗披提的计划！绒绒也想体验一下其他脆皮战斗时的感觉了！在这个挑战里面，所有的装备和所有世界掉落全部被禁用了，您不能运行地图，同时您不能获得任何脆皮（除了绒绒）。但是绒绒自带无限格挡，且敌人的伤害不能穿透绒绒的无限格挡！",
+			squaredDescription: "德罗披提意识到在以前的时间线里面，您终止了他的计划非常多次。他现在正在想，如果他比您先一步将这个行星上所有的脆皮，装备和地图全都抹除，他的计划会成功吗？但是，他并没有想到，您可以将绒绒带进传送门并且和您一起战斗，并且彻底破坏德罗披提的计划！绒绒也想体验一下其他脆皮战斗时的感觉了！在这个挑战里面，所有的装备和所有世界掉落全部被禁用了，您不能运行地图，同时您不能获得任何脆皮（除了绒绒）。但是绒绒自带无限格挡，且敌人的伤害不能穿透绒绒的无限格挡！",
 			completed: false,
 			filter: function () {
 				return (getHighestLevelCleared(true) >= 889);
 			},
 			start: function () {
-				document.getElementById("realTrimpName").innerHTML = "Fluffy";
+				document.getElementById("realTrimpName").innerHTML = "绒绒";
 				game.global.runningChallengeSquared = true;
 				fadeIn("upgradesTab", 10);
 				fadeIn("science", 10);

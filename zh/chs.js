@@ -3111,6 +3111,7 @@ var cnItems = {
 	'Liquified': '液化',
 	'You have completed the Liquified challenge! Liquification Mutators are stronger now!': '您完成了液化挑战，液化突变因子的基础效果已经变为17.5%！',
 	'Houseless': '无住房',
+	'Finale': '终幕',
 	
 	
     //#endregion 挑战相关
