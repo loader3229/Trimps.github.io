@@ -2470,11 +2470,11 @@ function getTrimpPs() {
 		currentCalc *= potencyMod;
 		textString += "<tr style='color: red'><td class='bdTitle'>Toxic Air</td><td class='bdPercent'>×  " + potencyMod.toFixed(3) + "</td><td class='bdNumber'>" + prettify(currentCalc) + "</td></tr>"
 	}
-	if (game.global.universe == 2 && u2Mutations.tree.GeneHealth.purchased){
+	if (u2Mutations.tree.GeneHealth.purchased){
 		currentCalc /= 50;
 		textString += "<tr style='color: red'><td class='bdTitle'>Gene Health</td><td class='bdPercent'>/ 50</td><td class='bdNumber'>" + prettify(currentCalc) + "</td></tr>"
 	}
-	if (game.global.universe == 2 && u2Mutations.tree.GeneAttack.purchased){
+	if (u2Mutations.tree.GeneAttack.purchased){
 		currentCalc /= 50;
 		textString += "<tr style='color: red'><td class='bdTitle'>Gene Attack</td><td class='bdPercent'>/ 50</td><td class='bdNumber'>" + prettify(currentCalc) + "</td></tr>"
 	}
@@ -3122,15 +3122,15 @@ function getBattleStatBd(what) {
 		currentCalc *= 1.5;
 		textString += "<tr><td class='bdTitle'>Attack Mutator</td><td>× 1.5</td><td></td><td>× 1.5</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>"
 	}
-	if (what == "health" && game.global.universe == 2 && u2Mutations.tree.GeneHealth.purchased)	{
+	if (what == "health" && u2Mutations.tree.GeneHealth.purchased)	{
 		currentCalc *= 10;
 		textString += "<tr><td class='bdTitle'>Gene Health Mutator</td><td>× 10</td><td class='bdNumberSm'></td><td class='bdNumberSm'>× 10</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td></tr>";
 	}
-	if (what == "attack" && game.global.universe == 2 && u2Mutations.tree.GeneAttack.purchased){
+	if (what == "attack" && u2Mutations.tree.GeneAttack.purchased){
 		currentCalc *= 10;
 		textString += "<tr><td class='bdTitle'>Gene Attack Mutator</td><td>× 10</td><td></td><td>× 10</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>"
 	}
-	if (what == "attack" && game.global.universe == 2 && u2Mutations.tree.Brains.purchased){
+	if (what == "attack" && u2Mutations.tree.Brains.purchased){
 		mult = u2Mutations.tree.Brains.getBonus();
 		currentCalc *= mult;
 		textString += "<tr><td class='bdTitle'>Brains to Brawn</td><td>× " + prettify(mult) + "</td><td></td><td>× " + prettify(mult) + "</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>"
@@ -6258,7 +6258,7 @@ function toggleSetting(setting, elem, fromPortal, updateOnly, backwards, fromHot
 	function giveSingleAchieve(index){
 		var name = index;
 		var area = (game.global.universe == 2) ? "oneOffs2" : "oneOffs";
-		if (index == "Huffstle" || index == "Just Smack It" || index == "Heavy Trinker" || index == "Peace") area = "oneOffs2"; //U2 achievements but completable in U1
+		if (index == "Huffstle" || index == "Just Smack It" || index == "Heavy Trinker" || index == "Peace" || index == "Superchallenged") area = "oneOffs2"; //U2 achievements but completable in U1
 		var achievement = game.achievements[area];
 		index = game.achievements[area].names.indexOf(index);
 		if (index == -1 || achievement.finished[index]) return;
@@ -6990,8 +6990,11 @@ function toggleSetting(setting, elem, fromPortal, updateOnly, backwards, fromHot
 				html += "伤害加成在2000%和" + prettify(10000) + "%之间时，每有500%伤害加成，每周目初始就获得一个金色升级";
 			else if (bonus <= 50000)
 				html += "伤害加成在" + prettify(10000) + "%和" + prettify(50000) + "%之间时，每有2000%伤害加成，每周目初始就获得一个金色升级";
-			else if (bonus <= 100000) html += "伤害加成到达" + prettify(100000) + "%以后，升级出现的频率将增加。伤害加成超过" + prettify(50000) + "%时，每有" + prettify(10000) + "%伤害加成，每周目初始就获得一个金色升级";
-			else html += "伤害加成超过" + prettify(50000) + "%时，每有" + prettify(10000) + "%伤害加成，每周目初始就获得一个金色升级";
+			else{
+				if (bonus <= 100000) html += "伤害加成到达" + prettify(100000) + "%以后，升级出现的频率将增加。";
+				else if (bonus <= 120000) html += "伤害加成到达" + prettify(120000) + "%以后，升级出现的频率将增加。";
+				html += "伤害加成超过" + prettify(50000) + "%时，每有" + prettify(10000) + "%伤害加成，每周目初始就获得一个金色升级";
+			}
 			html += "。您目前获得了" + count + "个金色升级。";
 		}
 		elem.innerHTML = html;
@@ -7007,7 +7010,8 @@ function toggleSetting(setting, elem, fromPortal, updateOnly, backwards, fromHot
 		else if (percent < 2000) return 5;
 		else if (percent < 10000) return 6;
 		else if (percent < 100000) return 7;
-		return 8;
+		else if (percent < 120000) return 8;
+		return 9;
 	}
 
 	function countExtraAchievementGoldens(){

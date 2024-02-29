@@ -1561,9 +1561,10 @@ function countChallengeSquaredReward(numberOnly, mesmerPreview, getUniverseArray
 		else reward += thisReward;
 	}
 	if (reward > 90000) reward = 90000;
+	if (reward >= 2000 && !mesmerPreview) giveSingleAchieve("Challenged");
+	if (rewardU2 >= 2000 && !mesmerPreview) giveSingleAchieve("Superchallenged");
 	if (getUniverseArray) return [reward, rewardU2];
 	reward *= ((rewardU2 / 100) + 1);
-	if (reward >= 2000 && !mesmerPreview) giveSingleAchieve("Challenged");
 	if (numberOnly) return reward;
 	game.global.totalSquaredReward = reward;
 }
@@ -5286,9 +5287,9 @@ function breed() {
 	if (game.jobs.Geneticist.owned > 0) potencyMod = potencyMod.mul(Math.pow(.98, game.jobs.Geneticist.owned));
 	//Mutators
 	//Gene Attack
-	if (game.global.universe == 2 && u2Mutations.tree.GeneAttack.purchased) potencyMod = potencyMod.div(50);
+	if (u2Mutations.tree.GeneAttack.purchased) potencyMod = potencyMod.div(50);
 	//Gene Health
-	if (game.global.universe == 2 && u2Mutations.tree.GeneHealth.purchased) potencyMod = potencyMod.div(50);
+	if (u2Mutations.tree.GeneHealth.purchased) potencyMod = potencyMod.div(50);
 	breeding = potencyMod.mul(breeding);
     updatePs(breeding.toNumber(), true);
 	potencyMod = potencyMod.div(10).add(1);
@@ -7650,7 +7651,7 @@ function getRandomBySteps(steps, mod, seed){
 
 function getHeirloomZoneBreakpoint(zone, forBones){
 	var breakpoint = getUnbuffedHeirloomZoneBreakpoint(zone, forBones);
-	if (game.global.universe == 2 && u2Mutations.tree.Heirmazing.purchased) breakpoint++;
+	if (u2Mutations.tree.Heirmazing.purchased) breakpoint++;
 	return breakpoint;
 }
 
@@ -8798,7 +8799,7 @@ var mutations = {
 				world = lastSpire + 199;
 			var possible = Math.floor((world - 300) / 15) + 2;
 			if (game.talents.healthStrength2.purchased) possible += game.global.lastSpireCleared;
-			if (possible > 40) possible = 40;
+			if (possible > 48) possible = 48;
 			return possible;
 		},
 		pattern: function (currentArray) {
@@ -11289,7 +11290,7 @@ function startFight() {
 		}
 		//Health Mutator
 		if (game.global.universe == 2 && u2Mutations.tree.Health.purchased)	game.global.soldierHealthMax *= 1.5;
-		if (game.global.universe == 2 && u2Mutations.tree.GeneHealth.purchased)	game.global.soldierHealthMax *= 10;
+		if (u2Mutations.tree.GeneHealth.purchased)	game.global.soldierHealthMax *= 10;
 		//Resilience
 		if (getPerkLevel("Resilience") > 0) game.global.soldierHealthMax *= Math.pow(game.portal.Resilience.modifier + 1, getPerkLevel("Resilience"));
 		//Power
@@ -11414,7 +11415,7 @@ function startFight() {
 				healthTemp *= mutations.Magma.getTrimpDecay();
 			}
 			if (game.global.universe == 2 && u2Mutations.tree.Health.purchased)	healthTemp *= 1.5;
-			if (game.global.universe == 2 && u2Mutations.tree.GeneHealth.purchased)	healthTemp *= 10;
+			if (u2Mutations.tree.GeneHealth.purchased)	healthTemp *= 10;
 			if (getPerkLevel("Toughness_II")) healthTemp *= (1 + (game.portal.Toughness_II.modifier * getPerkLevel("Toughness_II")));
 			if (!game.portal.Observation.radLocked && game.global.universe == 2 && game.portal.Observation.trinkets > 0) healthTemp *= game.portal.Observation.getMult();
 			if (getPerkLevel("Championism")) healthTemp *= game.portal.Championism.getMult();
@@ -11798,10 +11799,10 @@ function calculateDamage(number, buildString, isTrimp, noCheckAchieve, cell, noF
 		if (game.global.universe == 2 && u2Mutations.tree.Attack.purchased){
 			number *= 1.5;
 		}
-		if (game.global.universe == 2 && u2Mutations.tree.GeneAttack.purchased){
+		if (u2Mutations.tree.GeneAttack.purchased){
 			number *= 10;
 		}
-		if (game.global.universe == 2 && u2Mutations.tree.Brains.purchased){
+		if (u2Mutations.tree.Brains.purchased){
 			number *= u2Mutations.tree.Brains.getBonus();
 		}
 		if (game.global.challengeActive == "Daily"){
@@ -13308,11 +13309,12 @@ function giveSpireReward(level){
 			if (game.global.spireDeaths == 0) giveSingleAchieve("Invincible");
 			if (spireWorld >= 5 && game.global.spireDeaths == 0) giveSingleAchieve("Invisible");
 			if (spireWorld >= 7) giveSingleAchieve("Lucky Spirer");
+			if (game.global.challengeActive == "Spired" && game.global.world >= 300) giveSingleAchieve("Spires-In-Spires");
 			var text = getSpireStory(spireWorld, 10);
 			if (!game.global.runningChallengeSquared){
 				var amt = giveHeliumReward(100);
 				text += "您发现了<b>" + prettify(amt) + "氦</b>和<b>一个崭新的尖塔核心</b>！";
-			}else if(game.global.challengeActive == "Spired")text += "您得到了一个尖塔核心传家宝，回收它可以得到"+Math.floor((game.global.world**3)*Math.pow(10,(game.global.world-300)/100)*(game.global.world%100==0?10:1))+"尖塔石！";
+			}else if(game.global.challengeActive == "Spired")text += "您得到了一个尖塔核心传家宝，回收它可以得到"+Math.floor((game.global.world**3)*Math.pow(10,(game.global.world-300)/100)*(game.global.world%100==0?10:1)*(u2Mutations.tree.Nullifium.purchased?1.1:1))+"尖塔石！";
 			else text += "您发现了一个<b>崭新的尖塔核心</b>！";
 			if (spireWorld == 6){
 				var talentCount = countPurchasedTalents();
@@ -13459,12 +13461,12 @@ function rewardSpire1(level){
 			else{
 				createHeirloom(200, false, true);
 				if(game.global.challengeActive != "Spired")text += "<br/><br/><b>这次您成功地卸下了尖塔核心，获得了一个基础稀有度的尖塔核心传家宝！</b>";
-				else text += "<br/><br/><b>您得到了一个尖塔核心传家宝，回收它可以得到8000000尖塔石！</b>";
+				else text += "<br/><br/><b>您得到了一个尖塔核心传家宝，回收它可以得到"+(u2Mutations.tree.Nullifium.purchased?8800000:8000000)+"尖塔石！</b>";
 			}
 			}else{
 				createHeirloom(200, false, true);
-				if(game.global.world>=230)text += "您得到了一个尖塔核心传家宝，回收它可以得到"+Math.floor((game.global.world**3)*Math.pow(10,(game.global.world-300)/100))+"尖塔石！";
-				else text += "您得到了一个尖塔核心传家宝，回收它可以得到"+(20*game.global.world*game.global.world)+"尖塔石！";
+				if(game.global.world>=230)text += "您得到了一个尖塔核心传家宝，回收它可以得到"+Math.floor((game.global.world**3)*Math.pow(10,(game.global.world-300)/100)*(u2Mutations.tree.Nullifium.purchased?1.1:1))+"尖塔石！";
+				else text += "您得到了一个尖塔核心传家宝，回收它可以得到"+((u2Mutations.tree.Nullifium.purchased?22:20)*game.global.world*game.global.world)+"尖塔石！";
 			}
 			if(game.global.challengeActive != "Spired" || game.global.world == 200)text += "<br/><br/>在您的帮助下，脆皮们人口兴旺，经济繁荣，且打倒了让世界陷入混乱的罪魁祸首。因为您来过，这个宇宙才变得更好。只要脆皮的文明仍然存在，您的雕像就会永远竖立着。但您知道，世界上有着其他尖塔，还在将腐化注入行星的大气。如果您留下来帮忙，或许雕像还能更大一点？";
 			message(text, "Story");
@@ -13535,7 +13537,7 @@ function getAvailableGoldenUpgrades(){
 }
 
 function getGoldenFrequency(fluffTier){
-	if (fluffTier >= 8) return 20;
+	if (fluffTier >= 8) return 28 - fluffTier;
 	if (fluffTier >= 6) return 25;
 	return 50 - ((fluffTier - 1) * 5);
 }
@@ -17973,7 +17975,7 @@ var Fluffy = {
 		if (autoBattle.oneTimers.Battlescruff.owned && game.global.universe == 2){
 			reward *= (1 + ((autoBattle.maxEnemyLevel - 1) / 50));
 		}
-		if (game.global.universe == 2 && u2Mutations.tree.Scruffy.purchased){
+		if (u2Mutations.tree.Scruffy.purchased){
 			reward *= 1.3;
 		}
 		if (game.global.universe == 1 && game.global.frigidCompletions > 0){
@@ -18249,7 +18251,7 @@ var Fluffy = {
 			if (getUberEmpowerment() == "Ice") fluffFormula += ' × <span class="fluffFormIce" onmouseover="Fluffy.expBreakdown(\'ice\')" onmouseout="Fluffy.expBreakdown(\'clear\')">冰之启迪</span>';
 			if (showCruffys) fluffFormula += ' × <span class="fluffFormLab" onmouseover="Fluffy.expBreakdown(\'labs\')" onmouseout="Fluffy.expBreakdown(\'clear\')">Labs</span>';
 			if (game.global.universe == 2 && autoBattle.oneTimers.Battlescruff.owned) fluffFormula += ' × <span class="fluffFormBattlescruff" onmouseover="Fluffy.expBreakdown(\'battlescruff\')" onmouseout="Fluffy.expBreakdown(\'clear\')">Battlescruff</span>';
-			if (game.global.universe == 2 && u2Mutations.tree.Scruffy.purchased) fluffFormula += ' × <span class="fluffFormMutators" onmouseover="Fluffy.expBreakdown(\'mutators\')" onmouseout="Fluffy.expBreakdown(\'clear\')">Mutators</span>';
+			if (u2Mutations.tree.Scruffy.purchased) fluffFormula += ' × <span class="fluffFormMutators" onmouseover="Fluffy.expBreakdown(\'mutators\')" onmouseout="Fluffy.expBreakdown(\'clear\')">Mutators</span>';
 			fluffFormula = fluffFormula.replace('Zone', '<span onmouseover="Fluffy.expBreakdown(\'zone\')" onmouseout="Fluffy.expBreakdown(\'clear\')" class="fluffFormZone">Zone</span>');
 			fluffFormula = fluffFormula.replace('Cunning', '<span onmouseover="Fluffy.expBreakdown(\'cunning\')" onmouseout="Fluffy.expBreakdown(\'clear\')" class="fluffFormCunning">Cunning</span>')
 			fluffFormula = fluffFormula.replace('Curious', '<span onmouseover="Fluffy.expBreakdown(\'curious\')" onmouseout="Fluffy.expBreakdown(\'clear\')" class="fluffFormCurious">Curious</span>')			
