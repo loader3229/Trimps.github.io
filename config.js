@@ -1356,7 +1356,9 @@ var toReturn = {
 				extraTags: "qol",
 				get description() {
 					var appliesTo = " only to Warpstation";
+					if (game.global.houselessChallDone) appliesTo = " to all housing buildings";
 					if (game.global.improvedAutoStorage) appliesTo = " to Warpstation and AutoStorage";
+					if (game.global.houselessChallDone && game.global.improvedAutoStorage) appliesTo = " to all housing buildings and AutoStorage";
 					return "Choose whether or not to force instant-craft buildings to use the queue. Currently applies " + appliesTo + ". May be useful for double checking prices before building!";
 				},
 				titles: ["Not Forcing Queue", "Forcing Queue"],
@@ -6369,7 +6371,7 @@ var toReturn = {
 			unlockString: " reach Zone 200",
 		},
 		Houseless: {
-			description: "Tweak the portal to bring you to an alternate reality, where housing buildings and battle territory bonuses are disabled. Clearing <b>Zone 260</b> in this Challenge will change Hub's count formula to a better one, and Permanently unlock Hub in U1 & U2, U1 Hub count formula is boosted by Gigastations!",
+			description: "Tweak the portal to bring you to an alternate reality, where housing buildings and battle territory bonuses are disabled. Clearing <b>Zone 260</b> in this Challenge will change Hub's count formula to a better one, and Permanently unlock Hub in U1 & U2, U1 Hub count formula is boosted by Gigastations, and all housing buildings will build instantly, skipping the queue!",
 			squaredDescription: "Tweak the portal to bring you to an alternate reality, where housing buildings and battle territory bonuses are disabled. Highest zone reached above Z260 in this Challenge<sup>3</sup> will increase Houseless challenge's completion bonus!",
 			completed: false,
 			filter: function () {
@@ -6378,6 +6380,15 @@ var toReturn = {
 			onComplete: function (){
 				game.global.challengeActive = "";
 				game.global.houselessChallDone = true;
+				game.buildings.Hut.craftTime = 0;
+				game.buildings.House.craftTime = 0;
+				game.buildings.Mansion.craftTime = 0;
+				game.buildings.Hotel.craftTime = 0;
+				game.buildings.Resort.craftTime = 0;
+				game.buildings.Gateway.craftTime = 0;
+				game.buildings.Wormhole.craftTime = 0;
+				game.buildings.Collector.craftTime = 0;
+				game.buildings.Warpstation.craftTime = 0;
 				message("You have completed the <b>Houseless Challenge!</b> Your housing buildings provide more hubs now!", "Notices");
 			},
 			allowU2: true,
@@ -11555,6 +11566,7 @@ var toReturn = {
 			owned: 0,
 			purchased: 0,
 			craftTime: 10,
+			origTime: 10,
 			AP: true,
 			tooltip: "Has room for $incby$ more lovely Trimp{s}. All Trimp housing has enough workspaces for only half of the Trimps that can live there.",
 			cost: {
@@ -11571,6 +11583,7 @@ var toReturn = {
 			owned: 0,
 			purchased: 0,
 			craftTime: 20,
+			origTime: 20,
 			AP: true,
 			tooltip: "A better house for your Trimps! Each house supports up to $incby$ more Trimp{s}.",
 			cost: {
@@ -11588,6 +11601,7 @@ var toReturn = {
 			owned: 0,
 			purchased: 0,
 			craftTime: 60,
+			origTime: 60,
 			AP: true,
 			tooltip: "A pretty sick mansion for your Trimps to live in. Each Mansion supports $incby$ more Trimp{s}.",
 			cost: {
@@ -11607,6 +11621,7 @@ var toReturn = {
 			owned: 0,
 			purchased: 0,
 			craftTime: 120,
+			origTime: 120,
 			AP: true,
 			tooltip: "A fancy hotel for many Trimps to live in. Complete with room service and a mini bar. Supports $incby$ Trimp{s}.",
 			cost: {
@@ -11626,6 +11641,7 @@ var toReturn = {
 			owned: 0,
 			purchased: 0,
 			craftTime: 240,
+			origTime: 240,
 			AP: true,
 			tooltip: "A huge resort for your Trimps to live in. Sucks for the ones still stuck in huts. Supports $incby$ Trimp{s}.",
 			cost: {
@@ -11645,6 +11661,7 @@ var toReturn = {
 			owned: 0,
 			purchased: 0,
 			craftTime: 480,
+			origTime: 480,
 			AP: true,
 			tooltip: "A Gateway to another dimension, where your Trimps can sleep and work. Supports $incby$ Trimp{s}.",
 			cost: {
@@ -11662,6 +11679,7 @@ var toReturn = {
 			owned: 0,
 			purchased: 0,
 			craftTime: 600,
+			origTime: 600,
 			blockU2: true,
 			AP: true,
 			tooltip: "Use your crazy, helium-cooled, easy-to-aim wormhole generator to create easy-to-travel links to other colonizable planets where your Trimps can sleep and work. Each supports $incby$ Trimps. <b>This building costs helium to create.</b>",
@@ -11679,6 +11697,7 @@ var toReturn = {
 			owned: 0,
 			purchased: 0,
 			craftTime: 1200,
+			origTime: 1200,
 			AP: true,
 			tooltip: "Each collector allows you to harvest more of the power of your home star, allowing your Trimps to colonize a larger chunk of your solar system. Each supports $incby$ Trimp{s}.",
 			cost: {

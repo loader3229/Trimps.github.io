@@ -4738,6 +4738,15 @@ function resetGame(keepPortal, resetting) {
 		unlockBuilding('Antenna');
 	}
 	if (game.global.houselessChallDone){
+		game.buildings.Hut.craftTime = 0;
+		game.buildings.House.craftTime = 0;
+		game.buildings.Mansion.craftTime = 0;
+		game.buildings.Hotel.craftTime = 0;
+		game.buildings.Resort.craftTime = 0;
+		game.buildings.Gateway.craftTime = 0;
+		game.buildings.Wormhole.craftTime = 0;
+		game.buildings.Collector.craftTime = 0;
+		game.buildings.Warpstation.craftTime = 0;
 		unlockBuilding("Hub");
 	}
 	if (bwRewardUnlocked("Foremany")) game.bwRewards.Foremany.fire();
