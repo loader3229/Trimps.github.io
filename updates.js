@@ -4614,6 +4614,8 @@ function resetGame(keepPortal, resetting) {
 			game.global.infblock = true;
 			unlockBuilding("Hut");
 			unlockBuilding("House");
+			game.global.health = 1e300;
+			game.global.attack = 1e7;
 		}
 		if (game.global.autoUpgradesAvailable) document.getElementById("autoUpgradeBtn").style.display = "block";
 		if (game.global.autoStorageAvailable) {

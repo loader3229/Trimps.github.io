@@ -11138,7 +11138,8 @@ function startFight() {
 		if (game.global.realBreedTime >= 600000 && game.jobs.Geneticist.owned >= 1) giveSingleAchieve("Extra Crispy");
 		if (getPerkLevel("Anticipation")){
 			game.global.antiStacks = (game.jobs.Amalgamator.owned > 0) ? Math.floor((getGameTime() - game.global.lastSoldierSentAt) / 1000) : Math.floor(game.global.lastBreedTime / 1000);
-			if (game.talents.patience.purchased){
+			if(game.global.challengeActive == "Finale"){game.global.antiStacks = 0;
+			}else if (game.talents.patience.purchased){
 				if (game.global.antiStacks >= 45)
 					game.global.antiStacks = 45;
 			}
