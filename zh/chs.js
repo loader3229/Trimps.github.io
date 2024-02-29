@@ -2069,15 +2069,19 @@ var cnItems = {
     'Lucky Spirer': '幸运螺旋者',
     'The Limit of Bionic Wonderland': '仿生仙境的极限',
     'Spire-In-Spires': '尖塔中的尖塔',
+    'Spires-In-Spires': '尖塔中的尖塔 II',
+    'Spirentist': '尖塔科学家',
     'Eradicated Warden': '杀绝监狱长',
     'Eradicated Robotrimp': '杀绝脆皮机器人',
     'Broken Spire': '破碎尖塔',
     'Break the Planet on Spired': '在尖塔化挑战中破碎行星',
+    'Clear Spire in Scientist V': '在科学家 V挑战中通过尖塔',
     'Complete Bionic Wonderland LIII': '通过仿生仙境 LIII',
     'Complete Bionic Wonderland': '通过仿生仙境',
     'Complete The Prison on Eradicated': '在灭绝挑战中通过监狱',
     'Complete Bionic Wonderland on Eradicated': '在灭绝挑战中通过仿生仙境',
     'Complete The Real Spire(Z200) on Spired': '在尖塔化挑战中通过真正的尖塔(区域200)',
+    'Complete The Second Real Spire(Z300) on Spired': '在尖塔化挑战中通过真正的尖塔 II(区域300)',
 	
     //#endregion 游戏成就相关
     //#region 游戏设置相关
