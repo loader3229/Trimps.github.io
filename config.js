@@ -1356,7 +1356,9 @@ var toReturn = {
 				extraTags: "qol",
 				get description() {
 					var appliesTo = " only to Warpstation";
+					if (game.global.houselessChallDone) appliesTo = " to all housing buildings";
 					if (game.global.improvedAutoStorage) appliesTo = " to Warpstation and AutoStorage";
+					if (game.global.houselessChallDone && game.global.improvedAutoStorage) appliesTo = " to all housing buildings and AutoStorage";
 					return "Choose whether or not to force instant-craft buildings to use the queue. Currently applies " + appliesTo + ". May be useful for double checking prices before building!";
 				},
 				titles: ["Not Forcing Queue", "Forcing Queue"],
@@ -6399,7 +6401,7 @@ var toReturn = {
 			unlockString: "到达区域200",
 		},
 		Houseless: {
-			description: "这个挑战中住房和战斗领土加成完全失效，但是在这个挑战里面通过<b>区域260</b>可以使中心枢纽的数量公式变得更好，永久在宇宙1和宇宙2解锁中心枢纽，并且宇宙1中心枢纽的数量公式受到千兆核心加成！（这是loader3229的mod里面的一个新挑战！）",
+			description: "这个挑战中住房和战斗领土加成完全失效，但是在这个挑战里面通过<b>区域260</b>可以使中心枢纽的数量公式变得更好，永久在宇宙1和宇宙2解锁中心枢纽，宇宙1中心枢纽的数量公式受到千兆核心加成，并且所有住房可以不经过队列直接完成！（这是loader3229的mod里面的一个新挑战！）",
 			squaredDescription: "这个挑战<sup>3</sup>中住房和战斗领土加成完全失效，但是在这个挑战<sup>3</sup>里面通过<b>区域260</b><span class=green>及以后的区域</span>可以使无住房挑战的加成变得更好！（这是loader3229的mod里面的一个新挑战！）",
 			completed: false,
 			filter: function () {
@@ -6408,6 +6410,15 @@ var toReturn = {
 			onComplete: function (){
 				game.global.challengeActive = "";
 				game.global.houselessChallDone = true;
+				game.buildings.Hut.craftTime = 0;
+				game.buildings.House.craftTime = 0;
+				game.buildings.Mansion.craftTime = 0;
+				game.buildings.Hotel.craftTime = 0;
+				game.buildings.Resort.craftTime = 0;
+				game.buildings.Gateway.craftTime = 0;
+				game.buildings.Wormhole.craftTime = 0;
+				game.buildings.Collector.craftTime = 0;
+				game.buildings.Warpstation.craftTime = 0;
 				message("You have completed the <b>Houseless Challenge!</b> Your housing buildings provide more hubs now!", "Notices");
 			},
 			allowU2: true,
@@ -11615,6 +11626,7 @@ var toReturn = {
 			owned: 0,
 			purchased: 0,
 			craftTime: 10,
+			origTime: 10,
 			AP: true,
 			tooltip: "可以容纳$incby$个可爱的脆皮。所有小屋都预留了一半的空间给工作区。",
 			cost: {
@@ -11631,6 +11643,7 @@ var toReturn = {
 			owned: 0,
 			purchased: 0,
 			craftTime: 20,
+			origTime: 20,
 			AP: true,
 			tooltip: "脆皮住上更好的宅院了！每个宅院可以容纳$incby$个脆皮。",
 			cost: {
@@ -11648,6 +11661,7 @@ var toReturn = {
 			owned: 0,
 			purchased: 0,
 			craftTime: 60,
+			origTime: 60,
 			AP: true,
 			tooltip: "脆皮住上豪宅了，豪宅真棒！每个豪宅可以容纳$incby$个脆皮。",
 			cost: {
@@ -11667,6 +11681,7 @@ var toReturn = {
 			owned: 0,
 			purchased: 0,
 			craftTime: 120,
+			origTime: 120,
 			AP: true,
 			tooltip: "可以容纳大量脆皮的奢华宾馆。它提供客房服务，并有一个小酒吧。每个宾馆可以容纳$incby$个脆皮。",
 			cost: {
@@ -11686,6 +11701,7 @@ var toReturn = {
 			owned: 0,
 			purchased: 0,
 			craftTime: 240,
+			origTime: 240,
 			AP: true,
 			tooltip: "巨大的度假村，可供脆皮居住。还住在小屋里的脆皮简直弱爆了。每个度假村可以容纳$incby$个脆皮。",
 			cost: {
@@ -11705,6 +11721,7 @@ var toReturn = {
 			owned: 0,
 			purchased: 0,
 			craftTime: 480,
+			origTime: 480,
 			AP: true,
 			tooltip: "通往其他维度的裂隙，脆皮可以在那边正常睡觉和工作。每个维度裂隙可以容纳$incby$个脆皮。",
 			cost: {
@@ -11722,6 +11739,7 @@ var toReturn = {
 			owned: 0,
 			purchased: 0,
 			craftTime: 600,
+			origTime: 600,
 			blockU2: true,
 			AP: true,
 			tooltip: "使用疯狂氦冷易瞄的虫洞发生器，与其他宜居星球建立易于通行的链接，脆皮可以在那边正常睡觉和工作。每个虫洞可以容纳$incby$个脆皮。<b>This building costs helium to create.</b>",
@@ -11739,6 +11757,7 @@ var toReturn = {
 			owned: 0,
 			purchased: 0,
 			craftTime: 1200,
+			origTime: 1200,
 			AP: true,
 			tooltip: "汲能设施可以从母星汲取更多的能量，为脆皮们提供支持，使它们在太阳系中占领更多的地盘。每个汲能设施可以容纳$incby$个脆皮。",
 			cost: {
