@@ -698,8 +698,8 @@ function tooltip(what, isItIn, event, textString, attachFunction, numCheck, rena
 		if (game.talents.headstart.purchased) tooltipText += "<p><b>Note that your Headstart mastery will be disabled during Challenge<sup>" + sup + "</sup> runs.</b></p>";
 		if (portalUniverse == 1 && uniArray[0] >= 35000){
 			var color = (uniArray[0] >= 50000) ? " style='color: red;'" : "";
-			var extra = (uniArray[0] >= 90000) ? " You've reached this bonus and are officially done with Challenge<sup>2</sup>! Congratulations!" : "";
-			tooltipText += "<p><b" + color + ">Note that Challenge<sup>2</sup> Bonus is capped at " + prettify(90000) + "%." + extra + "</b></p>"
+			var extra = (uniArray[0] >= 110000) ? " You've reached this bonus and are officially done with Challenge<sup>2</sup>! Congratulations!" : "";
+			tooltipText += "<p><b" + color + ">Note that Challenge<sup>2</sup> Bonus is capped at " + prettify(110000) + "%." + extra + "</b></p>"
 		}
 		costText = "";
 	}
@@ -1076,7 +1076,8 @@ function tooltip(what, isItIn, event, textString, attachFunction, numCheck, rena
 				if (getAllowedTalentTiers()[talent.tier - 1] < 1 && thisTierTalents < 6){
 					costText = "<span style='color: red'>未解锁";
 					var lastTierTalents = countPurchasedTalents(talent.tier - 1);
-					if (lastTierTalents <= 1) costText += "(您还需要购买第" + (talent.tier - 1) + "层的" + ((lastTierTalents == 0) ? "2个专精" : "1个专精") + "才能解锁第" + talent.tier + "层的专精)";
+					if (talent.tier >= 10) costText += " (您还需要购买第" + (talent.tier - 1) + "层的所有专精并通过尖塔 "+romanNumeral(talent.tier - 10)+"才能解锁第" + talent.tier + "层的专精)";
+					else if (lastTierTalents <= 1) costText += "(您还需要购买第" + (talent.tier - 1) + "层的" + ((lastTierTalents == 0) ? "2个专精" : "1个专精") + "才能解锁第" + talent.tier + "层的专精)";
 					else costText += "(您还需要购买第" + (talent.tier - 1) + "层的1个专精才能解锁第" + talent.tier + "层的下一个专精)";
 					if (requiresText) costText += "<br>This Mastery also requires " + requiresText + "</span>";
 				}
@@ -2641,8 +2642,8 @@ function getBattleStatBd(what) {
 	}
 	//Add Finale
 	if (game.global.challengeActive == "Finale"){
-		currentCalc *= (what == "attack" ? 1e5 : (what == "block" ? Infinity : 1e200));
-		textString += "<tr><td class='bdTitle'>Finale</td><td></td><td></td><td>x "+prettify((what == "attack" ? 1e5 : (what == "block" ? Infinity : 1e200)))+"</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+		currentCalc *= (what == "attack" ? (Fluffy.isRewardActive("FluffyE10")?Math.pow(3.1, Fluffy.getCurrentPrestige()):1) : (what == "block" ? Infinity : 1e200));
+		textString += "<tr><td class='bdTitle'>Finale</td><td></td><td></td><td>x "+prettify((what == "attack" ? (Fluffy.isRewardActive("FluffyE10")?Math.pow(3.1, Fluffy.getCurrentPrestige()):1) : (what == "block" ? Infinity : 1e200)))+"</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
 	}
 	//Add coordination
 	if (what != "shield"){
@@ -4292,6 +4293,7 @@ function resetGame(keepPortal, resetting) {
 		decayDone = game.global.decayDone;
 		liquifiedChallDone = game.global.liquifiedChallDone;
 		houselessChallDone = game.global.houselessChallDone;
+		finaleChallDone = game.global.finaleChallDone;
 		if (game.global.dailyHelium) {
 			if (game.global.universe == 1) game.global.tempHighHelium -= game.global.dailyHelium;
 			else if (game.global.universe == 2) game.global.tempHighRadon -= game.global.dailyHelium;
@@ -4526,6 +4528,7 @@ function resetGame(keepPortal, resetting) {
 		game.global.decayDone = decayDone;
 		game.global.liquifiedChallDone = liquifiedChallDone;
 		game.global.houselessChallDone = houselessChallDone;
+		game.global.finaleChallDone = finaleChallDone;
 		game.global.magmite = magmite;
 		game.generatorUpgrades = genUpgrades;
 		game.permanentGeneratorUpgrades = permanentGenUpgrades;
@@ -4579,6 +4582,7 @@ function resetGame(keepPortal, resetting) {
 		game.global.lastU2Voids = lastU2Voids;
 		game.global.SB = SB;
 		game.global.tabForMastery = tabForMastery;
+		if (game.global.universe == 1 && game.talents.tier11a.purchased) game.global.expandingTauntimp = true;
 		if (game.global.universe == 2 && autoBattle.oneTimers.Expanding_Tauntimp.owned) game.global.expandingTauntimp = true;
 		if (microchipLevel){
 			game.buildings.Microchip.owned = microchipLevel;
@@ -4619,7 +4623,6 @@ function resetGame(keepPortal, resetting) {
 			unlockBuilding("Hut");
 			unlockBuilding("House");
 			game.global.health = 5e201;
-			game.global.attack = 6e5;
 		}
 		if (game.global.autoUpgradesAvailable) document.getElementById("autoUpgradeBtn").style.display = "block";
 		if (game.global.autoStorageAvailable) {
@@ -4808,8 +4811,8 @@ function stringToSeed(useString){
 function setUniverseStyle(){
 	if (game.global.universe == 1){
 		document.getElementById('roboTrimpBtn').style.display = 'block';
-		document.getElementById('damageDiv').style.width = '55%';
-		document.getElementById('blockDiv').style.width = '28.33333333%';
+		document.getElementById('damageDiv').style.width = '56%';
+		document.getElementById('blockDiv').style.width = '27%';
 	}
 	else if (game.global.universe == 2){
 		document.getElementById('roboTrimpBtn').style.display = 'none';
@@ -6822,7 +6825,7 @@ function toggleSetting(setting, elem, fromPortal, updateOnly, backwards, fromHot
 				return "A voice in the back of your mind tells you there should be something big soon, but you see nothing. Oh well."
 			},
 			get w303() {
-				if (game.global.spireRows >= 15 || Fluffy.getCapableLevel() > 0) return "You're glad you have Fluffy around now. He seems to be getting along well with the other Trimps, and seems happy to have found others like him. He doesn't seem to be any smarter than a normal Trimp so you're sure you'll get some entertainment out of him.";
+				if (game.global.spireRows >= 15 || Fluffy.getCapableLevel() > 0 || game.global.challengeActive == "Finale") return "You're glad you have Fluffy around now. He seems to be getting along well with the other Trimps, and seems happy to have found others like him. He doesn't seem to be any smarter than a normal Trimp so you're sure you'll get some entertainment out of him.";
 				return "You wish you had a pet.";
 			},
 			get w315(){
@@ -6832,7 +6835,7 @@ function toggleSetting(setting, elem, fromPortal, updateOnly, backwards, fromHot
 			w340: "Watch your step, there's some Magma on the ground over there.",
 			w350: "If Druopitee has really immortalized himself in an infinite amount of Spires, you might be here for a while.",
 			get w360(){
-				if (game.global.spireRows >= 15 || Fluffy.getCapableLevel() > 0) return "You attempt to put Fluffy through your rigorous Scientist training program, but he doesn't want to. He wouldn't have any trouble, but he doesn't want the label. You still couldn't be happier to have the little guy around!";
+				if (game.global.spireRows >= 15 || Fluffy.getCapableLevel() > 0 || game.global.challengeActive == "Finale") return "You attempt to put Fluffy through your rigorous Scientist training program, but he doesn't want to. He wouldn't have any trouble, but he doesn't want the label. You still couldn't be happier to have the little guy around!";
 				return "You really feel like something is missing from your life. Everything feels hollow and sad.";
 			},
 			w375: "Should be coming up on another Spire Zone soon. You stop and sit beside a beautiful Magma river and wonder what kinds of crazy stuff could be waiting for you up there. Then you realize it's probably just another Spire, so you get up and keep moving.",
@@ -6852,7 +6855,7 @@ function toggleSetting(setting, elem, fromPortal, updateOnly, backwards, fromHot
 			get w415(){
 				if (game.global.lastSpireCleared == 3) return "The Healthy mutation is starting to spread nicely now. The Bad Guys hurt quite a bit more, but you're pretty sure you're doing the right thing which kinda makes you feel good.";
 				if (game.global.lastSpireCleared == 2) return "It seems like the Healthy mutation has stopped spreading. That's alright though, some other version of you will probably take care of it.";
-				if (game.global.spireRows >= 15 || Fluffy.getCapableLevel() > 0) return "The land sure looks terrible and corrupted, but at least you have Fluffy.";
+				if (game.global.spireRows >= 15 || Fluffy.getCapableLevel() > 0 || game.global.challengeActive == "Finale") return "The land sure looks terrible and corrupted, but at least you have Fluffy.";
 				return "What do you have against Fluffy?";
 			},
 			w430: "The Trimps tried tying two Turkimps to this tall tree, then the Turkimps thrashed those three trillion Trimps, throwing the Trimps tumbling towards the tall tree. The Trimps truly tried. Those Turkimps though... they tough.",

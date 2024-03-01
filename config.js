@@ -309,6 +309,7 @@ var toReturn = {
 		infblock: false,
 		liquifiedChallDone: false,
 		houselessChallDone: false,
+		finaleChallDone: 0,
 		
 		lastHeirlooms: {
 			u1: {
@@ -2611,7 +2612,102 @@ var toReturn = {
 			tier: 10,
 			purchased: false,
 			icon: "*star-half"
-		}
+		},
+		tier11a: {
+			description: "Starting after your next Portal, U1 Tauntimps will increase all Trimps gained by 0.3% per run instead of adding flat housing.",
+			name: "Expanding Tauntimp",
+			tier: 11,
+			purchased: false,
+			icon: "gift"
+		},
+		tier11b: {
+			description: "Corruption won't affect maps.",
+			name: "Map Reducer III",
+			tier: 11,
+			purchased: false,
+			icon: "*gift2",
+			requires: "tier11a"
+		},
+		tier11c: {
+			description: "Tier 11 Mastery 3",
+			name: "Tier 11 Mastery 3",
+			tier: 11,
+			purchased: false,
+			icon: "road",
+			requires: "tier11b"
+		},
+		tier11d: {
+			description: "Tier 11 Mastery 4",
+			name: "Tier 11 Mastery 4",
+			tier: 11,
+			purchased: false,
+			icon: "road",
+			requires: "tier11c"
+		},
+		tier11e: {
+			description: "Tier 11 Mastery 5",
+			name: "Tier 11 Mastery 5",
+			tier: 11,
+			purchased: false,
+			icon: "road",
+			requires: "tier11d"
+		},
+		tier11f: {
+			description: "Tier 11 Mastery 6",
+			name: "Tier 11 Mastery 6",
+			tier: 11,
+			purchased: false,
+			icon: "road",
+			requires: "tier11e"
+		},
+		tier12a: {
+			description: "Tier 12 Mastery 1",
+			name: "Tier 12 Mastery 1",
+			tier: 12,
+			purchased: false,
+			icon: "road",
+			requires: "tier11f"
+		},
+		tier12b: {
+			description: "Tier 12 Mastery 2",
+			name: "Tier 12 Mastery 2",
+			tier: 12,
+			purchased: false,
+			icon: "road",
+			requires: "tier12a"
+		},
+		tier12c: {
+			description: "Tier 12 Mastery 3",
+			name: "Tier 12 Mastery 3",
+			tier: 12,
+			purchased: false,
+			icon: "road",
+			requires: "tier12b"
+		},
+		tier12d: {
+			description: "Tier 12 Mastery 4",
+			name: "Tier 12 Mastery 4",
+			tier: 12,
+			purchased: false,
+			icon: "road",
+			requires: "tier12c"
+		},
+		tier12e: {
+			description: "Tier 12 Mastery 5",
+			name: "Tier 12 Mastery 5",
+			tier: 12,
+			purchased: false,
+			icon: "road",
+			requires: "tier12d"
+		},
+		tier12f: {
+			description: "Tier 12 Mastery 6",
+			name: "Tier 12 Mastery 6",
+			tier: 12,
+			purchased: false,
+			icon: "road",
+			requires: "tier12e"
+		},
 		//don't forget to add new talent tier to getHighestTalentTier()
 	},
 	//portal
@@ -4243,8 +4339,9 @@ var toReturn = {
 			},
 		},
 		Finale: {
-			description: "德罗披提意识到在以前的时间线里面，您终止了他的计划非常多次。他现在正在想，如果他比您先一步将这个行星上所有的脆皮，装备和地图全都抹除，他的计划会成功吗？但是，他并没有想到，您可以将绒绒带进传送门并且和您一起战斗，并且彻底破坏德罗披提的计划！绒绒也想体验一下其他脆皮战斗时的感觉了！在这个挑战里面，所有的装备和所有世界掉落全部被禁用了，您不能运行地图，同时您不能获得任何脆皮（除了绒绒）。但是绒绒自带无限格挡，且敌人的伤害不能穿透绒绒的无限格挡！",
-			squaredDescription: "德罗披提意识到在以前的时间线里面，您终止了他的计划非常多次。他现在正在想，如果他比您先一步将这个行星上所有的脆皮，装备和地图全都抹除，他的计划会成功吗？但是，他并没有想到，您可以将绒绒带进传送门并且和您一起战斗，并且彻底破坏德罗披提的计划！绒绒也想体验一下其他脆皮战斗时的感觉了！在这个挑战里面，所有的装备和所有世界掉落全部被禁用了，您不能运行地图，同时您不能获得任何脆皮（除了绒绒）。但是绒绒自带无限格挡，且敌人的伤害不能穿透绒绒的无限格挡！",
+			get description(){return this.desc(1);},
+			get squaredDescription(){return this.desc(2);},
+			desc(a){return (a==1?"<b>这个挑战和它对应的挑战<sup>2</sup>共享最高通过的区域/尖塔！您不用再担心运行同一个挑战两次了！</b><br>":a==2?"<b>这个挑战和它对应的普通挑战共享最高通过的区域/尖塔！您不用再担心运行同一个挑战两次了！</b><br>":"")+"德罗披提意识到在以前的时间线里面，您终止了他的计划非常多次。他现在正在想，如果他比您先一步将这个行星上所有的脆皮，装备和地图全都抹除，他的计划会成功吗？但是，他并没有想到，您可以将绒绒带进传送门并且和您一起战斗，并且彻底破坏德罗披提的计划！绒绒也想体验一下其他脆皮战斗时的感觉了！在这个挑战里面，所有的装备和所有世界掉落全部被禁用了，您不能运行地图，同时您不能获得任何脆皮（除了绒绒）。但是绒绒自带无限格挡，且敌人的伤害不能穿透绒绒的无限格挡！"+(a!=2?"<span class=green>在该挑战里面，每通过一个区域，黑暗精华的获取量增加7%，效果叠乘！当前效果："+prettify(Math.pow(1.07, (game.c2.Finale ?? 1)-1))+"倍。</span>并且，在该挑战里面通过<b>尖塔 I</b>可以解锁新的专精，并且使绒绒突破他的极限！":"");},
 			completed: false,
 			filter: function () {
 				return (getHighestLevelCleared(true) >= 889);
@@ -4262,6 +4359,10 @@ var toReturn = {
 			onLoad: function () {
 				this.start();
 			},
+			replaceSquareFreq: 1,
+			replaceSquareThresh: 2,
+			replaceSquareReward: 1,
+			replaceSquareGrowth: 1,
 			allowU1: true,
 			blockU2: true,
 			allowSquared: true,
@@ -8021,25 +8122,24 @@ var toReturn = {
 		},
 		oneOffs: {
 			//Turns out this method of handling the feats does NOT scale well... adding stuff to the middle is a nightmare
-			finished: [
-			false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
+			finished: [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
 			title: "Feats",
 			get descriptions () {
 				return ["Complete the Dimension of Anger before buying Bounty", "Reach Z30 with no respec and 60 or less He spent", "Have over " + prettify(1e6) + " traps at once", "Die 50 times to a single Voidsnimp", "Beat Balance, never having more than 100 stacks", "Reach Zone 10 with 5 or fewer dead Trimps", "Reach exactly 1337 He/Hr", "Attack 20 times without dying in Electricity", "Create a perfect Map", "Use up all 7 Daily Challenges", "Equip a magnificent or better Staff and Shield", "Reach Z60 with 1000 or fewer dead Trimps", "Reach Z120 without using manual research", "Reach Z75 without buying any housing", "Find a Common heirloom at Z146 or higher", "Spend over " + prettify(250e3) + " total He on Wormholes", "Reach Z60 with rank " + romanNumeral(3) + " or lower equipment", "Kill an Improbability in one hit", "Beat a Lv 60+ Destructive Void Map with no deaths", "在到达区域5后未受到过敌人暴击的前提下，完成粉碎挑战", "Kill an enemy with 100 stacks of Nom", "Break the Planet with 5 or fewer lost battles", "Reach Z60 without hiring a single Trimp", "Complete a Zone above 99 without falling below 150 stacks on Life", "Spend at least 10 minutes breeding an army with Geneticists", "Beat Toxicity, never having more than 400 stacks", "Own 100 of all housing buildings", "在到达区域60前，超杀世界上的每个格子", "Complete Watch without entering maps or buying Nurseries", "Complete Lead with 100 or fewer lost battles", "Build your 10th Spire Floor", "Kill " + prettify(500e3) + " enemies in your Spire", "Equip a Magmatic Staff and Shield", "让世界上一名敌人的攻击力低于1", "Complete Lead with 1 or fewer Gigastations", "Complete Corrupted without Geneticists", "Complete a Void Map at Z215 on Domination", "Complete The Spire with 0 deaths", "Overkill an Omnipotrimp", "Defeat a Healthy enemy with 200 stacks of wind", "Build up a Poison debuff that's 1000x higher than your attack", "使挑战<sup>2</sup>的加成达到2000%", "Complete a Bionic Wonderland map 45 levels higher than your Zone number", "Beat the Spire with no respec and " + prettify(100e6) + " or less He Spent", "Defeat an enemy on Obliterated", "在区域1获得一个合并者", "Get 10 Red Crits in a row", "Beat Z75 on the Scientist V challenge", "Gain at least 01189998819991197253 He from one Bone Portal", "Kill an Enemy on Eradicated", "Complete Spire " + romanNumeral(5) + " with no deaths", "Build your 20th Spire Floor", "Complete a Bionic Wonderland map 200 levels higher than your Zone number", "Complete Spire " + romanNumeral(2) + " on the Coordinate challenge", "Beat Spire " + romanNumeral(2) + " with no respec and " + prettify(1e9) + " or less He spent", "Beat Imploding Star on Obliterated", "Close 750 Nurseries at the same time", "Earn Dark Essence with no respec and 0 He spent", "Reach Magma on Obliterated", "Break the Planet on Eradicated", 
-				"通过尖塔 " + romanNumeral(7), "Break the Planet on Spired", "Complete The Prison on Eradicated", "Complete The Real Spire(Z200) on Spired", "Complete Bionic Wonderland on Eradicated", "Complete Bionic Wonderland " + romanNumeral(53), "Clear Spire in Scientist V", "Complete The Second Real Spire(Z300) on Spired"];
+				"通过尖塔 " + romanNumeral(7), "Break the Planet on Spired", "Complete The Prison on Eradicated", "Complete The Real Spire(Z200) on Spired", "Complete Bionic Wonderland on Eradicated", "Complete Bionic Wonderland " + romanNumeral(53), "Clear Spire in Scientist V", "Complete The Second Real Spire(Z300) on Spired", "Clear Spire in Finale", "Clear Spire in Eradicated"];
 			},
 			tiers: [2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 
-				10, 11, 11, 13, 13, 13, 14, 14],
+				10, 11, 11, 13, 13, 13, 14, 14, 14, 14],
 			description: function (number) {
 				return this.descriptions[number];
 			},
-			filters: [19, 29, 29, -1, 39, 59, -1, 79, -1, 99, 124, 59, 119, 74, -1, 74, 59, 59, 59, 124, 144, 59, 59, 109, -1, 164, 59, -1, 179, 179, 199, 199, 229, 245, 179, 189, 214, 199, 229, 299, 235, 65, 169, 199, 424, 349, -1, 129, 399, 549, 599, 199, 324, 299, 299, 424, 229, 179, 424, 549, 801, 801, 549, 801, 549, 805, 200, 801],
+			filters: [19, 29, 29, -1, 39, 59, -1, 79, -1, 99, 124, 59, 119, 74, -1, 74, 59, 59, 59, 124, 144, 59, 59, 109, -1, 164, 59, -1, 179, 179, 199, 199, 229, 245, 179, 189, 214, 199, 229, 299, 235, 65, 169, 199, 424, 349, -1, 129, 399, 549, 599, 199, 324, 299, 299, 424, 229, 179, 424, 549, 801, 801, 549, 801, 549, 805, 200, 801, 890, 549],
 			filterLevel: function(){
 				return game.global.highestLevelCleared;
 			},
 			icon: "icomoon icon-flag",
 			names: ["Forgot Something", "Underachiever", "Hoarder", "Needs Block", "Underbalanced", "Peacekeeper", "Elite Feat", "Grounded", "Maptastic", "Now What", "Swag", "Workplace Safety", "No Time for That", "Tent City", "Consolation Prize", "Holey", "Shaggy", "One-Hit Wonder", "Survivor", "Thick Skinned", "Great Host", "Unbroken", "Unemployment", "Very Sneaky", "Extra Crispy", "Trimp is Poison", "Realtor", "Gotta Go Fast", "Grindless", "Leadership", "Defender", "Stoned", "Swagmatic", "Brr", "Unsatisfied Customer", "Organic Trimps", "Fhtagn", "Invincible", "Mighty", "Mother Lode", "Infected", "Challenged", "Bionic Sniper", "Nerfed", "Obliterate", "M'Algamator", "Critical Luck", "AntiScience", "HeMergency", "Eradicate", "Invisible", "Power Tower", "Bionic Nuker", "Hypercoordinated", "Nerfeder", "Imploderated", "Wildfire", "Unessenceted", "Melted", "Screwed", 
-				"Lucky Spirer", "Broken Spire", "Eradicated Warden", "Spire-In-Spires", "Eradicated Robotrimp", "The Limit of Bionic Wonderland", "Spirentist", "Spires-In-Spires"],
+				"Lucky Spirer", "Broken Spire", "Eradicated Warden", "Spire-In-Spires", "Eradicated Robotrimp", "The Limit of Bionic Wonderland", "Spirentist", "Spires-In-Spires", "Druopitee's plan is completely failed", "Eradicated Spirer"],
 			newStuff: []
 		},
 		oneOffs2: {
@@ -8295,7 +8395,7 @@ var toReturn = {
 				currentBonus: 0,
 				stacks: 0,
 				specialDescription: function(modifier){
-					var triggerStacks = (autoBattle.oneTimers.Burstier.owned) ? 4 : 5;
+					var triggerStacks = ((autoBattle.oneTimers.Burstier.owned) ? 4 : 5) - Fluffy.isRewardActive("scruffBurst");
 					return "Each attack by your Trimps adds 1 stack of Charging. When Charging reaches " + triggerStacks + " stacks, your Trimps will release a burst of energy, dealing " + prettify(modifier) + "% of their attack damage. Stacks reset after releasing a Burst or when your Trimps die.";
 				},
 				steps: [-1,-1,-1,-1,-1,-1, -1,-1,-1,[1000,2000,100],-1,-1],

@@ -3116,6 +3116,8 @@ var cnItems = {
 	'You have completed the Liquified challenge! Liquification Mutators are stronger now!': '您完成了液化挑战，液化突变因子的基础效果已经变为17.5%！',
 	'Houseless': '无住房',
 	'Finale': '终幕',
+	'Finale Challenge!': '终幕挑战',
+	' You have unlocked new masteries, also Fluffy\'s evolution limit is broken!': '您解锁了新的专精，并且绒绒突破了他的极限！',
 	
 	
     //#endregion 挑战相关
@@ -3954,6 +3956,10 @@ var cnItems = {
     'Show Scruffy Info': '显示污污的信息',
     'Show Cruffys Info': '显示朽朽的信息',
     'Pat': '拍头',
+	
+	'Every Evolution of Fluffy increase his attack by 210% (compounding) when running Finale Challenge.': '绒绒的每次进化使他在终幕挑战中的攻击力增加210%，效果叠乘。',
+	
+	
     //#endregion 绒绒污污相关
     //#region 突变因子相关
     'Hide Names': '隐藏名称',
