@@ -4708,6 +4708,7 @@ var u2Mutations = {
         var cost = getNextTalentCost();
         if (cost == -1) return "";
         if (game.global.essence >= cost) return '&nbsp;<span class="alert badge">!</span>&nbsp;&nbsp;';
+		return "";
     },
     toggleRespec: function(displayOnly, forceHide){
         var mutRespecBtn = document.getElementById('respecMutatorsBtn');

@@ -1561,7 +1561,7 @@ function countChallengeSquaredReward(numberOnly, mesmerPreview, getUniverseArray
 		if (challenge.allowU2 && challenge.blockU1) rewardU2 += thisReward;
 		else reward += thisReward;
 	}
-	if (reward > 90000) reward = 90000;
+	if (reward > 110000) reward = 110000;
 	if (reward >= 2000 && !mesmerPreview) giveSingleAchieve("Challenged");
 	if (rewardU2 >= 2000 && !mesmerPreview) giveSingleAchieve("Superchallenged");
 	if (getUniverseArray) return [reward, rewardU2];
@@ -1784,8 +1784,9 @@ function displayChallenges() {
 		else if (what == "Liquified") done = game.global.liquifiedChallDone;
 		else if (what == "Houseless") done = game.global.houselessChallDone;
 		done = (done) ? "finishedChallenge" : "";
+		if (what == "Finale") done = '" style="background-color: hsl(' + ((game.global.finaleChallDone + 1) * 60) + ',50%,50%)';
 		if (challenge.heliumThrough || what == "Experience") done = "challengeRepeatable";
-		if (challengeSquaredMode) done = '" style="background-color: ' + getChallengeSquaredButtonColor(what);
+		if (what != "Finale" && challengeSquaredMode) done = '" style="background-color: ' + getChallengeSquaredButtonColor(what);
 		if (thisFail) done = "nextChallenge";
 		if (!name) name = what;
 		//make sure the challengeSquaredMode color still works after messing with line below
@@ -2021,6 +2022,7 @@ function getSquaredDescriptionInRun(hideDesc){
 	var description = "";
 	if (!hideDesc){
 		description = "\"" + challenge.squaredDescription + "\" " + getSpecialSquaredRewards(challenge);
+		if(game.global.challengeActive == "Finale") description = "\"" + challenge.desc(0) + "\" " + getSpecialSquaredRewards(challenge);
 	}
 	description += "<b>You are currently at Zone " + game.global.world;
 	var portalText = (game.global.viewingUpgrades) ? "abandon the challenge " : "use the portal ";
@@ -9602,6 +9604,7 @@ function setMutationTooltip(which, mutation){
 }
 
 function setVoidCorruptionIcon(regularMap){
+	if(game.talents.tier11b.purchased)return;
 	var attackScale = "";
 	var healthScale = "";
 	if (regularMap || !mutations.Magma.active()){
@@ -10913,7 +10916,7 @@ function startFight() {
             var difficulty = map.difficulty;
             cell.attack *= difficulty;
             cell.health *= difficulty;
-			if (game.global.world >= corruptionStart){
+			if (game.global.world >= corruptionStart && !game.talents.tier11b.purchased){
 				if (mutations.Magma.active() && map.location == "Void"){
 					cell.attack *= (mutations.Corruption.statScale(3)).toFixed(1);
 					cell.health *= (mutations.Corruption.statScale(10)).toFixed(1);
@@ -11783,6 +11786,7 @@ function calculateDamage(number, buildString, isTrimp, noCheckAchieve, cell, noF
 		if (game.global.challengeActive == "Berserk") number *= game.challenges.Berserk.getAttackMult();
 		if (game.global.challengeActive == "Smithless" && game.challenges.Smithless.fakeSmithies > 0) number *= game.challenges.Smithless.getTrimpMult();
 		if (game.global.challengeActive == "Desolation") number *= game.challenges.Desolation.trimpAttackMult();
+		if (game.global.challengeActive == "Finale" && Fluffy.isRewardActive("FluffyE10")) number *= Math.pow(3.1, Fluffy.getCurrentPrestige());
 		if (game.challenges.Nurture.boostsActive()) number *= game.challenges.Nurture.getStatBoost();
 		number = calcHeirloomBonus("Shield", "trimpAttack", number);
 		if (Fluffy.isActive()){
@@ -11920,23 +11924,23 @@ function tryScry(){
 	if (reward <= 0) return;
 	if (countHeliumSpent() <= 0 && game.global.canRespecPerks && !game.global.bonePortalThisRun) giveSingleAchieve("Unessenceted");
 	game.global.essence += reward;
-	var maxCost = getTotalTalentCost();
-	var talentCount = countPurchasedTalents();
-	var maxTalents = Object.keys(game.talents).length;
-	if (game.global.spentEssence + game.global.essence > maxCost || talentCount == maxTalents){
-		if (talentCount == maxTalents){
-			game.global.essence = 0;
-		}
-		else{
-			game.global.essence = Math.max(maxCost - game.global.spentEssence, 0);
-			game.global.essence = Math.round(game.global.essence);
-		}
-		message("You have no more use for Dark Essence!", "Loot", "*cloud3", "essenceMessage", "essence");
-	}
-	else {
+	//var maxCost = getTotalTalentCost();
+	//var talentCount = countPurchasedTalents();
+	//var maxTalents = Object.keys(game.talents).length;
+	//if (game.global.spentEssence + game.global.essence > maxCost || talentCount == maxTalents){
+	//	if (talentCount == maxTalents){
+	//		game.global.essence = 0;
+	//	}
+	//	else{
+	//		game.global.essence = Math.max(maxCost - game.global.spentEssence, 0);
+	//		game.global.essence = Math.round(game.global.essence);
+	//	}
+	//	message("You have no more use for Dark Essence!", "Loot", "*cloud3", "essenceMessage", "essence");
+	//}
+	//else {
 		var essenceRemaining = countRemainingEssenceDrops(1);
 		message("You found " + prettify(reward) + " Dark Essence! There " + ((essenceRemaining == 1) ? "is " : "are ") + essenceRemaining + " Essence drop" + needAnS(essenceRemaining) + " left in the current Zone.", "Loot", "*cloud3", "essenceMessage", "essence");
-	}
+	//}
 	updateTalentNumbers();
 	return reward;
 }
@@ -11970,6 +11974,7 @@ function calculateScryingReward(){
 	if (scryableLevels <= 0) return 0;
 	var modAmt = (game.global.canMagma) ? 1.1683885 : 1.11613; //4.0 compatibility
 	var num = (1 * Math.pow(modAmt, scryableLevels)) / 3;
+	num = num * Math.pow(1.07, (game.c2.Finale ?? 1) - 1);
 	if (num < 1) num = 1;
 	if (game.talents.scry.purchased && !game.global.mapsActive){
 		var worldCell = getCurrentWorldCell();
@@ -12002,7 +12007,7 @@ function getHighestUnlockedTalentTier(){
 }
 
 function getHighestIdealRow(){
-	var idealPoints = [16, 22, 28, 34, 40, 46, 51, 55, 58, 60];
+	var idealPoints = [16, 22, 28, 34, 40, 46, 51, 55, 58, 60, 66, 72];
 	var affordable = checkAffordableTalents();
 	for (var x = 0; x < idealPoints.length; x++){
 		if (affordable < idealPoints[x]) return x;
@@ -12021,6 +12026,7 @@ function displayTalents(){
 		var talent = game.talents[item];
 		if (talent.tier > currentTier) {
 			currentTier = talent.tier;
+			if(currentTier >= 11 && !game.global.finaleChallDone)break;
 			html += "</div><div class='talentTierRow talentRow" + ((tiers[currentTier - 1] > 0) ? 'Unlocked' : 'Locked') + "'>";
 		}
 		var talentClass = ((ctrlPressed && talent.tier <= highestBuyoutRow) ? ((talent.tier <= highestIdealRow) ? "talentIdealRow " : "talentCanBuyRow ") : "") + "talentItem noselect talent" + ((talent.purchased) ? "Purchased" : "NotPurchased");
@@ -12061,6 +12067,7 @@ function displayTalents(){
 	swapClass('color', respecAvailable, respecBtn)
 	if (game.global.freeTalentRespecs > 0) respecBtn.innerHTML = "Respec (" + game.global.freeTalentRespecs + " Free!)";
 	else respecBtn.innerHTML = "Respec (20 Bones)";
+	if(countPurchasedTalents() >= 60)respecBtn.style.display="none";
 	updateTalentNumbers();
 }
 
@@ -12161,7 +12168,7 @@ function completeTalentPurchase(talent){
 	game.global.spentEssence += cost;
 	talent.purchased = true;
 	if (typeof talent.onPurchase === 'function') talent.onPurchase();
-	if (countPurchasedTalents() == Object.keys(game.talents).length) game.global.essence = 0;
+	//if (countPurchasedTalents() == Object.keys(game.talents).length) game.global.essence = 0;
 	displayTalents();
 }
 
@@ -12205,7 +12212,7 @@ function getAllowedTalentTiers(){
 
 	var ownedLastTier = countPurchasedTalents(1);
 	var allowed = [colsPerTier - ownedLastTier];
-	for (var x = 2; x <= totalTiers; x++){
+	for (var x = 2; x <= 10; x++){
 		var ownedThisTier = countPurchasedTalents(x);
 		if (ownedLastTier <= 1){
 			//-1 means the tier is locked
@@ -12218,6 +12225,17 @@ function getAllowedTalentTiers(){
 		else{
 			//previous tier is not maxxed out. 0 is possible and means the tier is displayed (not locked), but not greyed out and not purchaseable
 			allowed.push(ownedLastTier - ownedThisTier - 1);
+		}
+		ownedLastTier = ownedThisTier;
+	}
+	for (var x = 11; x <= totalTiers; x++){
+		var ownedThisTier = countPurchasedTalents(x);
+		if (ownedLastTier < 6 || game.global.finaleChallDone < (x - 10)){
+			//-1 means the tier is locked
+			allowed.push(-1);
+		}else{
+			//previous tier is maxxed out, so anything in this tier can be purchased
+			allowed.push(colsPerTier - ownedThisTier);
 		}
 		ownedLastTier = ownedThisTier;
 	}
@@ -12253,6 +12271,7 @@ function checkAffordableTalents(){
 function getNextTalentCost(forceAmt){
 	var count = (isNaN(forceAmt)) ? countPurchasedTalents() : forceAmt;
 	if (count == Object.keys(game.talents).length) return -1;
+	if (count >= 60)return Math.pow(10, count);
 	if (count >= 25){
 		//2824295364810 == Math.floor(10 * Math.pow(3, 24)) == cost of talent 25
 		return Math.floor(2824295364810 * Math.pow(6, count - 24));
@@ -12262,8 +12281,9 @@ function getNextTalentCost(forceAmt){
 
 function getTotalTalentCost(){
 	var count = Object.keys(game.talents).length;
+	return (Math.pow(10, count) - Math.pow(10, 60)) / 9 + 1412147682400 + (2824295364810 * (Math.pow(6, 60 - 24) - 1) / 5);
 	//1412147682400 == 10 * (Math.pow(3, 24) - 1) / 2 == cost of 1-25
-	return 1412147682400 + (2824295364810 * (Math.pow(6, count - 24) - 1) / 5);
+	//return 1412147682400 + (2824295364810 * (Math.pow(6, count - 24) - 1) / 5);
 }
 
 
@@ -13196,7 +13216,7 @@ function giveSpireReward(level){
 			break;
 		case(50):
 			if (spireWorld == 2){
-				if (Fluffy.getCapableLevel() > 0){
+				if (Fluffy.getCapableLevel() > 0 || game.global.challengeActive == "Finale"){
 					message("Out of the corner of your eye, you notice a creature who doesn't seem like he belongs. You walk up closer and notice that it's Fluffy! You turn around expecting to see your other Fluffy, but there is only one. You turn back as he waves at you in recognition, you feel a bit lightheaded, but you've had weirder things happen on this planet. You decide to keep moving up the Spire with your new old friend.", "Story");					
 				}
 				else {
@@ -13245,6 +13265,10 @@ function giveSpireReward(level){
 			if (game.global.spireDeaths == 0) giveSingleAchieve("Invincible");
 			if (spireWorld >= 5 && game.global.spireDeaths == 0) giveSingleAchieve("Invisible");
 			if (spireWorld >= 7) giveSingleAchieve("Lucky Spirer");
+			if (game.global.challengeActive == "Finale"){
+				giveSingleAchieve("Druopitee's plan is completely failed");
+				game.global.finaleChallDone = Math.max(game.global.finaleChallDone ?? 0, spireWorld);
+			}
 			if (game.global.challengeActive == "Spired" && game.global.world >= 300) giveSingleAchieve("Spires-In-Spires");
 			var text = getSpireStory(spireWorld, 10);
 			if (!game.global.runningChallengeSquared){
@@ -13253,18 +13277,19 @@ function giveSpireReward(level){
 			}else if(game.global.challengeActive == "Spired")text += "You have found a Spire Core Heirloom that worth "+Math.floor((game.global.world**3)*Math.pow(10,(game.global.world-300)/100)*(game.global.world%100==0?10:1)*(u2Mutations.tree.Nullifium.purchased?1.1:1))+" Spirestones!";
 			else text += " You find a <b>brand new Spire Core</b>!";
 			if (spireWorld == 6){
-				var talentCount = countPurchasedTalents();
-				var maxTalents = Object.keys(game.talents).length;
-				if (talentCount < maxTalents){
-					var maxCost = getTotalTalentCost();
-					if (game.global.spentEssence + game.global.essence < maxCost){
-						var oldEssence = game.global.essence;
-						game.global.essence = Math.max(maxCost - game.global.spentEssence, 0);
-						game.global.essence = Math.round(game.global.essence);
-						if (game.global.essence > oldEssence)
-						text += "<br/><span class='fullDarkEssence'>At the top of this Spire, you found a gigantic, pitch-black cache with " + prettify(game.global.essence - oldEssence) + " Dark Essence inside, just enough to complete your entire collection!</span><br/>";
-					}
-				}
+				//var talentCount = countPurchasedTalents();
+				//var maxTalents = Object.keys(game.talents).length;
+				//if (talentCount < maxTalents){
+				//	var maxCost = getTotalTalentCost();
+				//	if (game.global.spentEssence + game.global.essence < maxCost){
+				//		var oldEssence = game.global.essence;
+				//		game.global.essence = Math.max(maxCost - game.global.spentEssence, 0);
+				//		game.global.essence = Math.round(game.global.essence);
+				//		if (game.global.essence > oldEssence)
+				game.global.essence += 1e40;
+				text += "<br/><span class='fullDarkEssence'>At the top of this Spire, you found a gigantic, pitch-black cache with " + prettify(1e40) + " Dark Essence inside, just enough to complete your entire collection!</span><br/>";
+				//	}
+				//}
 			}
 			createHeirloom(game.global.world, false, true);
 			if (game.global.spiresCompleted < spireWorld){
@@ -13377,6 +13402,12 @@ function rewardSpire1(level){
 		case 100:
 			if (game.global.spireDeaths == 0) giveSingleAchieve("Invincible");
 			if (game.global.challengeActive == "Scientist") giveSingleAchieve("Spirentist");
+			if (game.global.challengeActive == "Eradicated") giveSingleAchieve("Eradicated Spirer");
+			if (game.global.challengeActive == "Finale"){
+				giveSingleAchieve("Druopitee's plan is completely failed");
+				game.global.finaleChallDone = Math.max(game.global.finaleChallDone ?? 0, 1);
+				message("You have completed the <b>Finale Challenge!</b> You have unlocked new masteries, also Fluffy's evolution limit is broken!", "Notices");
+			}
 			if (game.global.challengeActive == "Spired" && game.global.world >= 59) giveSingleAchieve("Broken Spire");
 			if (game.global.challengeActive == "Spired" && game.global.world >= 200) giveSingleAchieve("Spire-In-Spires");
 			if(game.global.challengeActive != "Spired" || game.global.world == 200)text = "Druopitee collapses to the floor. You were hoping he'd be a little more sane, but whatever. You shut down the corruption device and hope the planet will repair itself soon, then you rummage through his stuff and find keys, surely for the ship!";
@@ -15133,8 +15164,7 @@ function fight(makeUp) {
 	if (game.global.soldierHealth > 0 && getHeirloomBonus("Shield", "gammaBurst") > 0){
 		var burst = game.heirlooms.Shield.gammaBurst;
 		burst.stacks++;
-		var triggerStacks = (autoBattle.oneTimers.Burstier.owned) ? 4 : 5;
-		if (Fluffy.isRewardActive("scruffBurst")) triggerStacks--;
+		var triggerStacks = ((autoBattle.oneTimers.Burstier.owned) ? 4 : 5) - Fluffy.isRewardActive("scruffBurst");
 		if (burst.stacks >= triggerStacks){
 			burst.stacks = triggerStacks;
 			if (cell.health > 0){
@@ -15705,7 +15735,7 @@ function updateGammaStacks(reset){
 		manageStacks(null, null, true, 'gammaSpan', null, null, true);
 		return;
 	}
-	var triggerStacks = (autoBattle.oneTimers.Burstier.owned) ? 4 : 5;
+	var triggerStacks = ((autoBattle.oneTimers.Burstier.owned) ? 4 : 5) - Fluffy.isRewardActive("scruffBurst");
 	var tipText = "Your Trimps are charging up for a Gamma Burst! When Charging reaches " + triggerStacks + " stacks, your Trimps will release a burst of energy, dealing " + prettify(bonus) + "% of their attack damage.";
 	manageStacks('Charging', game.heirlooms.Shield.gammaBurst.stacks, true, 'gammaSpan', 'glyphicon glyphicon-flash', tipText, false);
 }
@@ -17689,8 +17719,8 @@ var Fluffy = {
 	damageModifiers: [1, 1.1, 1.3, 1.6, 2, 2.5, 3.1, 3.8, 4.6, 5.5, 6.5],
 	damageModifiers2: [1, 1.1, 1.3, 1.6, 2, 2.5, 3.1, 3.8, 4.6, 5.5, 25.5, 30.5, 38, 48, 61, 111, 171, 241, 321, 411, 511, 621, 741, 871, 1011, 1161, 1311, 1311],
 	rewards: ["stickler", "helium", "liquid", "purifier", "lucky", "void", "helium", "liquid", "eliminator", "overkiller"],
-	prestigeRewards: ["dailies", "voidance", "overkiller", "critChance", "megaCrit", "superVoid", "voidelicious", "naturesWrath", "voidSiphon", "plaguebrought"],
-	rewardsU2: ["trapper", "prism", "heirloopy", "radortle", "healthy", "wealthy", "critChance", "gatherer", "dailies", "exotic", "shieldlayer", "tenacity", "megaCrit", "critChance", "smithy", "biggerbetterheirlooms", "shieldlayer", "void", "moreVoid", "tenacity", "SADailies", "Scruffy21", "bigSeeds", "justdam", "scruffBurst", "justdam", "justdam"],
+	prestigeRewards: ["dailies", "voidance", "overkiller", "critChance", "megaCrit", "superVoid", "voidelicious", "naturesWrath", "voidSiphon", "plaguebrought", "FluffyE10", "critChance", "scruffBurst", "justdam", "justdam", "justdam"],
+	rewardsU2: ["trapper", "prism", "heirloopy", "radortle", "healthy", "wealthy", "critChance", "gatherer", "dailies", "exotic", "shieldlayer", "tenacity", "megaCrit", "critChance", "smithy", "biggerbetterheirlooms", "shieldlayer", "void", "moreVoid", "tenacity", "SADailies", "Scruffy21", "bigSeeds", "scruffBurst", "justdam", "justdam", "justdam"],
 	prestigeRewardsU2: [],
 	checkU2Allowed: function(){
 		if (game.global.universe == 2) return true;
@@ -17728,7 +17758,7 @@ var Fluffy = {
 		return (fluffyLevel <= capableLevel);
 	},
 	isActive: function(){
-		return (game.global.spireRows >= 15 || this.getCapableLevel() > 0);
+		return (game.global.spireRows >= 15 || this.getCapableLevel() > 0 || game.global.challengeActive == "Finale");
 	},
 	isMaxLevel: function() {
 		return (this.currentLevel == this.getRewardList().length);
@@ -18130,7 +18160,7 @@ var Fluffy = {
 		if (!big) return topText;
 		//clicked
 
-		if (Fluffy.currentLevel == 10 && this.getCurrentPrestige() < prestigeRewardsList.length)
+		if (Fluffy.currentLevel == 10 && this.getCurrentPrestige() < (game.global.finaleChallDone ? 15 /*prestigeRewardsList.length*/ : 10))
 			topText += "<span class='fluffyEvolveText'>" + name + " is ready to Evolve! This will reset his damage bonus and most abilities back to level 0, but he will regrow to be stronger than ever. You can cancel this Evolution at any point to return to level 10.<br/><span class='btn btn-md btn-success' onclick='Fluffy.prestige(); Fluffy.refreshTooltip(true);'>Evolve!</span></span><br/>";
 		if (Fluffy.canGainExp() && game.global.world >= minZoneForExp && (!showCruffys || fluffyInfo[0] < 19)) {
 			topText += "- " + name + "'s Exp gain at the end of each Zone is equal to: ";
@@ -18367,6 +18397,15 @@ var Fluffy = {
 		radortle2: {
 			description: "Scruffy's 4th bonus that increases Radon gain based on last Portal's highest Zone is no longer based on last Portal, and is now based on your highest Zone ever reached in Universe 2."
 		},
+
+
+		FluffyE10: {
+			get description(){
+				if(game.global.highestLevelCleared >= 890)return "Every Evolution of Fluffy increase his attack by 210% (compounding) when running Finale Challenge.";
+				return "Provides no bonus other than damage. Will some day evolve into a more powerful boost!";
+			},
+		},
+
 
 		//Cruffys
 		cruf1: {
