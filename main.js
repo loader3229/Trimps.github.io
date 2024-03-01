@@ -1073,6 +1073,7 @@ function load(saveString, autoLoad, fromPf) {
 	//End Temporary
 	
 	
+	if (game.global.infblock) game.global.soldierCurrentBlock = Infinity;
 	
 	portalUniverse = game.global.universe;
 	Fluffy.handleBox();
@@ -1281,7 +1282,6 @@ function load(saveString, autoLoad, fromPf) {
 		updatePortalTimer();
 		document.getElementById("portalTimer").className = "timerPaused";
 	}
-	if (game.global.infblock) game.global.soldierCurrentBlock = Infinity;
 	return true;
 }
 
