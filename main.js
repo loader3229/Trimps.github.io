@@ -13356,7 +13356,7 @@ function giveSpireReward(level){
 				//		game.global.essence = Math.round(game.global.essence);
 				//		if (game.global.essence > oldEssence)
 				game.global.essence += 1e40;
-						text += "<br/><span class='fullDarkEssence'>您在塔顶发现了一个巨大的漆黑箱子，里面装着" + prettify(game.global.essence - oldEssence) + "黑暗精华，正好足够升级所有专精！</span><br/>";
+						text += "<br/><span class='fullDarkEssence'>您在塔顶发现了一个巨大的漆黑箱子，里面装着" + prettify(1e40) + "黑暗精华，正好足够升级所有专精！</span><br/>";
 				//	}
 				//}
 			}
