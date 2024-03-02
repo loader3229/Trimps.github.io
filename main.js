@@ -1561,7 +1561,7 @@ function countChallengeSquaredReward(numberOnly, mesmerPreview, getUniverseArray
 		if (challenge.allowU2 && challenge.blockU1) rewardU2 += thisReward;
 		else reward += thisReward;
 	}
-	if (reward > 110000) reward = 110000;
+	if (reward > 120000) reward = 120000;
 	if (reward >= 2000 && !mesmerPreview) giveSingleAchieve("Challenged");
 	if (rewardU2 >= 2000 && !mesmerPreview) giveSingleAchieve("Superchallenged");
 	if (getUniverseArray) return [reward, rewardU2];
@@ -9037,7 +9037,7 @@ function getGeneratorFuelCap(includeStorage, checkingHybrid){
 }
 
 function increaseTheHeat(){
-	if (game.resources.trimps.soldiers > 0) {
+	if (game.resources.trimps.soldiers > 0 && !(Fluffy.isRewardActive("FluffyE13") && game.global.challengeActive == "Finale")) {
 		var newMult = mutations.Magma.getTrimpDecayMult(game.global.world);
 		game.global.soldierCurrentAttack *= newMult;
 		game.global.soldierHealthMax *= newMult;
@@ -10814,7 +10814,7 @@ function startFight() {
 		badName = getEmpowerment(-1, true) + " " + badName;
 		badName = "<span class='badNameMutation badName" + getEmpowerment(-1) + "'>" + badName + "</span>";
 	}
-	if (cell.name == "Omnipotrimp" && game.global.world % 5 == 0 && !game.global.spireActive){
+	if (cell.name == "Omnipotrimp" && game.global.world % 5 == 0 && !game.global.spireActive && !(Fluffy.isRewardActive("FluffyE13") && game.global.challengeActive == "Finale")){
 		badName += ' <span class="badge badBadge Magma" onmouseover="tooltip(\'Superheated\', \'customText\', event, \'This Omnipotrimp is Superheated, and will explode on death.\')" onmouseout="tooltip(\'hide\')"><span class="icomoon icon-fire2"></span></span>';
 	}
 	if (game.global.brokenPlanet && !game.global.mapsActive){
@@ -11183,7 +11183,7 @@ function startFight() {
 			game.global.soldierHealthMax *= game.jobs.Amalgamator.getHealthMult();
 		}
 		//Magma
-		if (mutations.Magma.active()){
+		if (mutations.Magma.active() && !(Fluffy.isRewardActive("FluffyE13") && game.global.challengeActive == "Finale")){
 			var magMult = mutations.Magma.getTrimpDecay();
 			game.global.soldierHealthMax *= magMult;
 			game.global.soldierCurrentAttack *= magMult;
@@ -11360,7 +11360,7 @@ function startFight() {
 		//Check differences in equipment, apply perks, bonuses, and formation
 		if (game.global.difs.health !== 0) {
 			var healthTemp = trimpsFighting * game.global.difs.health * ((game.portal.Toughness.modifier * getPerkLevel("Toughness")) + 1);
-			if (mutations.Magma.active()){
+			if (mutations.Magma.active() && !(Fluffy.isRewardActive("FluffyE13") && game.global.challengeActive == "Finale")){
 				healthTemp *= mutations.Magma.getTrimpDecay();
 			}
 			if (game.global.universe == 2 && u2Mutations.tree.Health.purchased)	healthTemp *= 1.5;
@@ -11421,7 +11421,7 @@ function startFight() {
 		}
 		if (game.global.difs.attack !== 0) {
 			var attackTemp = trimpsFighting * game.global.difs.attack * ((game.portal.Power.modifier * getPerkLevel("Power")) + 1);
-			if (mutations.Magma.active()){
+			if (mutations.Magma.active() && !(Fluffy.isRewardActive("FluffyE13") && game.global.challengeActive == "Finale")){
 				attackTemp *= mutations.Magma.getTrimpDecay();
 			}
 			if (getPerkLevel("Power_II")) attackTemp *= (1 + (game.portal.Power_II.modifier * getPerkLevel("Power_II")));
@@ -11787,6 +11787,7 @@ function calculateDamage(number, buildString, isTrimp, noCheckAchieve, cell, noF
 		if (game.global.challengeActive == "Smithless" && game.challenges.Smithless.fakeSmithies > 0) number *= game.challenges.Smithless.getTrimpMult();
 		if (game.global.challengeActive == "Desolation") number *= game.challenges.Desolation.trimpAttackMult();
 		if (game.global.challengeActive == "Finale" && Fluffy.isRewardActive("FluffyE10")) number *= Math.pow(3.1, Fluffy.getCurrentPrestige());
+		if (game.global.challengeActive == "Finale" && Fluffy.isRewardActive("FluffyE13")) number *= 11;
 		if (game.challenges.Nurture.boostsActive()) number *= game.challenges.Nurture.getStatBoost();
 		number = calcHeirloomBonus("Shield", "trimpAttack", number);
 		if (Fluffy.isActive()){
@@ -15856,7 +15857,7 @@ function planetBreaker(){
 	for (var item in game.equipment){
 		prestigeEquipment(item, true, true);
 	}
-	unlockUpgrade("Formations");
+	if(game.global.challengeActive != "Finale")unlockUpgrade("Formations");
 	buffVoidMaps();
 	if (game.stats.battlesLost.value <= 5) giveSingleAchieve("Unbroken");
 }
@@ -15967,7 +15968,7 @@ function unlockFormation(what){
 	if (what == 3 || (game.upgrades.Barrier.done == 1)){
 		document.getElementById("formation3").style.display = "block";
 	}
-	if ((game.global.world >= 60 && getHighestLevelCleared() >= 180) && (what == "start" || what == "all" || what == 4)){
+	if (((game.global.world >= 60 || game.global.challengeActive == "Finale") && getHighestLevelCleared() >= 180) && (what == "start" || what == "all" || what == 4)){
 		document.getElementById("formation4").style.display = "block";
 	}
 	if (usingRealTimeOffline) offlineProgress.updateFormations(true);
@@ -17719,7 +17720,7 @@ var Fluffy = {
 	damageModifiers: [1, 1.1, 1.3, 1.6, 2, 2.5, 3.1, 3.8, 4.6, 5.5, 6.5],
 	damageModifiers2: [1, 1.1, 1.3, 1.6, 2, 2.5, 3.1, 3.8, 4.6, 5.5, 25.5, 30.5, 38, 48, 61, 111, 171, 241, 321, 411, 511, 621, 741, 871, 1011, 1161, 1311, 1311],
 	rewards: ["stickler", "helium", "liquid", "purifier", "lucky", "void", "helium", "liquid", "eliminator", "overkiller"],
-	prestigeRewards: ["dailies", "voidance", "overkiller", "critChance", "megaCrit", "superVoid", "voidelicious", "naturesWrath", "voidSiphon", "plaguebrought", "FluffyE10", "critChance", "scruffBurst", "justdam", "justdam", "justdam"],
+	prestigeRewards: ["dailies", "voidance", "overkiller", "critChance", "megaCrit", "superVoid", "voidelicious", "naturesWrath", "voidSiphon", "plaguebrought", "FluffyE10", "critChance", "scruffBurst", "FluffyE13", "justdam", "justdam"],
 	rewardsU2: ["trapper", "prism", "heirloopy", "radortle", "healthy", "wealthy", "critChance", "gatherer", "dailies", "exotic", "shieldlayer", "tenacity", "megaCrit", "critChance", "smithy", "biggerbetterheirlooms", "shieldlayer", "void", "moreVoid", "tenacity", "SADailies", "Scruffy21", "bigSeeds", "scruffBurst", "justdam", "justdam", "justdam"],
 	prestigeRewardsU2: [],
 	checkU2Allowed: function(){
@@ -18160,7 +18161,7 @@ var Fluffy = {
 		if (!big) return topText;
 		//clicked
 
-		if (Fluffy.currentLevel == 10 && this.getCurrentPrestige() < (game.global.finaleChallDone ? 15 /*prestigeRewardsList.length*/ : 10))
+		if (Fluffy.currentLevel == 10 && this.getCurrentPrestige() < (game.global.challengeActive == "Finale"? 0 : game.global.finaleChallDone ? 15 /*prestigeRewardsList.length*/ : 10))
 			topText += "<span class='fluffyEvolveText'>" + name + " is ready to Evolve! This will reset his damage bonus and most abilities back to level 0, but he will regrow to be stronger than ever. You can cancel this Evolution at any point to return to level 10.<br/><span class='btn btn-md btn-success' onclick='Fluffy.prestige(); Fluffy.refreshTooltip(true);'>Evolve!</span></span><br/>";
 		if (Fluffy.canGainExp() && game.global.world >= minZoneForExp && (!showCruffys || fluffyInfo[0] < 19)) {
 			topText += "- " + name + "'s Exp gain at the end of each Zone is equal to: ";
@@ -18404,6 +18405,9 @@ var Fluffy = {
 				if(game.global.highestLevelCleared >= 890)return "Every Evolution of Fluffy increase his attack by 210% (compounding) when running Finale Challenge.";
 				return "Provides no bonus other than damage. Will some day evolve into a more powerful boost!";
 			},
+		},
+		FluffyE13: {
+			description: "In Finale challenge, Fluffy gain +1000% attack, can use Formations, and is immune to Magma and Omnipotrimps!"
 		},
 
 

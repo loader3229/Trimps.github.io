@@ -698,8 +698,8 @@ function tooltip(what, isItIn, event, textString, attachFunction, numCheck, rena
 		if (game.talents.headstart.purchased) tooltipText += "<p><b>Note that your Headstart mastery will be disabled during Challenge<sup>" + sup + "</sup> runs.</b></p>";
 		if (portalUniverse == 1 && uniArray[0] >= 35000){
 			var color = (uniArray[0] >= 50000) ? " style='color: red;'" : "";
-			var extra = (uniArray[0] >= 110000) ? " You've reached this bonus and are officially done with Challenge<sup>2</sup>! Congratulations!" : "";
-			tooltipText += "<p><b" + color + ">Note that Challenge<sup>2</sup> Bonus is capped at " + prettify(110000) + "%." + extra + "</b></p>"
+			var extra = (uniArray[0] >= 120000) ? " You've reached this bonus and are officially done with Challenge<sup>2</sup>! Congratulations!" : "";
+			tooltipText += "<p><b" + color + ">Note that Challenge<sup>2</sup> Bonus is capped at " + prettify(120000) + "%." + extra + "</b></p>"
 		}
 		costText = "";
 	}
@@ -2643,8 +2643,8 @@ function getBattleStatBd(what) {
 	}
 	//Add Finale
 	if (game.global.challengeActive == "Finale"){
-		currentCalc *= (what == "attack" ? (Fluffy.isRewardActive("FluffyE10")?Math.pow(3.1, Fluffy.getCurrentPrestige()):1) : (what == "block" ? Infinity : 1e200));
-		textString += "<tr><td class='bdTitle'>Finale</td><td></td><td></td><td>x "+prettify((what == "attack" ? (Fluffy.isRewardActive("FluffyE10")?Math.pow(3.1, Fluffy.getCurrentPrestige()):1) : (what == "block" ? Infinity : 1e200)))+"</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+		currentCalc *= (what == "attack" ? (Fluffy.isRewardActive("FluffyE13")?11*Math.pow(3.1, Fluffy.getCurrentPrestige()):Fluffy.isRewardActive("FluffyE10")?Math.pow(3.1, Fluffy.getCurrentPrestige()):1) : (what == "block" ? Infinity : 1e200));
+		textString += "<tr><td class='bdTitle'>Finale</td><td></td><td></td><td>x "+prettify((what == "attack" ? (Fluffy.isRewardActive("FluffyE13")?11*Math.pow(3.1, Fluffy.getCurrentPrestige()):Fluffy.isRewardActive("FluffyE10")?Math.pow(3.1, Fluffy.getCurrentPrestige()):1) : (what == "block" ? Infinity : 1e200)))+"</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
 	}
 	//Add coordination
 	if (what != "shield"){
@@ -3084,7 +3084,7 @@ function getBattleStatBd(what) {
 		textString += "<tr><td class='bdTitle'>Cruffys</td><td></td><td>" + game.challenges.Nurture.getLevel() + "</td><td class='bdPercent'>" + formatMultAsPercent(mult) + "</td><td class='bdNumber'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
 	}
 	//Magma
-	if (mutations.Magma.active() && (what == "attack" || what == "health")){
+	if (mutations.Magma.active() && (what == "attack" || what == "health") && !(Fluffy.isRewardActive("FluffyE13") && game.global.challengeActive == "Finale")){
 		mult = mutations.Magma.getTrimpDecay();
 		var lvls = game.global.world - mutations.Magma.start() + 1;
 		currentCalc *= mult;
@@ -4624,6 +4624,12 @@ function resetGame(keepPortal, resetting) {
 			unlockBuilding("Hut");
 			unlockBuilding("House");
 			game.global.health = 5e201;
+			if(Fluffy.isRewardActive("FluffyE13")){
+				game.upgrades.Formations.allowed = game.upgrades.Formations.done = 1;
+				game.upgrades.Barrier.allowed = game.upgrades.Barrier.done = 1;
+				game.upgrades.Dominance.allowed = game.upgrades.Dominance.done = 1;
+				unlockFormation("all");
+			}
 		}
 		if (game.global.autoUpgradesAvailable) document.getElementById("autoUpgradeBtn").style.display = "block";
 		if (game.global.autoStorageAvailable) {
@@ -5542,6 +5548,7 @@ function updatePs(jobObj, trimps, jobName){ //trimps is true/false, send PS as f
 
 		}
 		if (game.options.menu.useAverages.enabled) psText = parseFloat(psText) + getAvgLootSecond(jobObj.increase);
+		psText = Math.min(psText, 1e300);
 		psText = prettify(psText);
 		psText = "+" + psText + "/sec";
 		elem.textContent = psText;

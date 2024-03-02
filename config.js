@@ -9503,7 +9503,7 @@ var toReturn = {
 					amt = rewardResource("helium", amt, level);
 					message("You managed to steal " + prettify(amt) + " " + heliumOrRadon(true) + " from that Omnipotrimp. That'll teach it.", "Loot", heliumIcon(true), 'helium', 'helium');
 				}
-				if (game.global.world % 5 == 0){
+				if (game.global.world % 5 == 0 && !(Fluffy.isRewardActive("FluffyE13") && game.global.challengeActive == "Finale")){
 					message("The Omnipotrimp explodes, killing all of your soldiers!", "Combat", null, null, 'trimp');
 					game.stats.trimpsKilled.value += game.resources.trimps.soldiers;
 					game.global.soldierHealth = 0;
