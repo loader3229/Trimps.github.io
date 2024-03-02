@@ -9533,7 +9533,7 @@ var toReturn = {
 					amt = rewardResource("helium", amt, level);
 					message("您从全能者身上顺走了" + prettify(amt) + heliumOrRadon(true) + "。让它长长记性。", "Loot", heliumIcon(true), 'helium', 'helium');
 				}
-				if (game.global.world % 5 == 0){
+				if (game.global.world % 5 == 0 && !(Fluffy.isRewardActive("FluffyE13") && game.global.challengeActive == "Finale")){
 					message("全能者爆炸了，杀死了所有士兵！", "Combat", null, null, 'trimp');
 					game.stats.trimpsKilled.value += game.resources.trimps.soldiers;
 					game.global.soldierHealth = 0;
