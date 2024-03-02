@@ -2614,14 +2614,14 @@ var toReturn = {
 			icon: "*star-half"
 		},
 		tier11a: {
-			description: "Starting after your next Portal, U1 Tauntimps will increase all Trimps gained by 0.3% per run instead of adding flat housing.",
+            description: "从下一次传送开始，宇宙1的脆皮咚咚将从根据当前数量增加脆皮上限改为直接使脆皮上限增加0.3%。",
 			name: "Expanding Tauntimp",
 			tier: 11,
 			purchased: false,
 			icon: "gift"
 		},
 		tier11b: {
-			description: "Corruption won't affect maps.",
+			description: "腐化不再影响地图。",
 			name: "Map Reducer III",
 			tier: 11,
 			purchased: false,

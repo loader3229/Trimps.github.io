@@ -3351,6 +3351,9 @@ var cnItems = {
     'Start every post-magma Zone with an additional 60 seconds of credit already applied to your Magmamancers per Spire row completed this run. In addition, every 2 Spires you complete this run increases the maximum time that Magmamancers can stack by 10 minutes!': '本周目每通过一行尖塔，进入岩浆以后的区域时岩浆巫师就额外获得60秒的加成。另外，本周目每通过2个尖塔，岩浆巫师的时间上限就增加10分钟。',
     'Angelic': '天之赐福',
     'Your Trimps heal for 50% of their remaining health immediately before each attack. Due to the intense amount of evil present, Trimps cannot heal in never-before-cleared Spires.': '每次我方脆皮被攻击前恢复剩余生命值50%的生命值。由于尖塔中邪恶存在过多，我方脆皮无法在从未通过的尖塔中恢复生命值。',
+	
+    'Map Reducer III': '地图减压 III',
+	
     'You have already purchased this tier!': '您已经购买了这一层的所有升级！',
     'You must buy this entire tier to be able to spend all of your Dark Essence.': '您必须购买这一层的所有升级，才能花光黑暗精华。',
     'You can afford to purchase this entire tier!': '您的黑暗精华足够购买这一层的所有升级！',
