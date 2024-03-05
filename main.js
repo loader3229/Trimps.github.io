@@ -2589,7 +2589,7 @@ var offlineProgress = {
 		if (game.upgrades.Dominance.done) text += "<div class='formationBtn offlineForm pointer " + ((game.global.formation == 2) ? 'formationStateEnabled' : 'formationStateDisabled') + "' onclick='setFormation(\"2\")'>D</div>";
 		if (game.upgrades.Barrier.done) text += "<div class='formationBtn offlineForm pointer " + ((game.global.formation == 3) ? 'formationStateEnabled' : 'formationStateDisabled') + "' onclick='setFormation(\"3\")'>B</div>";
 		if (getHighestLevelCleared() >= 180) text += "<div class='formationBtn offlineForm pointer " + ((game.global.formation == 4) ? 'formationStateEnabled' : 'formationStateDisabled') + "' onclick='setFormation(\"4\")'>S</div>";
-		if (game.global.uberNature == "Wind") text += "<div class='formationBtn offlineForm pointer " + ((game.global.formation == 5) ? 'formationStateEnabled' : 'formationStateDisabled') + "' onclick='setFormation(\"5\")'>W</div>";
+		if ((game.global.uberNature == "Wind" || Fluffy.isRewardActive("FluffyE14") || game.global.fluffyPrestige >= 15)) text += "<div class='formationBtn offlineForm pointer " + ((game.global.formation == 5) ? 'formationStateEnabled' : 'formationStateDisabled') + "' onclick='setFormation(\"5\")'>W</div>";
 		this.formationsElem.innerHTML = text;
 		this.formationsElem.style.display = 'block';
 	},
@@ -4028,7 +4028,7 @@ function rewardResource(what, baseAmt, level, checkMapLootScale, givePercentage)
 		else if (what != "fragments")
 			amt *= (1 + (game.empowerments.Wind.getCombatModifier()));
 	}
-	if (what != "helium" && what != "fragments" && getUberEmpowerment() == "Wind"){
+	if (what != "helium" && what != "fragments" && (getUberEmpowerment() == "Wind" || getUberEmpowerment() == "ALL")){
 		amt *= 10;
 	}
 	if (what == "helium"){
@@ -7586,6 +7586,7 @@ function createHeirloom(zone, fromBones, spireCore, forceBest){
 	if (game.global.challengeActive == "Spired" && spireCore && game.global.world >= 230)buildHeirloom.nuMod *= (game.global.world/200*Math.pow(10,(game.global.world%100)/100));
 	if (autoBattle.oneTimers.Nullicious.owned && game.global.universe == 2) buildHeirloom.nuMod *= autoBattle.oneTimers.Nullicious.getMult();
 	if (u2Mutations.tree.Nullifium.purchased) buildHeirloom.nuMod *= 1.1;
+	if (Fluffy.isRewardActive("Scruffy22") && !spireCore && rarity == 11) buildHeirloom.nuMod *= 3;
 	game.global.heirloomsExtra.push(buildHeirloom);
 	if (game.options.menu.voidPopups.enabled != 2 || type == "Core" || (getHeirloomRarityRanges(zone, fromBones).length == (rarity + 1))){
 		displaySelectedHeirloom(false, 0, false, "heirloomsExtra", game.global.heirloomsExtra.length - 1, true);
@@ -7774,6 +7775,7 @@ function getMapIndex(mapId) {
 
 function getUberEmpowerment(){
 	if (game.global.world < getNatureStartZone()) return "";
+	if (Fluffy.isRewardActive("FluffyE14") || game.global.fluffyPrestige >= 15)return "ALL";
 	return game.global.uberNature;
 }
 
@@ -7804,7 +7806,7 @@ function stackPoison(trimpAttack){
 
 function handlePoisonDebuff(){
 	var elem = document.getElementById('poisonEmpowermentIcon');
-	if (getEmpowerment() != "Poison"){
+	if (getEmpowerment() != "Poison" && (!Fluffy.isRewardActive("FluffyE14") || game.global.challengeActive != "Finale")){
 		game.empowerments.Poison.currentDebuffPower = 0;
 		if (elem == null) return;
 		elem.style.display = 'none';
@@ -7934,6 +7936,7 @@ function getRetainModifier(empowermentName){
 function resetEmpowerStacks(){
 	var empowerment = getEmpowerment();
 	for (var item in game.empowerments){
+		if (item == "Poison" && game.global.challengeActive == "Finale")continue;
 		if (item == empowerment){
 			game.empowerments[item].currentDebuffPower = 1 + (Math.ceil(game.empowerments[item].currentDebuffPower * getRetainModifier(item)));
 			continue;
@@ -7997,7 +8000,7 @@ function natureTooltip(event, doing, spending, convertTo){
 		}
 
 	}
-	else if (doing == 'formation' && game.global.uberNature == "Wind"){
+	else if (doing == 'formation' && (game.global.uberNature == "Wind" || Fluffy.isRewardActive("FluffyE14") || game.global.fluffyPrestige >= 15)){
 		var emp = getUberEmpowerment();
 		tipTitle = "Wind Formation";
 		tipText = game.empowerments.Wind.formationDesc;
@@ -8047,7 +8050,7 @@ function updateNatureInfoSpans(){
 		var bonusLevels = emp.getRetainBonus();
 		document.getElementById('natureUpgrade' + item + 'Level').innerHTML = "Lv: " + prettify(emp.getLevel());
 		document.getElementById('natureStackTransfer' + item + 'Level').innerHTML = "Lv: " + prettify(emp.retainLevel + bonusLevels);
-		document.getElementById('uber' + item + "Name").innerHTML = ((emp.getLevel() < 50) ? "Locked" : (game.global.uberNature != "") ? "<span class='red'>" + game.global.uberNature + " active</span>" : "Enlightened " + item);
+		document.getElementById('uber' + item + "Name").innerHTML = ((Fluffy.isRewardActive('FluffyE14') || game.global.fluffyPrestige >= 15) ? "<span class='green'>Activated by Fluffy</span>" : (emp.getLevel() < 50) ? "Locked" :  (game.global.uberNature != "") ? "<span class='red'>" + game.global.uberNature + " active</span>" : "Enlightened " + item);
 		var unlockZone = 235;
 		var mainWindow = document.getElementById('tabCol' + item);
 		if (item == "Wind") unlockZone = 240;
@@ -8093,7 +8096,7 @@ function naturePurchase(doing, spending, convertTo){
 		return;
 	}
 	if (doing == "uberEmpower"){
-		if (game.global.uberNature != "") return;
+		if ((game.global.uberNature != "" || Fluffy.isRewardActive("FluffyE14") || game.global.fluffyPrestige >= 15)) return;
 		var spendingEmpowerment = game.empowerments[spending];
 		if (spendingEmpowerment.getLevel() < 50) return;
 		var cost = spendingEmpowerment.nextUberCost;
@@ -11063,7 +11066,7 @@ function startFight() {
 					if (game.empowerments.Ice.getLevel() >= 50) overkillerCount++;
 					if (game.empowerments.Ice.getLevel() >= 100) overkillerCount++;
 				}
-				if (getUberEmpowerment() == "Ice") overkillerCount += 2;
+				if ((getUberEmpowerment() == "Ice" || getUberEmpowerment() == "ALL")) overkillerCount += 2;
 				if (u2Mutations.tree.MaxOverkill.purchased) overkillerCount++;
 			}
 			else {
@@ -11099,14 +11102,14 @@ function startFight() {
 					}
 					if (empowerment == "Wind"){
 						var hits = cell.plagueHits;
-						if (getEmpowerment() == "Wind" && getUberEmpowerment() == "Wind") hits *= 2;
+						if (getEmpowerment() == "Wind" && (getUberEmpowerment() == "Wind" || getUberEmpowerment() == "ALL")) hits *= 2;
 						if (Fluffy.isRewardActive("plaguebrought")) hits *= 2;
 						game.empowerments[empowerment].currentDebuffPower += Math.ceil(hits);
 						handleWindDebuff();
 					}
 					if (empowerment == "Ice"){
 						var hits = cell.plagueHits;
-						if (getEmpowerment() == "Ice" && getUberEmpowerment() == "Ice") hits *= 2;
+						if (getEmpowerment() == "Ice" && (getUberEmpowerment() == "Ice" || getUberEmpowerment() == "ALL")) hits *= 2;
 						if (Fluffy.isRewardActive("plaguebrought")) hits *= 2;
 						game.empowerments[empowerment].currentDebuffPower += Math.ceil(hits);
 						handleIceDebuff();
@@ -11708,7 +11711,7 @@ function calculateDamage(number, buildString, isTrimp, noCheckAchieve, cell, noF
 			var strBonus = playerSpireTraps.Strength.getWorldBonus();
 			number *= (1 + (strBonus / 100));
 		}
-		if (getUberEmpowerment() == "Poison"){
+		if ((getUberEmpowerment() == "Poison" || getUberEmpowerment() == "ALL")){
 			number *= 3;
 		}
 		if (Fluffy.isRewardActive('voidSiphon') && game.stats.totalVoidMaps.value){
@@ -11976,6 +11979,7 @@ function calculateScryingReward(){
 	var modAmt = (game.global.canMagma) ? 1.1683885 : 1.11613; //4.0 compatibility
 	var num = (1 * Math.pow(modAmt, scryableLevels)) / 3;
 	num = num * Math.pow(1.07, (game.c2.Finale ?? 1) - 1);
+	if(game.talents.tier11c.purchased)num = num * Math.log10(game.global.mutatedSeeds+10);
 	if (num < 1) num = 1;
 	if (game.talents.scry.purchased && !game.global.mapsActive){
 		var worldCell = getCurrentWorldCell();
@@ -12689,7 +12693,7 @@ function nextWorld() {
 	}
 	setEmpowerTab();
 	if (game.global.buyTab == "nature") updateNatureInfoSpans();
-	if (game.global.world == 236 && getUberEmpowerment() == "Wind") unlockFormation(5);
+	if (game.global.world == 236 && (getUberEmpowerment() == "Wind" || getUberEmpowerment() == "ALL")) unlockFormation(5);
 	if (game.global.world >= 241 && game.global.world % 5 == 1){
 		resetEmpowerStacks();
 	}
@@ -12745,6 +12749,7 @@ function nextWorld() {
 }
 
 function checkMapAtZoneWorld(runMap){
+	if(game.global.challengeActive=="Finale")return;
 	var nextCell = game.global.lastClearedCell;
 	if (nextCell == -1) nextCell = 1;
 	else nextCell += 2;
@@ -15088,9 +15093,9 @@ function fight(makeUp) {
 		wasAttacked = true;
         if (game.global.soldierHealth > 0) {
 			if (!badDodge){
-				if (getEmpowerment() == "Poison"){
+				if (getEmpowerment() == "Poison" || game.global.challengeActive == "Finale"){
 					cell.health -= game.empowerments.Poison.getDamage();
-					stackPoison(trimpAttack);
+					if (getEmpowerment() == "Poison")stackPoison(trimpAttack);
 				}
 				if (trimpAttack >= cell.health) {
 					overkill = trimpAttack - cell.health;
@@ -15113,7 +15118,7 @@ function fight(makeUp) {
 			}
 		}
 		else thisKillsTheTrimp();
-		if (cell.health < 1 && game.global.formation == 5 && getUberEmpowerment() == "Wind" && getEmpowerment() == "Wind" && game.empowerments.Wind.currentDebuffPower < game.empowerments.Wind.stackMax()){
+		if (cell.health < 1 && game.global.formation == 5 && (getUberEmpowerment() == "Wind" || getUberEmpowerment() == "ALL") && getEmpowerment() == "Wind" && game.empowerments.Wind.currentDebuffPower < game.empowerments.Wind.stackMax()){
 			cell.health = 1;
 		}
         if (cell.health <= 0) {
@@ -15124,9 +15129,9 @@ function fight(makeUp) {
 		//Fighting a slow enemy, Trimps attack first
 		if (game.global.soldierHealth > 0){
 			if (!badDodge){
-				if (getEmpowerment() == "Poison"){
+				if (getEmpowerment() == "Poison" || game.global.challengeActive == "Finale"){
 					cell.health -= game.empowerments.Poison.getDamage();
-					stackPoison(trimpAttack);
+					if (getEmpowerment() == "Poison")stackPoison(trimpAttack);
 				}
 				if (trimpAttack >= cell.health){
 					overkill = trimpAttack - cell.health;
@@ -15142,7 +15147,7 @@ function fight(makeUp) {
 				cell.health -= trimpAttack;
 				attacked = true;
 			}
-			if (cell.health < 1 && game.global.formation == 5 && getUberEmpowerment() == "Wind" && getEmpowerment() == "Wind" && game.empowerments.Wind.currentDebuffPower < game.empowerments.Wind.stackMax()){
+			if (cell.health < 1 && game.global.formation == 5 && (getUberEmpowerment() == "Wind" || getUberEmpowerment() == "ALL") && getEmpowerment() == "Wind" && game.empowerments.Wind.currentDebuffPower < game.empowerments.Wind.stackMax()){
 				cell.health = 1;
 			}
 			if (cell.health > 0) {
@@ -15176,7 +15181,7 @@ function fight(makeUp) {
 				if (cell.health > 0 && getPlaguebringerModifier() > 0){
 					plaguebringer += (burstDamage * getPlaguebringerModifier());
 				}
-				if (getUberEmpowerment() == "Wind" && getEmpowerment() == "Wind" && game.global.formation == 5 && cell.health < 1) {
+				if ((getUberEmpowerment() == "Wind" || getUberEmpowerment() == "ALL") && getEmpowerment() == "Wind" && game.global.formation == 5 && cell.health < 1) {
 					cell.health = 1;
 				}
 				else if (cell.health <= 0){
@@ -15191,11 +15196,11 @@ function fight(makeUp) {
 	//if (game.global.challengeActive == "Quagmire") overkill = 0;
 	//if (game.global.challengeActive == "Archaeology" && !game.global.mapsActive) overkill = 0;
 	//if (game.challenges.Quest.disableOverkill()) overkill = 0;
-	if (getUberEmpowerment() == "Wind" && getEmpowerment() == "Wind" && game.global.formation == 5) {
+	if ((getUberEmpowerment() == "Wind" || getUberEmpowerment() == "ALL") && getEmpowerment() == "Wind" && game.global.formation == 5) {
 		overkill = 0;
 		if (plaguebringer == 0) plaguebringer = 1;
 	}
-	if ((cell.health / cell.maxHealth < 0.5) && getUberEmpowerment() == "Ice" && getEmpowerment() == "Ice" && game.empowerments.Ice.currentDebuffPower > 20) {
+	if ((cell.health / cell.maxHealth < 0.5) && (getUberEmpowerment() == "Ice" || getUberEmpowerment() == "ALL") && getEmpowerment() == "Ice" && game.empowerments.Ice.currentDebuffPower > 20) {
 		cell.health = 0;
 		thisKillsTheBadGuy();
 		overkill = "shatter";
@@ -15234,15 +15239,16 @@ function fight(makeUp) {
 	}
 	if (getEmpowerment() == "Ice" && attacked){
 		var addStacks = 1;
-		if (getUberEmpowerment() == "Ice" && getEmpowerment() == "Ice") addStacks *= 2;
+		if ((getUberEmpowerment() == "Ice" || getUberEmpowerment() == "ALL") && getEmpowerment() == "Ice") addStacks *= 2;
 		if (Fluffy.isRewardActive("plaguebrought")) addStacks *= 2;
 		game.empowerments.Ice.currentDebuffPower += addStacks;
 		handleIceDebuff();
 	}
 	if (getEmpowerment() == "Wind" && attacked) {
 		var addStacks = 1;
-		if (getUberEmpowerment() == "Wind" && getEmpowerment() == "Wind") addStacks *= 2;
+		if ((getUberEmpowerment() == "Wind" || getUberEmpowerment() == "ALL") && getEmpowerment() == "Wind") addStacks *= 2;
 		if (Fluffy.isRewardActive("plaguebrought")) addStacks *= 2;
+		if (Fluffy.isRewardActive("FluffyE14")) addStacks *= 75;
 		game.empowerments.Wind.currentDebuffPower += addStacks;
 		if (game.empowerments.Wind.currentDebuffPower > game.empowerments.Wind.stackMax()) game.empowerments.Wind.currentDebuffPower = game.empowerments.Wind.stackMax();
 		handleWindDebuff();
@@ -15946,8 +15952,9 @@ function setFormation(what) {
 }
 
 function unlockFormation(what){
-	if (what == 5 || ((what == "start" || what == "all") && game.global.uberNature == "Wind")){
-		if (game.global.uberNature){
+	if (what != "start" && !game.upgrades.Formations.done) return;
+	if (what == 5 || ((what == "start" || what == "all") && (game.global.uberNature == "Wind" || Fluffy.isRewardActive("FluffyE14") || game.global.fluffyPrestige >= 15))){
+		if ((game.global.uberNature == "Wind" || Fluffy.isRewardActive("FluffyE14") || game.global.fluffyPrestige >= 15)){
 			for (var x = 0; x < 5; x++){
 				swapClass('form', 'formSixth', document.getElementById('form' + x + 'Container'));
 			}
@@ -15957,7 +15964,6 @@ function unlockFormation(what){
 			uberElem.style.display = "block";
 		}
 	}
-	if (what != "start" && !game.upgrades.Formations.done) return;
 	if (what == "start" || (what == "all" && game.upgrades.Formations.done == 1)){
 		document.getElementById("formation0").style.display = "block";
 		document.getElementById("formation1").style.display = "block";
@@ -16254,7 +16260,7 @@ function scaleLootBonuses(amt, ignoreScry){
 	amt *= alchObj.getPotionEffect("Elixir of Finding");
 	if (getPerkLevel("Greed")) amt *= game.portal.Greed.getMult();
 	if (Fluffy.isRewardActive("wealthy")) amt *= 2;
-	if (getUberEmpowerment() == "Wind") amt *= 10;
+	if ((getUberEmpowerment() == "Wind" || getUberEmpowerment() == "ALL")) amt *= 10;
 	if (!ignoreScry && isScryerBonusActive()) amt *= 2;
 	if (game.global.challengeActive == "Quagmire") amt *= game.challenges.Quagmire.getLootMult();
 	if (game.global.challengeActive == "Archaeology") amt *= game.challenges.Archaeology.getStatMult("science");
@@ -17720,8 +17726,8 @@ var Fluffy = {
 	damageModifiers: [1, 1.1, 1.3, 1.6, 2, 2.5, 3.1, 3.8, 4.6, 5.5, 6.5],
 	damageModifiers2: [1, 1.1, 1.3, 1.6, 2, 2.5, 3.1, 3.8, 4.6, 5.5, 25.5, 30.5, 38, 48, 61, 111, 171, 241, 321, 411, 511, 621, 741, 871, 1011, 1161, 1311, 1311],
 	rewards: ["stickler", "helium", "liquid", "purifier", "lucky", "void", "helium", "liquid", "eliminator", "overkiller"],
-	prestigeRewards: ["dailies", "voidance", "overkiller", "critChance", "megaCrit", "superVoid", "voidelicious", "naturesWrath", "voidSiphon", "plaguebrought", "FluffyE10", "critChance", "scruffBurst", "FluffyE13", "justdam", "justdam"],
-	rewardsU2: ["trapper", "prism", "heirloopy", "radortle", "healthy", "wealthy", "critChance", "gatherer", "dailies", "exotic", "shieldlayer", "tenacity", "megaCrit", "critChance", "smithy", "biggerbetterheirlooms", "shieldlayer", "void", "moreVoid", "tenacity", "SADailies", "Scruffy21", "bigSeeds", "scruffBurst", "justdam", "justdam", "justdam"],
+	prestigeRewards: ["dailies", "voidance", "overkiller", "critChance", "megaCrit", "superVoid", "voidelicious", "naturesWrath", "voidSiphon", "plaguebrought", "FluffyE10", "critChance", "scruffBurst", "FluffyE13", "FluffyE14", "justdam"],
+	rewardsU2: ["trapper", "prism", "heirloopy", "radortle", "healthy", "wealthy", "critChance", "gatherer", "dailies", "exotic", "shieldlayer", "tenacity", "megaCrit", "critChance", "smithy", "biggerbetterheirlooms", "shieldlayer", "void", "moreVoid", "tenacity", "SADailies", "Scruffy21", "Scruffy22", "scruffBurst", "justdam", "justdam", "justdam"],
 	prestigeRewardsU2: [],
 	checkU2Allowed: function(){
 		if (game.global.universe == 2) return true;
@@ -17750,6 +17756,7 @@ var Fluffy = {
 		this.handleBox();
 	},
 	canGainExp: function () {
+		if (game.global.challengeActive == "Finale")return false;
 		if (!this.isCapableHighEnough(this.currentLevel, true)) return false;
 		return true;
 	},
@@ -17920,7 +17927,7 @@ var Fluffy = {
 		//----Modifiers below this comment will not apply to best fluffy exp bone portal credit or stats----
 		if (game.global.challengeActive == "Daily")
 			reward *= (1 + (getDailyHeliumValue(countDailyWeight()) / 100));
-		if (getUberEmpowerment() == "Ice") reward *= (1 + (game.empowerments.Ice.getLevel() * 0.0025));
+		if ((getUberEmpowerment() == "Ice" || getUberEmpowerment() == "ALL")) reward *= (1 + (game.empowerments.Ice.getLevel() * 0.0025));
 		return reward;
 	},
 	getLevel: function(ignoreCapable){
@@ -18139,6 +18146,18 @@ var Fluffy = {
 		}
 		else if (!Fluffy.isMaxLevel() && (!showCruffys || fluffyInfo[0] < 19)){
 			if (savedLevel > fluffyInfo[0]) topText += "<span class='red'>- " + name + "'s level and damage bonus are currently reduced. " + name + " will return to level " + savedLevel + " when points are placed back in Capable.</span>";
+			else if (game.global.challengeActive == "Finale"){
+				if(game.global.fighting||game.global.world!=1){
+					topText += "<span class='red'>- " + name + " cannot gain any Experience in Finale Challenge, because he is fighting for you in this Challenge!</span>";
+				}else{
+					if(game.jobs.Farmer.owned)topText += "- " + name + " is gathering food for you in the Finale Challenge.<br/>";
+					if(game.jobs.Lumberjack.owned)topText += "- " + name + " is gathering wood for you in the Finale Challenge.<br/>";
+					if(game.jobs.Miner.owned)topText += "- " + name + " is gathering metal for you in the Finale Challenge.<br/>";
+					if(game.jobs.Scientist.owned)topText += "- " + name + " is gathering science for you in the Finale Challenge.<br/>";
+					if(game.jobs.Explorer.owned)topText += "- " + name + " is gathering fragments for you in the Finale Challenge.<br/>";
+					topText += "- " + Fluffy.getFluff();
+				}
+			}
 			else if (!Fluffy.canGainExp()) topText += "<span class='red'>- " + name + " needs " + ((this.getCapableLevel() == 0) ? " at least one point of Capable to gain any Exp" + ((game.portal.Capable.locked) ? ". Complete Spire II to unlock Capable!" : "") : " more points in Capable to gain Exp above level " + this.getCapableLevel() + ".") + "</span>";
 			else {
 				if (game.global.world < minZoneForExp) topText += "<span class='red'>- " + name + " cannot gain any Experience from Zones lower than " + minZoneForExp + "</span>";
@@ -18156,7 +18175,18 @@ var Fluffy = {
 			}
 			
 		}
-		else topText += "- " + Fluffy.getFluff();
+		else if (game.global.challengeActive == "Finale"){
+			if(game.global.fighting||game.global.world!=1){
+				topText += "- " + name + " is fighting for you in the Finale Challenge!";
+			}else{
+				if(game.jobs.Farmer.owned)topText += "- " + name + " is gathering food for you in the Finale Challenge.<br/>";
+				if(game.jobs.Lumberjack.owned)topText += "- " + name + " is gathering wood for you in the Finale Challenge.<br/>";
+				if(game.jobs.Miner.owned)topText += "- " + name + " is gathering metal for you in the Finale Challenge.<br/>";
+				if(game.jobs.Scientist.owned)topText += "- " + name + " is gathering science for you in the Finale Challenge.<br/>";
+				if(game.jobs.Explorer.owned)topText += "- " + name + " is gathering fragments for you in the Finale Challenge.<br/>";
+				topText += "- " + Fluffy.getFluff();
+			}
+		}else topText += "- " + Fluffy.getFluff();
 		topText += "</br>";
 		if (!big) return topText;
 		//clicked
@@ -18179,7 +18209,7 @@ var Fluffy = {
 			if (playerSpireTraps.Knowledge.owned) fluffFormula += ' * <span class="fluffFormKnowledge" onmouseover="Fluffy.expBreakdown(\'knowledge\')" onmouseout="Fluffy.expBreakdown(\'clear\')">Knowledge</span>';
 			if (game.global.frigidCompletions > 0 && game.global.universe == 1) fluffFormula += ' * <span class="fluffFormFrigid" onmouseover="Fluffy.expBreakdown(\'frigid\')" onmouseout="Fluffy.expBreakdown(\'clear\')">Frigid</span>';
 			if (Fluffy.specialExpModifier > 1) fluffFormula += ' * <span class="fluffFormSpecial" onmouseover="Fluffy.expBreakdown(\'special\')" onmouseout="Fluffy.expBreakdown(\'clear\')">' + Fluffy.specialExpModifier + "</span>";
-			if (getUberEmpowerment() == "Ice") fluffFormula += ' * <span class="fluffFormIce" onmouseover="Fluffy.expBreakdown(\'ice\')" onmouseout="Fluffy.expBreakdown(\'clear\')">Ice</span>';
+			if ((getUberEmpowerment() == "Ice" || getUberEmpowerment() == "ALL")) fluffFormula += ' * <span class="fluffFormIce" onmouseover="Fluffy.expBreakdown(\'ice\')" onmouseout="Fluffy.expBreakdown(\'clear\')">Ice</span>';
 			if (showCruffys) fluffFormula += ' * <span class="fluffFormLab" onmouseover="Fluffy.expBreakdown(\'labs\')" onmouseout="Fluffy.expBreakdown(\'clear\')">Labs</span>';
 			if (game.global.universe == 2 && autoBattle.oneTimers.Battlescruff.owned) fluffFormula += ' * <span class="fluffFormBattlescruff" onmouseover="Fluffy.expBreakdown(\'battlescruff\')" onmouseout="Fluffy.expBreakdown(\'clear\')">Battlescruff</span>';
 			if (u2Mutations.tree.Scruffy.purchased) fluffFormula += ' * <span class="fluffFormMutators" onmouseover="Fluffy.expBreakdown(\'mutators\')" onmouseout="Fluffy.expBreakdown(\'clear\')">Mutators</span>';
@@ -18188,7 +18218,7 @@ var Fluffy = {
 			fluffFormula = fluffFormula.replace('Curious', '<span onmouseover="Fluffy.expBreakdown(\'curious\')" onmouseout="Fluffy.expBreakdown(\'clear\')" class="fluffFormCurious">Curious</span>')			
 			topText += fluffFormula;
 		}
-		if (calculatedPrestige > 0 && Fluffy.currentLevel < 10 && !(calculatedPrestige == 1 && game.talents.fluffyAbility.purchased))
+		if (calculatedPrestige > 0 && Fluffy.currentLevel < 10 && !(calculatedPrestige == 1 && game.talents.fluffyAbility.purchased) && !(game.global.challengeActive == "Finale"))
 			topText += "<br/><span class='btn btn-sm btn-warning' onmousedown='cancelTooltip(); tooltip(\"confirm\", null, \"update\", \"You are about to abort " + name + "&#39;s Evolution. This will return you to level 10 on your last Evolution, but you will permanently lose all Experience earned towards the current Evolution. Are you sure you want to abort?\", \"Fluffy.abortPrestige()\", \"Abort Evolution\")'>Abort Evolution</span>"
 		var xpBreakdownFill = (document.getElementById('fluffyExpBreakdown') ? document.getElementById('fluffyExpBreakdown').innerHTML : "");
 		topText += "<div id='fluffyExpBreakdown'>" + xpBreakdownFill + "</div>";
@@ -18377,26 +18407,23 @@ var Fluffy = {
 		SADailies: {
 			get description(){
 				var cleared = autoBattle.maxEnemyLevel - 1;
-				return "Your Trimps gain +4% Attack and +0.25% Crit Chance per Spire Assault level cleared while on a Daily Challenge. You have cleared " + cleared + " SA levels, granting +" + prettify((this.attackMod() - 1) * 100) + "% Attack and +" + prettify(this.critChance() * 100) + "% Crit Chance on Daily Challenges." 
+				return "Your Trimps gain +4% Attack and +0.25% (Capped at 50%) Crit Chance per Spire Assault level cleared while on a Daily Challenge. You have cleared " + cleared + " SA levels, granting +" + prettify((this.attackMod() - 1) * 100) + "% Attack and +" + prettify(this.critChance() * 100) + "% Crit Chance on Daily Challenges." 
 			},
 			critChance: function(){
-				return (0.0025 * (autoBattle.maxEnemyLevel - 1));
+				return Math.min(0.0025 * (autoBattle.maxEnemyLevel - 1), 0.5);
 			},
 			attackMod: function(){
 				return 1 + (0.04 * (autoBattle.maxEnemyLevel - 1));
 			}
 		},
-		bigSeeds: {
-			description: "Gain x10 Mutated Seed Drops."
+		scruffBurst: {
+			description: "Gamma Burst requires 1 fewer attack before triggering."
 		},
 		Scruffy21: {
 			description: "Scruffy's 4th bonus that increases Radon gain based on last Portal's highest Zone is no longer based on last Portal, and is now based on your highest Zone ever reached in Universe 2. Also, gain 5x Dust from SA enemies."
 		},
-		scruffBurst: {
-			description: "Gamma Burst requires 1 fewer attack before triggering."
-		},
-		radortle2: {
-			description: "Scruffy's 4th bonus that increases Radon gain based on last Portal's highest Zone is no longer based on last Portal, and is now based on your highest Zone ever reached in Universe 2."
+		Scruffy22: {
+			description: "Gain x10 Mutated Seed Drops. Triple Nullifium gain when recycling Enigmatic Heirlooms."
 		},
 
 
@@ -18408,6 +18435,9 @@ var Fluffy = {
 		},
 		FluffyE13: {
 			description: "In Finale challenge, Fluffy gain +1000% attack, can use Formations, and is immune to Magma and Omnipotrimps!"
+		},
+		FluffyE14: {
+			description: "Permanently active all three Nature Enlightenments at once (even after evolving to Evolution 15+)! Wind Stacks is always 300 after attacking. In Finale challenge, Poison stacks are permanent, and transfer rate of Poison stacks is always 100%."
 		},
 
 
@@ -19224,7 +19254,7 @@ document.addEventListener('keydown', function (e) {
 				break;
 			}
 		case 87: //W
-			if (checkStatus() && game.global.uberNature == "Wind") setFormation('5');
+			if (checkStatus() && (game.global.uberNature == "Wind" || Fluffy.isRewardActive("FluffyE14"))) setFormation('5');
 		case 55: //7
 		case 103: //num7
 			if (playerSpire.popupOpen && !playerSpireTraps.Knowledge.locked && !usingScreenReader)

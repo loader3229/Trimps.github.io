@@ -4900,7 +4900,8 @@ var u2Mutations = {
         if (game.global.challengeActive == "Daily"){
             reward *= (1 + (getDailyHeliumValue(countDailyWeight()) / 100));
         }
-        if (Fluffy.isRewardActive("bigSeeds")) reward *= 10;
+        if (Fluffy.isRewardActive("Scruffy22")) reward *= 10;
+		if (game.talents.tier11c.purchased) reward *= 2;
         game.global.mutatedSeeds += reward;
         if (typeof game.global.messages.Loot.seeds === 'undefined') game.global.messages.Loot.seeds = true;
         message("You found " + prettify(reward) + " Mutated Seed" + needAnS(reward) + nullText + " on that " + this.getName(cell.u2Mutation) + " enemy!", 'Loot', null, 'seedMessage', 'seeds', null, 'background-color: ' + this.getColor(cell.u2Mutation));

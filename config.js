@@ -597,7 +597,7 @@ var toReturn = {
 				return prettify(number * 100);
 			},
 			getDamage: function(){
-				if (getEmpowerment() == "Poison" && getUberEmpowerment() == "Poison") return (this.currentDebuffPower * 2);
+				if ((getEmpowerment() == "Poison" || (Fluffy.isRewardActive("FluffyE14") && game.global.challengeActive == "Finale")) && (getUberEmpowerment() == "Poison" || getUberEmpowerment() == "ALL")) return (this.currentDebuffPower * 2);
 				return this.currentDebuffPower;
 			},
 			getLevel: function(){
@@ -659,7 +659,7 @@ var toReturn = {
 				if (game.talents.nature2.purchased){
 					extra += 5;
 				}
-				if (getUberEmpowerment() == "Wind"){
+				if ((getUberEmpowerment() == "Wind" || getUberEmpowerment() == "ALL")){
 					extra += 5;
 				}
 				return extra;
@@ -669,7 +669,7 @@ var toReturn = {
 			level: 1,
 			retainLevel: 0,
 			stackMax: function(){
-				return (getUberEmpowerment() == "Wind") ? 300 : 200;
+				return ((getUberEmpowerment() == "Wind" || getUberEmpowerment() == "ALL")) ? 300 : 200;
 			},
 			tokens: 0,
 			nextUberCost: 0,
@@ -2629,8 +2629,8 @@ var toReturn = {
 			requires: "tier11a"
 		},
 		tier11c: {
-			description: "Tier 11 Mastery 3",
-			name: "Tier 11 Mastery 3",
+			get description(){return "Double Mutated Seed gain. Mutated Seeds boost Dark Essence gain. Currently: "+prettify(Math.log10(game.global.mutatedSeeds+10))+"x"},
+			name: "Mutated Mastery",
 			tier: 11,
 			purchased: false,
 			icon: "road",
@@ -3200,6 +3200,7 @@ var toReturn = {
 				if (this.radLevel + extra > 0) text += "<br/><br/>You are currently gaining " + formatMultAsPercent(this.getMult(0, extra), true) + " attack and health. Your next Spire Assault level will increase this bonus to " + formatMultAsPercent(this.getMult(1, extra), true) + ", or your next perk level will increase this bonus to " + formatMultAsPercent(this.getMult(0, 1 + extra), true) + ".";
 				return text;
 			},
+			max: 50,
 			getMult: function(addAb, addLev){
 				var level = this.radLevel;
 				var abLevel = autoBattle.maxEnemyLevel - 1;

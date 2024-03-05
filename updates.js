@@ -3111,7 +3111,7 @@ function getBattleStatBd(what) {
 		textString += "<tr><td class='bdTitle'>Strength Tower" + needAnS(playerSpireTraps.Strength.owned) + "</td><td>+ " + prettify(playerSpireTraps.Strength.getWorldBonus(true)) + "%</td><td>" + playerSpireTraps.Strength.owned + "</td><td>+ " + prettify(amt) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>"
 		
 	}
-	if (what == "attack" && getUberEmpowerment() == "Poison"){
+	if (what == "attack" && (getUberEmpowerment() == "Poison" || getUberEmpowerment() == "ALL")){
 		currentCalc *= 3;
 		textString += "<tr><td class='bdTitle'>Enlightened Poison</td><td>x 3</td><td></td><td>x 3</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>"
 	}
@@ -3712,7 +3712,7 @@ function getLootBd(what) {
 		currentCalc *= 2;
 		textString += "<tr><td class='bdTitle'>Formation</td><td></td><td></td><td>x 2</td><td>" + prettify(currentCalc) + "</td></tr>";
 	}
-	if (getUberEmpowerment() == "Wind" && what != "Helium" && what != "Fragments"){
+	if ((getUberEmpowerment() == "Wind" || getUberEmpowerment() == "ALL") && what != "Helium" && what != "Fragments"){
 		currentCalc *= 10;
 		textString += "<tr><td class='bdTitle'>Enlightened Wind</td><td></td><td></td><td>x 10</td><td>" + prettify(currentCalc) + "</td></tr>";
 	}
