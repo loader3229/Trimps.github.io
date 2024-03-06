@@ -8088,10 +8088,10 @@ function updateNatureInfoSpans(){
 		var emp = game.empowerments[item];
 		document.getElementById('infoSpan' + item).innerHTML = "<span class='icomoon icon-info2'></span>&nbsp" + emp.formatModifier(emp.getModifier(0, true)) + "%";
 		document.getElementById('tokenCount' + item).innerHTML = prettify(emp.tokens);
-		var bonusLevels = emp.getRetainBonus();=
+		var bonusLevels = emp.getRetainBonus();
 		document.getElementById('natureUpgrade' + item + 'Level').innerHTML = "等级：" + prettify(emp.getLevel());
 		document.getElementById('natureStackTransfer' + item + 'Level').innerHTML = "等级：" + prettify(emp.retainLevel + bonusLevels);
-		document.getElementById('uber' + item + "Name").innerHTML = ((Fluffy.isRewardActive('FluffyE14') || game.global.fluffyPrestige >= 15) ? "<span class='green'>绒绒已经永久激活启迪！</span>" : (emp.getLevel() < 50) ? "Locked" : (game.global.uberNature != "") ? "<span class='red'>" + game.global.uberNature + " active</span>" : "Enlightened " + item);=
+		document.getElementById('uber' + item + "Name").innerHTML = ((Fluffy.isRewardActive('FluffyE14') || game.global.fluffyPrestige >= 15) ? "<span class='green'>绒绒已经永久激活启迪！</span>" : (emp.getLevel() < 50) ? "Locked" : (game.global.uberNature != "") ? "<span class='red'>" + game.global.uberNature + " active</span>" : "Enlightened " + item);
 		var unlockZone = 235;
 		var mainWindow = document.getElementById('tabCol' + item);
 		if (item == "Wind") unlockZone = 240;
