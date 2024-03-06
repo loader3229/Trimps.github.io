@@ -4909,7 +4909,8 @@ var u2Mutations = {
         if (game.global.challengeActive == "Daily"){
             reward *= (1 + (getDailyHeliumValue(countDailyWeight()) / 100));
         }
-        if (Fluffy.isRewardActive("bigSeeds")) reward *= 10;
+        if (Fluffy.isRewardActive("Scruffy22")) reward *= 10;
+		if (game.talents.tier11c.purchased) reward *= 2;
         game.global.mutatedSeeds += reward;
         if (typeof game.global.messages.Loot.seeds === 'undefined') game.global.messages.Loot.seeds = true;
         message("您击杀了那个<i></i>" + this.getName(cell.u2Mutation) + "<i></i>敌人，获得了" + nullText + "" + prettify(reward) + "突变之种！", 'Loot', null, 'seedMessage', 'seeds', null, 'background-color: ' + this.getColor(cell.u2Mutation));
