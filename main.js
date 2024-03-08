@@ -18539,10 +18539,10 @@ var Fluffy = {
 			},
 		},
 		FluffyE13: {
-			description: "In Finale challenge, Fluffy gain +1000% attack, can use Formations, and is immune to Magma and Omnipotrimps!"
+			description: "终幕挑战中绒绒增加1000%攻击力，可以使用阵型，且不受岩浆和全能者影响！"
 		},
 		FluffyE14: {
-			description: "Permanently active all three Nature Enlightenments at once (even after evolving to Evolution 15+)! Wind Stacks is always 300 after attacking. In Finale challenge, Poison stacks are permanent, and transfer rate of Poison stacks is always 100%."
+			description: "永久性同时激活三种自然启迪（即使您把绒绒升级到进化次数15或以上）！风层数在攻击后必定为300层。终幕挑战中保留毒层数（即使不在毒区），且毒层数的传递率为100%。"
 		},
 
 
