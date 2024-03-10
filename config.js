@@ -2637,19 +2637,19 @@ var toReturn = {
 			requires: "tier11b"
 		},
 		tier11d: {
-			description: "Tier 11 Mastery 4",
-			name: "Tier 11 Mastery 4",
+			description: "Each Randimp now give three different exotic import rewards at once.",
+			name: "Randimp II",
 			tier: 11,
 			purchased: false,
-			icon: "road",
+			icon: "*dice",
 			requires: "tier11c"
 		},
 		tier11e: {
-			description: "Tier 11 Mastery 5",
-			name: "Tier 11 Mastery 5",
+			description: "You can downgrade your SA equipments and ring. You will get a full refund.",
+			name: "SA Downgrader",
 			tier: 11,
 			purchased: false,
-			icon: "road",
+			icon: "*arrow-bold-down",
 			requires: "tier11d"
 		},
 		tier11f: {
@@ -3298,7 +3298,7 @@ var toReturn = {
 			radLocked: true,
 			priceBase: 5e18,
 			radLevel: 0,
-			max: 60,
+			max: 66,
 			radSpent: 0,
 			get tooltip(){
 				var useTemp = false;
@@ -8123,24 +8123,24 @@ var toReturn = {
 		},
 		oneOffs: {
 			//Turns out this method of handling the feats does NOT scale well... adding stuff to the middle is a nightmare
-			finished: [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
+			finished: [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
 			title: "Feats",
 			get descriptions () {
 				return ["Complete the Dimension of Anger before buying Bounty", "Reach Z30 with no respec and 60 or less He spent", "Have over " + prettify(1e6) + " traps at once", "Die 50 times to a single Voidsnimp", "Beat Balance, never having more than 100 stacks", "Reach Zone 10 with 5 or fewer dead Trimps", "Reach exactly 1337 He/Hr", "Attack 20 times without dying in Electricity", "Create a perfect Map", "Use up all 7 Daily Challenges", "Equip a magnificent or better Staff and Shield", "Reach Z60 with 1000 or fewer dead Trimps", "Reach Z120 without using manual research", "Reach Z75 without buying any housing", "Find a Common heirloom at Z146 or higher", "Spend over " + prettify(250e3) + " total He on Wormholes", "Reach Z60 with rank " + romanNumeral(3) + " or lower equipment", "Kill an Improbability in one hit", "Beat a Lv 60+ Destructive Void Map with no deaths", "在到达区域5后未受到过敌人暴击的前提下，完成粉碎挑战", "Kill an enemy with 100 stacks of Nom", "Break the Planet with 5 or fewer lost battles", "Reach Z60 without hiring a single Trimp", "Complete a Zone above 99 without falling below 150 stacks on Life", "Spend at least 10 minutes breeding an army with Geneticists", "Beat Toxicity, never having more than 400 stacks", "Own 100 of all housing buildings", "在到达区域60前，超杀世界上的每个格子", "Complete Watch without entering maps or buying Nurseries", "Complete Lead with 100 or fewer lost battles", "Build your 10th Spire Floor", "Kill " + prettify(500e3) + " enemies in your Spire", "Equip a Magmatic Staff and Shield", "让世界上一名敌人的攻击力低于1", "Complete Lead with 1 or fewer Gigastations", "Complete Corrupted without Geneticists", "Complete a Void Map at Z215 on Domination", "Complete The Spire with 0 deaths", "Overkill an Omnipotrimp", "Defeat a Healthy enemy with 200 stacks of wind", "Build up a Poison debuff that's 1000x higher than your attack", "使挑战<sup>2</sup>的加成达到2000%", "Complete a Bionic Wonderland map 45 levels higher than your Zone number", "Beat the Spire with no respec and " + prettify(100e6) + " or less He Spent", "Defeat an enemy on Obliterated", "在区域1获得一个合并者", "Get 10 Red Crits in a row", "Beat Z75 on the Scientist V challenge", "Gain at least 01189998819991197253 He from one Bone Portal", "Kill an Enemy on Eradicated", "Complete Spire " + romanNumeral(5) + " with no deaths", "Build your 20th Spire Floor", "Complete a Bionic Wonderland map 200 levels higher than your Zone number", "Complete Spire " + romanNumeral(2) + " on the Coordinate challenge", "Beat Spire " + romanNumeral(2) + " with no respec and " + prettify(1e9) + " or less He spent", "Beat Imploding Star on Obliterated", "Close 750 Nurseries at the same time", "Earn Dark Essence with no respec and 0 He spent", "Reach Magma on Obliterated", "Break the Planet on Eradicated", 
-				"通过尖塔 " + romanNumeral(7), "Break the Planet on Spired", "Complete The Prison on Eradicated", "Complete The Real Spire(Z200) on Spired", "Complete Bionic Wonderland on Eradicated", "Complete Bionic Wonderland " + romanNumeral(53), "Clear Spire in Scientist V", "Complete The Second Real Spire(Z300) on Spired", "Clear Spire in Finale", "Clear Spire in Eradicated"];
+				"通过尖塔 " + romanNumeral(7), "Break the Planet on Spired", "Complete The Prison on Eradicated", "Complete The Real Spire(Z200) on Spired", "Complete Bionic Wonderland on Eradicated", "Complete Bionic Wonderland " + romanNumeral(53), "Clear Spire in Scientist V", "Complete The Second Real Spire(Z300) on Spired", "Clear Spire in Finale", "Clear Spire in Eradicated", "Reach cell 100 of Spire " + romanNumeral(8), "Clear Spire " + romanNumeral(8)];
 			},
 			tiers: [2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 
-				10, 11, 11, 13, 13, 13, 14, 14, 14, 14],
+				10, 11, 11, 13, 13, 13, 14, 14, 14, 14, 14, 14],
 			description: function (number) {
 				return this.descriptions[number];
 			},
-			filters: [19, 29, 29, -1, 39, 59, -1, 79, -1, 99, 124, 59, 119, 74, -1, 74, 59, 59, 59, 124, 144, 59, 59, 109, -1, 164, 59, -1, 179, 179, 199, 199, 229, 245, 179, 189, 214, 199, 229, 299, 235, 65, 169, 199, 424, 349, -1, 129, 399, 549, 599, 199, 324, 299, 299, 424, 229, 179, 424, 549, 801, 801, 549, 801, 549, 805, 200, 801, 890, 549],
+			filters: [19, 29, 29, -1, 39, 59, -1, 79, -1, 99, 124, 59, 119, 74, -1, 74, 59, 59, 59, 124, 144, 59, 59, 109, -1, 164, 59, -1, 179, 179, 199, 199, 229, 245, 179, 189, 214, 199, 229, 299, 235, 65, 169, 199, 424, 349, -1, 129, 399, 549, 599, 199, 324, 299, 299, 424, 229, 179, 424, 549, 801, 801, 549, 801, 549, 805, 200, 801, 890, 549, -1, -1],
 			filterLevel: function(){
 				return game.global.highestLevelCleared;
 			},
 			icon: "icomoon icon-flag",
 			names: ["Forgot Something", "Underachiever", "Hoarder", "Needs Block", "Underbalanced", "Peacekeeper", "Elite Feat", "Grounded", "Maptastic", "Now What", "Swag", "Workplace Safety", "No Time for That", "Tent City", "Consolation Prize", "Holey", "Shaggy", "One-Hit Wonder", "Survivor", "Thick Skinned", "Great Host", "Unbroken", "Unemployment", "Very Sneaky", "Extra Crispy", "Trimp is Poison", "Realtor", "Gotta Go Fast", "Grindless", "Leadership", "Defender", "Stoned", "Swagmatic", "Brr", "Unsatisfied Customer", "Organic Trimps", "Fhtagn", "Invincible", "Mighty", "Mother Lode", "Infected", "Challenged", "Bionic Sniper", "Nerfed", "Obliterate", "M'Algamator", "Critical Luck", "AntiScience", "HeMergency", "Eradicate", "Invisible", "Power Tower", "Bionic Nuker", "Hypercoordinated", "Nerfeder", "Imploderated", "Wildfire", "Unessenceted", "Melted", "Screwed", 
-				"Lucky Spirer", "Broken Spire", "Eradicated Warden", "Spire-In-Spires", "Eradicated Robotrimp", "The Limit of Bionic Wonderland", "Spirentist", "Spires-In-Spires", "Druopitee's plan is completely failed", "Eradicated Spirer"],
+				"Lucky Spirer", "Broken Spire", "Eradicated Warden", "Spire-In-Spires", "Eradicated Robotrimp", "The Limit of Bionic Wonderland", "Spirentist", "Spires-In-Spires", "Druopitee's plan is completely failed", "Eradicated Spirer", "What? Druopitee is revived?", "Infinity Spirer"],
 			newStuff: []
 		},
 		oneOffs2: {
@@ -8186,17 +8186,17 @@ var toReturn = {
 			fireTrap: {
 				name: "火焰陷阱伤害",
 				currentBonus: 0,
-				steps: [[10,25,1],[10,25,1],[10,25,1],[25,50,1],[50,100,2],[100,199,3],[200,400,4],-1]
+				steps: [[10,25,1],[10,25,1],[10,25,1],[25,50,1],[50,100,2],[100,199,3],[200,400,4],-1,-1]
 			},
 			poisonTrap: {
 				name: "剧毒陷阱伤害",
 				currentBonus: 0,
-				steps: [-1,[10,25,1],[10,25,1],[25,50,1],[50,100,2],[100,199,3],[200,400,4],-1]
+				steps: [-1,[10,25,1],[10,25,1],[25,50,1],[50,100,2],[100,199,3],[200,400,4],-1,-1]
 			},
 			lightningTrap: {
 				name: "闪电陷阱效果",
 				currentBonus: 0,
-				steps: [-1,-1,[1,10,1],[10,20,1],[20,50,2],[50,100,2],[100,199,3],-1],
+				steps: [-1,-1,[1,10,1],[10,20,1],[20,50,2],[50,100,2],[100,199,3],-1,-1],
 				specialDescription: function (modifier) {
 					return "Increases the damage dealt by Lightning Trap" + ((playerSpireTraps.Lightning.level >= 4) ? ", Shocked, and its column boost to Fire and Poison Traps " : " and Shocked ") + "by " + prettify(modifier) + "%.";
 				},
@@ -8204,12 +8204,12 @@ var toReturn = {
 			runestones: {
 				name: "符石掉率",
 				currentBonus: 0,
-				steps: [[10,25,1],[10,25,1],[10,25,1],[25,50,1],[50,100,2],[100,199,3],[200,400,4],[500,500,5]]
+				steps: [[10,25,1],[10,25,1],[10,25,1],[25,50,1],[50,100,2],[100,199,3],[200,400,4],[500,1000,5],[1200,1800,6]]
 			},
 			strengthEffect: {
 				name: "力量塔效果",
 				currentBonus: 0,
-				steps: [[1,10,1],[1,10,1],[1,10,1],[10,20,1],[20,50,2],[50,100,2],[100,199,3],-1],
+				steps: [[1,10,1],[1,10,1],[1,10,1],[10,20,1],[20,50,2],[50,100,2],[100,199,3],-1,-1],
 				specialDescription: function (modifier) {
 					return "Increases the damage dealt by Fire Traps on the same Floor as a Strength Tower by " + prettify(modifier) + "%. Does not increase the world bonus to Trimps.";
 				},
@@ -8217,7 +8217,7 @@ var toReturn = {
 			condenserEffect: {
 				name: "冷凝塔效果",
 				currentBonus: 0,
-				steps: [-1,[1,5,0.25],[1,5,0.25],[5,10,0.25],[5,15,0.5],[10,20,0.5],[20,30,0.5],-1],
+				steps: [-1,[1,5,0.25],[1,5,0.25],[5,10,0.25],[5,15,0.5],[10,20,0.5],[20,30,0.5],-1,-1],
 				max: [-1,10,10,15,25,35,50],
 				specialDescription: function(modifier) {
 					return "Increases the amount of Poison damage compounded by the Condenser Tower by " + prettify(modifier) + "%. Does not increase the world bonus to Trimps.";
@@ -8226,22 +8226,22 @@ var toReturn = {
 			strengthBonus: {
 				name: "力量塔世界加成",
 				currentBonus: 0,
-				steps: [-1,-1,-1,-1,-1,-1,[2,2,2],[20,20,20]]
+				steps: [-1,-1,-1,-1,-1,-1,[2,2,2],[5,5,5],[5,5,5]]
 			},
 			condenserBonus: {
 				name: "冷凝塔世界加成",
 				currentBonus: 0,
-				steps: [-1,-1,-1,-1,-1,-1,[2,2,2],[20,20,20]]
+				steps: [-1,-1,-1,-1,-1,-1,[2,2,2],[5,5,5],[5,5,5]]
 			},
 			knowledgeBonus: {
 				name: "知识塔世界加成",
 				currentBonus: 0,
-				steps: [-1,-1,-1,-1,-1,-1,[2,2,2],[20,20,20]]
+				steps: [-1,-1,-1,-1,-1,-1,[2,2,2],[5,5,5],[5,5,5]]
 			},
 			worldBonus: {
 				name: "所有的尖塔世界加成",
 				currentBonus: 0,
-				steps: [-1,-1,-1,-1,-1,-1,-1,[5,5,5]]
+				steps: [-1,-1,-1,-1,-1,-1,-1,[1,1,1],[1,1,1]]
 			},
 		},
 		Staff: {
@@ -8796,8 +8796,15 @@ var toReturn = {
 					}
 				}
 				var enemySeed = (game.global.mapsActive) ? Math.floor(Math.random() * 10000000) : game.global.enemySeed++;
-				var selected = imports[getRandomIntSeeded(enemySeed, 0, imports.length)];
-				game.badGuys[selected].loot(level, true);
+				if(!game.talents.tier11d.purchased){
+					var selected = imports[getRandomIntSeeded(enemySeed, 0, imports.length)];
+					game.badGuys[selected].loot(level, true);
+				}else{
+					var a = getAmountInRange(imports.length, 3, 2);
+					game.badGuys[imports[a[0]]].loot(level, true);
+					game.badGuys[imports[a[1]]].loot(level, true);
+					game.badGuys[imports[a[2]]].loot(level, true);
+				}
 			}
 		},
 		Pumpkimp: {
@@ -9549,9 +9556,8 @@ var toReturn = {
 			location: "World",
 			last: true,
 			world: 59,
-			attack: Infinity,
-			health: Infinity,
-			fast: true,
+			attack: 1.2,
+			health: 6,
 			loot: function (level) {
 				return;
 			}
@@ -9561,9 +9567,8 @@ var toReturn = {
 			location: "World",
 			last: true,
 			world: 59,
-			attack: Infinity,
-			health: Infinity,
-			fast: true,
+			attack: 1.2,
+			health: 6,
 			loot: function (level) {
 				return;
 			}

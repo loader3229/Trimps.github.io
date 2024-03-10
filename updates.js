@@ -1224,7 +1224,9 @@ function tooltip(what, isItIn, event, textString, attachFunction, numCheck, rena
 		var shriekValue = ((1 - game.mapUnlocks.roboTrimp.getShriekValue()) * 100).toFixed(1);
 		var bossName = game.global.gridArray[99].name;
 		if (checkIfSpireWorld() && game.global.spireActive){
-			bossName = (game.global.world == 200) ? "Druopitee" : "Echo of Druopitee";
+			bossName = (game.global.world == 900) ? "Druopitinity" : (game.global.world == 200) ? "Druopitee" : (game.global.world >= 200) ? "Echo of Druopitee" : bossName;
+		}else if(game.global.world == 900){
+			bossName = "Omnipotrimp";
 		}
 		var plural;
 		switch(bossName){
@@ -1236,6 +1238,9 @@ function tooltip(what, isItIn, event, textString, attachFunction, numCheck, rena
 				break;
 			case "Druopitee":
 				plural = "Druopitee";
+				break;
+			case "Druopitinity":
+				plural = "Druopitinity";
 				break;
 			default:
 				plural = bossName + "s";
