@@ -3505,7 +3505,22 @@ var autoBattle = {
         itemObj.level++;
         this.popup(false, false, true);
     },
+    downgrade: function(item){
+        var itemObj = this.items[item];
+        if (!itemObj) return; 
+        if (itemObj.level <= 1) return; 
+        itemObj.level--;
+		
+        var cost = this.upgradeCost(item);
+        var currency = (this.items[item].dustType == "shards") ? this.shards : this.dust;
+        if (this.items[item].dustType == "shards") this.shards += cost;
+        else this.dust += cost;
+        this.resetCombat(true);
+		
+        this.popup(false, false, true);
+    },
     checkLastActions: function(){
+		if(game.talents.tier11e.purchased){this.lastActions = [];return;}
         var somethinGood = false;
         for (var x = 0; x < this.lastActions.length; x++){
             if (this.lastActions[x][2] > this.dust || this.lastActions[x][6] > this.shards) {
@@ -3516,6 +3531,7 @@ var autoBattle = {
         if (!somethinGood) this.lastActions = [];
     },
     saveLastAction: function(type, what, cost){
+		if(game.talents.tier11e.purchased)return;
         var useShards = false;
         if (type == "ring" || ((type == "contract" || type == "cancelContract") && this.items[what].dustType == "shards")) useShards = true;
         if (type == "oneTimer" && this.oneTimers[what].useShards) useShards = true;
@@ -3542,6 +3558,7 @@ var autoBattle = {
         if (this.lastActions.length > 3) this.lastActions.splice(0,1);
     },
     restoreLastAction: function(){
+		if(game.talents.tier11e.purchased)return;
         var action = this.lastActions.splice(this.lastActions.length - 1, 1)[0];
         this.dust = action[2];
         this.shards = (action[6]) ? action[6] : 0;
@@ -3613,6 +3630,7 @@ var autoBattle = {
     swapPopup: function(to){
         if (to == "rings" && !this.oneTimers.The_Ring.owned) return;
         this.hideMode = false;
+        this.downgradeMode = false;
         this.popupMode = to;
         this.notes = "";
         this.confirmUndo = false;
@@ -3620,13 +3638,20 @@ var autoBattle = {
     },
     toggleHideMode: function(){
         this.hideMode = !this.hideMode;
+        this.downgradeMode = false;
+        this.popupMode = "items";
+        this.popup(false, false, true)
+    },
+    toggleDowngradeMode: function(){
+        this.downgradeMode = (game.talents.tier11e.purchased) && !this.downgradeMode;
+		this.hideMode = false;
         this.popupMode = "items";
         this.popup(false, false, true)
     },
     hide: function(itemName){
         this.items[itemName].hidden = true;
-        if (this.items[itemName].equipped) this.items[itemName].equipped = false;
-        this.popup(false, false, true);
+        if (this.items[itemName].equipped) this.items[itemName].equipped = false,this.resetCombat(true),this.popup(true);
+        else this.popup(false, false, true);
     },
     restore: function(itemName){
         this.items[itemName].hidden = false;
@@ -3745,6 +3770,16 @@ var autoBattle = {
             var randomMod = availableMods[Math.floor(Math.random() * availableMods.length)];
             this.rings.mods.push(randomMod);
         }
+        this.popup(false, false, true);
+    },
+    downgradeRing: function(){
+		if(this.rings.level <= 1)return;
+        this.rings.level--;
+        var cost = this.getRingLevelCost();
+        this.shards += cost;
+        var slots = this.getRingSlots();
+        if (this.rings.mods.length > slots)this.rings.mods.pop();
+		this.resetCombat(true);
         this.popup(false, false, true);
     },
     getAvailableRingMods: function(){
@@ -4100,6 +4135,7 @@ var autoBattle = {
         text += "<div id='autoBattleStatsText'>" + statsText + "</div>";
         var itemsText = "Items (" + this.countEquippedItems() + "/" + this.getMaxItems() + " Equipped)"; 
         text += "<div id='autoBattleMenuButtons'><span id='abItemsBtn' onclick='autoBattle.swapPopup(\"items\")' class='btn btn-lg autoItemUpgrade darkBorder'>" + itemsText + "</span><span onclick='autoBattle.swapPopup(\"bonuses\")' class='btn btn-lg colorNavy'>Bonuses</span><span onclick='autoBattle.swapPopup(\"contracts\")' class='btn btn-lg colorVoidy darkBorder'>Contracts</span><span onclick='autoBattle.swapPopup(\"hidden\")' class='btn btn-lg autoColorOrange darkBorder'>Hidden Items</span><span class='btn btn-lg autoItemHide darkBorder' onclick='autoBattle.toggleHideMode()'>Hide Items</span>";
+        text += "<span class='btn btn-lg autoItemHide darkBorder'  style='display: " + ((game.talents.tier11e.purchased) ? 'inline-block' : 'none') + "' onclick='autoBattle.toggleDowngradeMode()'>Downgrade Items</span>";
         text += "<span id='autoBattleRingBtn' onclick='autoBattle.swapPopup(\"rings\")' style='display: " + ((this.oneTimers.The_Ring.owned) ? 'inline-block' : 'none') + "' class='btn btn-lg autoColorTeal active darkBorder'>The Ring</span>";
         text += "<span onclick='autoBattle.swapPopup(\"other\")' class='btn btn-lg autoColorGrey active darkBorder'>Misc</span></div>";
         var notesElem = document.getElementById('autoBattleNotes');
@@ -4136,9 +4172,14 @@ var autoBattle = {
                 
                 var equipClass = (itemObj.equipped) ? "Equipped" : "NotEquipped"; 
                 var upgradeCost = prettify(this.upgradeCost(item)) + " " + this.getCurrencyName(item);
+                var downgradeCost = prettify(this.upgradeCost(item)/(itemObj.priceMod ?? 3)) + " " + this.getCurrencyName(item);
                 line1 += "<div class='autoItem autoItem" + equipClass + "' onclick='autoBattle.equip(\"" + item + "\")' onmouseover='autoBattle.hoverItem(\"" + item + "\")'>" + this.cleanName(item) + ((itemObj.noUpgrade) ? "" : " Lv " + itemObj.level) + "</div>";
                 if (this.popupMode == "items"){
-                    if (this.hideMode)
+                    if (this.downgradeMode && itemObj.level <= 1)
+                        line2 += "<div class='autoItem autoColorGrey'>Undowngradable</div>"
+                    else if (this.downgradeMode)
+                        line2 += "<div class='autoItem autoItemHide' onclick='autoBattle.downgrade(\"" + item + "\")' onmouseover='autoBattle.hoverItem(\"" + item + "\", true)'>Downgrade (+" + downgradeCost + ")</div>";
+                    else if (this.hideMode)
                         line2 += "<div class='autoItem autoItemHide' onclick='autoBattle.hide(\"" + item + "\")'>Hide</div>";
                     else if (itemObj.noUpgrade) line2 += "<div class='autoItem autoColorGrey'>Unupgradable</div>"
                     else 
@@ -4222,9 +4263,15 @@ var autoBattle = {
                 text += "<span class='btn btn-md " + className + "' onclick='autoBattle.toggleSetting(\"" + setting + "\")'>" + thisSetting.text[thisSetting.enabled] + "</span>";
             }
             text += "</div>";
-            text += "<div class='abMiscBox'><b style='font-size: 1.1em;'>Undo last change</b><br/>";
+            text += "<div class='abMiscBox'>";
             var action = this.lastActions[this.lastActions.length - 1];
-            if (action){
+            if(game.talents.tier11e.purchased){
+				text += "<b style='font-size: 1.1em;'>Downgrade your ring</b><br/>";
+				text += "<span class='btn autoItemUpgrade btn-md' onclick='autoBattle.downgradeRing()'>Downgrade</span>";
+                text += "<br/>";
+				text += "Downgrade your ring by 1 level, and gain "+prettify(autoBattle.getRingLevelCost() / 2)+" Shards.";
+			}else if (action){
+				text += "<b style='font-size: 1.1em;'>Undo last change</b><br/>";
                 if (!this.confirmUndo) text += "<span class='btn autoItemUpgrade btn-md' onclick='autoBattle.confirmUndoClicked()'>Undo</span>";
                 else text += "<b>Are you sure?!</b><br/><span class='btn autoItemUpgrade btn-md' onclick='autoBattle.restoreLastAction()'>Yes, Undo</span><span class='btn autoItemHide btn-md' onclick='autoBattle.confirmUndoClicked()'>No, Cancel</span>";
                 text += "<br/>";
@@ -4242,7 +4289,7 @@ var autoBattle = {
                 else if (this.enemiesKilled > action[4]) text += " Your kill counter will be reduced by " + prettify(this.enemiesKilled - action[4]) + ".";
                 text += "<br/>";
             }
-            else text += "Undoing your last 3 actions would still leave you with less currency than you have now."
+            else text += "<b style='font-size: 1.1em;'>Undo last change</b><br/>Undoing your last 3 actions would still leave you with less currency than you have now."
             text += "</div>"
             for (var x = 1; x <= 3; x++){
                 var pname = 'p' + x;
@@ -5065,7 +5112,7 @@ var u2Mutations = {
                 var spread = (Math.floor(possible / 6) + 1) * 10;
                 if (spread > 100) spread = 100;
 				if(game.global.world == 400)spread = 60;
-                var addCorrupteds = getAmountInRange(spread, possible, true);
+                var addCorrupteds = getAmountInRange(spread, possible, 1);
                 for (var a = 0; a < addCorrupteds.length; a++){
                  currentArray[addCorrupteds[a]].u2Mutation.push("RGE");
                 }

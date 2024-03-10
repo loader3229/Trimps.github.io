@@ -2153,7 +2153,7 @@ function getObsidianStart(baseOnly){
 	var bonus = 0;
 	bonus += (radLevels > 100) ? 100 + (Math.floor((radLevels - 100) / 25) * 10) : Math.floor(radLevels / 10) * 10;
 	start += bonus;
-	if (start > 891) start = 891;
+	if (start > 901) start = 901;
 	return start;
 }
 
@@ -8311,9 +8311,11 @@ var mutations = {
 		   return currentArray;
 		  },
 		attack: function (cellNum, name) {
+			if(Fluffy.isRewardActive("FluffyE15"))return game.global.getEnemyAttack(cellNum, name);
 			return game.global.getEnemyAttack(cellNum, name, true) * this.statScale(3);
 		},
 		health: function (cellNum, name) {
+			if(Fluffy.isRewardActive("FluffyE15"))return game.global.getEnemyHealth(cellNum, name);
 			return game.global.getEnemyHealth(cellNum, name, true) * this.statScale(10);
 		},
 		statScale: function (base){
@@ -8334,8 +8336,8 @@ var mutations = {
 		tooltip: function (effectName) {
 			var mutText = mutationEffects[effectName].text;
 			var text = "";
+			if (effectName == "none") return "This enemy is missing an effect thanks to Fluffy! It will still drop " + ((game.global.challengeActive == "Corrupted") ? "7.5%" : "15%") + " of the helium you would normally get from completing this Zone.";
 			if (game.global.spireActive){
-				if (effectName == "none") return "This enemy is missing an effect thanks to Fluffy! It will still drop " + ((game.global.challengeActive == "Corrupted") ? "7.5%" : "15%") + " of the helium you would normally get from completing this Zone.";
 				text = mutText[0].toUpperCase() + mutText.substring(1);
 			}
 			else {
@@ -8740,7 +8742,7 @@ var mutations = {
 		tooltip: function () {
 			var text = "This enemy is rock solid, and there\\'s no way to get past.";
 			if (Fluffy.checkU2Allowed()){
-				if (game.global.world == 891) text += " This Zone is even more rocky and solid than anything you\\'ve seen before. You don\\'t think there\\'s any way to get past for now.";
+				if (game.global.world == 901) text += " This Zone is even more rocky and solid than anything you\\'ve seen before. You don\\'t think there\\'s any way to get past for now.";
 				else text += " Time to go to the Radon Universe and find a way to melt these Zones!";
 			}
 			else text += " Fluffy suggests that you find a way to get him to Evolution 8 Level 10 as quickly as possible so he can help you melt these Zones!";
@@ -8764,7 +8766,7 @@ var mutations = {
 				world = lastSpire + 199;
 			var possible = Math.floor((world - 300) / 15) + 2;
 			if (game.talents.healthStrength2.purchased) possible += game.global.lastSpireCleared;
-			if (possible > 48) possible = 48;
+			if (possible > 50) possible = 50;
 			return possible;
 		},
 		pattern: function (currentArray) {
@@ -8783,9 +8785,11 @@ var mutations = {
 			return currentArray;
 		  },
 		attack: function (cellNum, name) {
+			if(Fluffy.isRewardActive("FluffyE15"))return game.global.getEnemyAttack(cellNum, name);
 			return game.global.getEnemyAttack(cellNum, name, true) * this.statScale(5);
 		},
 		health: function (cellNum, name) {
+			if(Fluffy.isRewardActive("FluffyE15"))return game.global.getEnemyHealth(cellNum, name);
 			return game.global.getEnemyHealth(cellNum, name, true) * this.statScale(14);
 		},
 		statScale: function (base){
@@ -8806,8 +8810,8 @@ var mutations = {
 		tooltip: function (effectName) {
 			var mutText = mutationEffects[effectName].text;
 			var text = "";
+			if (effectName == "none") return "This enemy is missing an effect thanks to Fluffy! It will still drop 45% of the helium you would normally get from completing this Zone.";
 			if (game.global.spireActive){
-				if (effectName == "none") return "This enemy is missing an effect thanks to Fluffy! It will still drop 45% of the helium you would normally get from completing this Zone.";
 				text = mutText[0].toUpperCase() + mutText.substring(1);
 			}
 			else {
@@ -9581,7 +9585,7 @@ function getSeededRandomFromArray(seed, array){
 	return array[getRandomIntSeeded(seed, 0, array.length)];
 }
 
-function getAmountInRange(maxRange, toKeep, useU2Seed)
+function getAmountInRange(maxRange, toKeep, seed)
 {
 	var toShuffle = [];
 	for (var w = 0; w < maxRange; w++){
@@ -9589,7 +9593,7 @@ function getAmountInRange(maxRange, toKeep, useU2Seed)
 	}
     for (var x = Math.floor(toShuffle.length / 2); x < toShuffle.length; x++)
     {
-		var seed = (useU2Seed) ? game.global.u2MutationSeed++ : game.global.mutationSeed++;
+		var seed = (seed == 2) ? game.global.enemySeed++ : (seed == 1) ? game.global.u2MutationSeed++ : game.global.mutationSeed++;
         var random = getRandomIntSeeded(seed, 0, toShuffle.length);
         var hold = toShuffle[x];
         toShuffle[x] = toShuffle[random];
@@ -9645,7 +9649,7 @@ function getRandomBadGuy(mapSuffix, level, totalCells, world, imports, mutation,
 			if (item == "Blimp" && (world != 5 && world  != 10 && world < 15)) continue;
 			if (!mapSuffix && ((game.global.brokenPlanet || (game.global.universe == 2 && game.global.world >= 20)) || game.global.world == 59) && item == "Blimp"){
 				if (world > 900)
-					item = "Obsidimp";
+					item = "Omnipotrimp";
 				else if (world == 900)
 					item = "Druopitinity";
 				else if (mutations.Magma.active())
@@ -10820,7 +10824,9 @@ function startFight() {
 	if (cell.name == "Omnipotrimp" && game.global.world % 5 == 0 && !game.global.spireActive && !(Fluffy.isRewardActive("FluffyE13") && game.global.challengeActive == "Finale")){
 		badName += ' <span class="badge badBadge Magma" onmouseover="tooltip(\'Superheated\', \'customText\', event, \'This Omnipotrimp is Superheated, and will explode on death.\')" onmouseout="tooltip(\'hide\')"><span class="icomoon icon-fire2"></span></span>';
 	}
-	if (game.global.brokenPlanet && !game.global.mapsActive){
+	if (cell.name == "Druopitinity" && game.global.spireActive){
+		badName += ' <span class="badge badBadge" onmouseover="tooltip(\'True Infinity Attack\', \'customText\', event, \'He will deal True Infinity damage that insta-kill your Trimps! Ignores block.\')" onmouseout="tooltip(\'hide\')"><span class="icomoon icon-infinity"></span></span>';
+	}else if (game.global.brokenPlanet && !game.global.mapsActive){
 		badName += ' <span class="badge badBadge" onmouseover="tooltip(\'Pierce\', \'customText\', event, \'' + prettify(getPierceAmt() * 100) + '% of the damage from this Bad Guy pierces through block\')" onmouseout="tooltip(\'hide\')"><span class="glyphicon glyphicon-tint"></span></span>';
 	}
 	if (game.global.challengeActive == "Glass" || challengeActive("Slow") || (game.global.challengeActive == "Desolation" && game.global.mapsActive) || (cell.u2Mutation && cell.u2Mutation.length) || ((game.badGuys[cell.name].fast || cell.mutation == "Corruption") && game.global.challengeActive != "Coordinate" && !challengeActive("Nom")))
@@ -10831,7 +10837,9 @@ function startFight() {
 	document.getElementById("badGuyName").innerHTML = badName;
 	if (game.global.challengeActive == "Domination") handleDominationDebuff();
 	var corruptionStart = mutations.Corruption.start(true);
-	if (cell.maxHealth == -1 && checkIfSpireWorld() && game.global.spireActive && !game.global.mapsActive && cell.corrupted){
+	if (cell.maxHealth == -1 && Fluffy.isRewardActive("FluffyE15") && !game.global.mapsActive && cell.corrupted){
+		if(cell.corrupted != "obsidian")cell.corrupted = "none";
+	}else if (cell.maxHealth == -1 && checkIfSpireWorld() && game.global.spireActive && !game.global.mapsActive && cell.corrupted){
 		if (Fluffy.isRewardActive("eliminator")){
 			cell.corrupted = "none";
 		}
@@ -11000,7 +11008,7 @@ function startFight() {
 		}
 		if (cell.name == 'Improbability' || cell.name == "Omnipotrimp"){
 			if (game.global.roboTrimpLevel && game.global.useShriek) activateShriek();
-			if (game.global.world >= corruptionStart) {
+			if (game.global.world >= corruptionStart && !Fluffy.isRewardActive("FluffyE15")) {
 				if (game.global.spireActive) {
 					cell.origHealth *= mutations.Corruption.statScale(10);
 					cell.origAttack *= mutations.Corruption.statScale(3);
@@ -12720,7 +12728,7 @@ function nextWorld() {
 		var next = (game.global.highestRadonLevelCleared >= 99) ? "25" : "10";
 		var text;
 		if (!Fluffy.checkU2Allowed()) text = " Fluffy has an idea for remelting the world, but it will take a tremendous amount of energy from a place Fluffy isn't yet powerful enough to send you. Fluffy asks you to help him reach the <b>10th Level of his 8th Evolution</b>, and he promises he'll make it worth your time.";
-		else if (game.global.world == 891) text = "";
+		else if (game.global.world == 901) text = "";
 		else text = " However, all is not lost! Every " + next + " Zones of progress you make in the Radon Universe will allow you to harness enough energy for Fluffy to slow down the hardening of your World for an extra 10 Zones in this Universe.";
 		message("The Magma has solidified into impenetrable Obsidian; your Trimps have no hope of progressing here right now." + text, "Notices", null, "obsidianMessage");
 	}
@@ -13053,6 +13061,7 @@ function handleExitSpireBtn(){
 
 function getSpireStats(cellNum, name, what){
 	if(name == "Druopitinity" && what == "health") return 1e300;
+	if(name == "Druopitinity" && what == "attack") return 0;
 	var base = (what == "attack") ? game.global.getEnemyAttack(100, null, true) : (game.global.getEnemyHealth(100, null, true) * 2);
 	var mod = (what == "attack") ? 1.17 : 1.14;
 	var spireNum = checkIfSpireWorld(true);
@@ -13062,6 +13071,10 @@ function getSpireStats(cellNum, name, what){
 		mod = 1.1+game.global.world/100;
 		if(mod >= 2)mod = mod * 1.5 - 1;
 		if(mod >= 2.5)mod = mod * 3.4 - 6;
+	} else if (spireNum == 8){
+		var modRaiser = 0;
+		if (what == "attack") mod = 1.35;
+		if (what == "health") mod = 1.8;
 	} else if (spireNum > 1){
 		var modRaiser = 0;
 		modRaiser += ((spireNum - 1) / 100);
@@ -13071,13 +13084,16 @@ function getSpireStats(cellNum, name, what){
 	}
 	base *= Math.pow(mod, cellNum);
 	base *= game.badGuys[name][what];
+	if(what == "health" && base > 1e300) return 1e300;
 	return base;
 }
 
 function deadInSpire(){
 	game.global.spireDeaths++;
 	if (game.global.spireDeaths >= 10) {
-		message("You're not yet ready. Maybe you'll be of use in the next lifetime (You made it to cell " + (game.global.lastClearedCell + 2) + ").", "Story");
+		if(game.global.lastClearedCell == 98 && checkIfSpireWorld(true) == 8){
+			message("You're not yet ready. Maybe you'll be of use in the next lifetime (Your Trimps dealt " + prettify(1e300-game.global.gridArray[99].health) + " damage to Druopitinity).", "Story");
+		}else message("You're not yet ready. Maybe you'll be of use in the next lifetime (You made it to cell " + (game.global.lastClearedCell + 2) + ").", "Story");
 		endSpire();
 		return;
 	}
@@ -13281,7 +13297,7 @@ function giveSpireReward(level){
 				var amt = giveHeliumReward(100);
 				text += " You find a large stockpile of <b>" + prettify(amt) + " Helium</b> and <b>a brand new Spire Core</b>!";
 			}else if(game.global.challengeActive == "Spired")text += "You have found a Spire Core Heirloom that worth "+Math.floor((game.global.world**3)*Math.pow(10,(game.global.world-300)/100)*(game.global.world%100==0?10:1)*(u2Mutations.tree.Nullifium.purchased?1.1:1))+" Spirestones!";
-			else text += " You find a <b>brand new Spire Core</b>!";
+			else if(spireWorld != 8)text += " You find a <b>brand new Spire Core</b>!";
 			if (spireWorld == 6){
 				//var talentCount = countPurchasedTalents();
 				//var maxTalents = Object.keys(game.talents).length;
@@ -13293,11 +13309,11 @@ function giveSpireReward(level){
 				//		game.global.essence = Math.round(game.global.essence);
 				//		if (game.global.essence > oldEssence)
 				game.global.essence += 1e40;
-				text += "<br/><span class='fullDarkEssence'>At the top of this Spire, you found a gigantic, pitch-black cache with " + prettify(1e40) + " Dark Essence inside, just enough to complete your entire collection!</span><br/>";
+				text += "<br/><span class='fullDarkEssence'>At the top of this Spire, you found a gigantic, pitch-black cache with " + prettify(1e40) + " Dark Essence inside!</span><br/>";
 				//	}
 				//}
 			}
-			createHeirloom(game.global.world, false, true);
+			if (spireWorld != 8)createHeirloom(game.global.world, false, true);
 			if (game.global.spiresCompleted < spireWorld){
 				game.global.spiresCompleted = spireWorld;
 				game.global.b += 20;
@@ -13333,6 +13349,14 @@ function giveSpireReward(level){
 				checkAchieve(spireAchieve);
 			}
 			break;
+		case(99):
+			if (spireWorld == 8){
+				giveSingleAchieve("What? Druopitee is revived?");
+				createHeirloom(game.global.world, false, true);
+				text += "You find a <b>brand new Spire Core</b>!";
+				message(text, "Story");
+				break;
+			}
 		default:
 			if (game.global.runningChallengeSquared) return;
 			amt = 0.5;
@@ -15167,7 +15191,7 @@ function fight(makeUp) {
 		game.global.soldierHealth -= game.challenges.Mayhem.poison;
 		if (game.global.soldierHealth < 0) thisKillsTheTrimp();
 	}
-	if (game.global.soldierHealth > 0 && getHeirloomBonus("Shield", "gammaBurst") > 0){
+	if (game.global.soldierHealth > 0 && getHeirloomBonus("Shield", "gammaBurst") > 0 && (cell.name != "Druopitinity" || !game.global.spireActive)){
 		var burst = game.heirlooms.Shield.gammaBurst;
 		burst.stacks++;
 		var triggerStacks = ((autoBattle.oneTimers.Burstier.owned) ? 4 : 5) - Fluffy.isRewardActive("scruffBurst");
@@ -15189,6 +15213,14 @@ function fight(makeUp) {
 					thisKillsTheBadGuy();
 				}
 				if (getEmpowerment() == "Poison") stackPoison(burstDamage);
+				if (Fluffy.isRewardActive("FluffyE15") && game.global.challengeActive == "Finale"){
+					if (getEmpowerment() == "Poison"){
+						game.empowerments.Poison.currentDebuffPower += Math.ceil(burstDamage * (game.empowerments.Poison.getLevel() + 100) * 6);
+					}
+					game.empowerments.Poison.currentDebuffPower += Math.ceil(burstDamage * (game.empowerments.Poison.getLevel() + 100));
+					if (game.empowerments.Poison.getDamage() > trimpAttack * 1000) giveSingleAchieve("Infected");
+					handlePoisonDebuff();
+				}
 			}
 		}
 		updateGammaStacks();
@@ -15349,6 +15381,10 @@ function fight(makeUp) {
 		var bleedMod = (cell.corrupted == 'healthyBleed') ? 0.3 : 0.2;
 		game.global.soldierHealth -= (game.global.soldierHealth * bleedMod);
 		if (game.global.soldierHealth < 1) thisKillsTheTrimp();
+	}
+	if (cell.name == "Druopitinity" && game.global.spireActive){
+		game.global.soldierHealth = 0;
+		thisKillsTheTrimp();
 	}
 
 	//Crit/Overkill
@@ -17726,7 +17762,7 @@ var Fluffy = {
 	damageModifiers: [1, 1.1, 1.3, 1.6, 2, 2.5, 3.1, 3.8, 4.6, 5.5, 6.5],
 	damageModifiers2: [1, 1.1, 1.3, 1.6, 2, 2.5, 3.1, 3.8, 4.6, 5.5, 25.5, 30.5, 38, 48, 61, 111, 171, 241, 321, 411, 511, 621, 741, 871, 1011, 1161, 1311, 1311],
 	rewards: ["stickler", "helium", "liquid", "purifier", "lucky", "void", "helium", "liquid", "eliminator", "overkiller"],
-	prestigeRewards: ["dailies", "voidance", "overkiller", "critChance", "megaCrit", "superVoid", "voidelicious", "naturesWrath", "voidSiphon", "plaguebrought", "FluffyE10", "critChance", "scruffBurst", "FluffyE13", "FluffyE14", "justdam"],
+	prestigeRewards: ["dailies", "voidance", "overkiller", "critChance", "megaCrit", "superVoid", "voidelicious", "naturesWrath", "voidSiphon", "plaguebrought", "FluffyE10", "critChance", "scruffBurst", "FluffyE13", "FluffyE14", "FluffyE15"],
 	rewardsU2: ["trapper", "prism", "heirloopy", "radortle", "healthy", "wealthy", "critChance", "gatherer", "dailies", "exotic", "shieldlayer", "tenacity", "megaCrit", "critChance", "smithy", "biggerbetterheirlooms", "shieldlayer", "void", "moreVoid", "tenacity", "SADailies", "Scruffy21", "Scruffy22", "scruffBurst", "justdam", "justdam", "justdam"],
 	prestigeRewardsU2: [],
 	checkU2Allowed: function(){
@@ -18438,6 +18474,10 @@ var Fluffy = {
 		},
 		FluffyE14: {
 			description: "Permanently active all three Nature Enlightenments at once (even after evolving to Evolution 15+)! Wind Stacks is always 300 after attacking. In Finale challenge, Poison stacks are permanent, and transfer rate of Poison stacks is always 100%."
+		},
+		FluffyE15: {
+			get description(){ return "Corruption and Healthy enemies no longer have special abilities. Corruptions won't affect Improbabilities and Omnipotrimps. In Finale challenge, enemy will gain poison stack equal to Y times Fluffy's Gamma Burst damage. Y = (Poison Empowerment Level + 100) * Z, Z = 7 when Poison Empowerment is active, 1 otherwise.";
+			}
 		},
 
 
