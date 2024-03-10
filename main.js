@@ -18581,7 +18581,7 @@ var Fluffy = {
 			description: "永久性同时激活三种自然启迪（即使您把绒绒升级到进化次数15或以上）！风层数在攻击后必定为300层。终幕挑战中保留毒层数（即使不在毒区），且毒层数的传递率为100%。"
 		},
 		FluffyE15: {
-			get description(){ return "Corruption and Healthy enemies no longer have special abilities. Corruptions won't affect Improbabilities and Omnipotrimps. In Finale challenge, enemy will gain poison stack equal to Y times Fluffy's Gamma Burst damage. Y = (Poison Empowerment Level + 100) * Z, Z = 7 when Poison Empowerment is active, 1 otherwise.";
+			get description(){ return "使腐化和健康敌人失去特殊能力。终幕挑战中敌人额外增加Y倍伽马爆发伤害值的毒层数。Y = (毒赋能等级 + 100) * Z。如果绒绒正在毒区战斗，Z的值为7，否则Z的值为1。";
 			}
 		},
 

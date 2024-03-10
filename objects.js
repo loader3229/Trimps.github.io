@@ -4135,7 +4135,7 @@ var autoBattle = {
         text += "<div id='autoBattleStatsText'>" + statsText + "</div>";
         var itemsText = "物品(已装备" + this.countEquippedItems() + "/" + this.getMaxItems() + ")"; 
         text += "<div id='autoBattleMenuButtons'><span id='abItemsBtn' onclick='autoBattle.swapPopup(\"items\")' class='btn btn-lg autoItemUpgrade darkBorder'>" + itemsText + "</span><span onclick='autoBattle.swapPopup(\"bonuses\")' class='btn btn-lg colorNavy'>Bonuses</span><span onclick='autoBattle.swapPopup(\"contracts\")' class='btn btn-lg colorVoidy darkBorder'>Contracts</span><span onclick='autoBattle.swapPopup(\"hidden\")' class='btn btn-lg autoColorOrange darkBorder'>Hidden Items</span><span class='btn btn-lg autoItemHide darkBorder' onclick='autoBattle.toggleHideMode()'>Hide Items</span>";
-        text += "<span class='btn btn-lg autoItemHide darkBorder'  style='display: " + ((game.talents.tier11e.purchased) ? 'inline-block' : 'none') + "' onclick='autoBattle.toggleDowngradeMode()'>Downgrade Items</span>";
+        text += "<span class='btn btn-lg autoItemHide darkBorder'  style='display: " + ((game.talents.tier11e.purchased) ? 'inline-block' : 'none') + "' onclick='autoBattle.toggleDowngradeMode()'>降级物品</span>";
         text += "<span id='autoBattleRingBtn' onclick='autoBattle.swapPopup(\"rings\")' style='display: " + ((this.oneTimers.The_Ring.owned) ? 'inline-block' : 'none') + "' class='btn btn-lg autoColorTeal active darkBorder'>The Ring</span>";
         text += "<span onclick='autoBattle.swapPopup(\"other\")' class='btn btn-lg autoColorGrey active darkBorder'>Misc</span></div>";
         var notesElem = document.getElementById('autoBattleNotes');
@@ -4176,9 +4176,9 @@ var autoBattle = {
                 line1 += "<div class='autoItem autoItem" + equipClass + "' onclick='autoBattle.equip(\"" + item + "\")' onmouseover='autoBattle.hoverItem(\"" + item + "\")'>" + this.cleanName(item) + ((itemObj.noUpgrade) ? "" : "<i></i> 等级" + itemObj.level) + "</div>";
                 if (this.popupMode == "items"){
                     if (this.downgradeMode && itemObj.level <= 1)
-                        line2 += "<div class='autoItem autoColorGrey'>Undowngradable</div>"
+                        line2 += "<div class='autoItem autoColorGrey'>无法降级</div>"
                     else if (this.downgradeMode)
-                        line2 += "<div class='autoItem autoItemHide' onclick='autoBattle.downgrade(\"" + item + "\")' onmouseover='autoBattle.hoverItem(\"" + item + "\", true)'>Downgrade (+" + downgradeCost + ")</div>";
+                        line2 += "<div class='autoItem autoItemHide' onclick='autoBattle.downgrade(\"" + item + "\")' onmouseover='autoBattle.hoverItem(\"" + item + "\", true)'>降级(+" + downgradeCost + ")</div>";
                     else if (this.hideMode)
                         line2 += "<div class='autoItem autoItemHide' onclick='autoBattle.hide(\"" + item + "\")'>Hide</div>";
                     else if (itemObj.noUpgrade) line2 += "<div class='autoItem autoColorGrey'>Unupgradable</div>"
@@ -4266,10 +4266,10 @@ var autoBattle = {
             text += "<div class='abMiscBox'>";
             var action = this.lastActions[this.lastActions.length - 1];
             if(game.talents.tier11e.purchased){
-				text += "<b style='font-size: 1.1em;'>Downgrade your ring</b><br/>";
-				text += "<span class='btn autoItemUpgrade btn-md' onclick='autoBattle.downgradeRing()'>Downgrade</span>";
+				text += "<b style='font-size: 1.1em;'>降级灵戒</b><br/>";
+				text += "<span class='btn autoItemUpgrade btn-md' onclick='autoBattle.downgradeRing()'>降级</span>";
                 text += "<br/>";
-				text += "Downgrade your ring by 1 level, and gain "+prettify(autoBattle.getRingLevelCost() / 2)+" Shards.";
+				text += "使您的戒指降低1级，并增加"+prettify(autoBattle.getRingLevelCost() / 2)+"晶块";
 			}else if (action){
 				text += "<b style='font-size: 1.1em;'>Undo last change</b><br/>";
                 if (!this.confirmUndo) text += "<span class='btn autoItemUpgrade btn-md' onclick='autoBattle.confirmUndoClicked()'>Undo</span>";

@@ -2629,24 +2629,24 @@ var toReturn = {
 			requires: "tier11a"
 		},
 		tier11c: {
-			get description(){return "Double Mutated Seed gain. Mutated Seeds boost Dark Essence gain. Currently: "+prettify(Math.log10(game.global.mutatedSeeds+10))+"x"},
-			name: "Mutated Mastery",
+			get description(){return "突变之种的获取变为原来的2倍。基于突变之种增加黑暗精华的获取量。当前效果："+prettify(Math.log10(game.global.mutatedSeeds+10))+"倍。"},
+			name: "突变专精",
 			tier: 11,
 			purchased: false,
 			icon: "road",
 			requires: "tier11b"
 		},
 		tier11d: {
-			description: "Each Randimp now give three different exotic import rewards at once.",
-			name: "Randimp II",
+			description: "脆皮百变怪现在会同时给予不同的3个奇异外皮的效果。",
+			name: "脆皮百变怪 II",
 			tier: 11,
 			purchased: false,
 			icon: "*dice",
 			requires: "tier11c"
 		},
 		tier11e: {
-			description: "You can downgrade your SA equipments and ring. You will get a full refund.",
-			name: "SA Downgrader",
+			description: "您可以降级尖塔突击物品和灵戒。",
+			name: "尖塔突击降级器",
 			tier: 11,
 			purchased: false,
 			icon: "*arrow-bold-down",
