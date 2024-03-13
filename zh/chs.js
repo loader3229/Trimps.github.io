@@ -473,6 +473,8 @@ var cnItems = {
     'Emptiness': '空白',
     'Void Corruption': '虚空腐化',
     'Map Corruption': '地图腐化',
+    'True Infinity Attack': '真·无限攻击',
+    'He will deal True Infinity damage that insta-kill your Trimps! Ignores block.': '该敌人的攻击会造成真·无限伤害并秒杀您的脆皮们！真·无限伤害不受格挡影响！ 代！码！杀！！',
     'Your Trimps are dealing double damage, thanks to the Titimp!': '多亏了脆皮泰坦，我方脆皮可以造成双倍伤害！',
     'Charging': '蓄能',
     'Fast': '快速',
@@ -1041,11 +1043,15 @@ var cnItems = {
     'Darknimp': '脆皮暗罪者',
     'Freezo': '冰雪之王',
     'Frosnimp': '脆皮寒霜者',
+    'Obsidimp': '脆皮黑曜石',
     'Druopitee': '德罗披提',
     'Druopitee and Pals': '德罗披提和随从们',
     'Echo of Druopitee': '德罗披提的幻影',
+    'Echoes of Druopitee': '德罗披提的幻影',
     'Echoes of Druopitee and Pals': '德罗披提和随从们的幻影',
     'Improbabilities': '乌有者们',
+    'Omnipotrimps': '全能者们',
+    'Druopitinity': '德罗披提·无限',
     'Corrupt': '腐化',
     'Magma': '岩浆',
     'Healthy': '健康',
@@ -6342,6 +6348,7 @@ var cnRegReplace = new Map([
     //#region 其他消息
     [/^(.+) groups? of Trimps ha(s|ve) perished in the Spire.$/, '$1队脆皮在尖塔中战斗到了生命的最后一刻。'], //其他消息等
     [/^You're not yet ready. Maybe you'll be of use in the next lifetime \(You made it to cell (.+)\).$/, '您只是在自寻死路。希望下周目您准备好了(您到达了格子$1)。'], //其他消息等
+    [/^You're not yet ready. Maybe you'll be of use in the next lifetime \(Your Trimps dealt (.+) damage to Druopitinity\).$/, '您只是在自寻死路。希望下周目您准备好了(您的脆皮们对德罗披提·无限造成了$1点伤害)。'], //其他消息等
     [/^Scruffy gave you (.+) free Void Maps!$/, '污污给了您$1张免费的虚空地图！'], //其他消息等
     [/^Your save file is from a newer version of Trimps \(v(.+)\) than what your computer is running \(v(.+)\). Refresh or restart your browser!$/, '您的游戏版本为$2，但存档的游戏版本更新一些，为$1。请刷新或重启浏览器！'], //其他消息等
     [/^Your save file is from a newer version of Trimps \(v(.+)\) than what your computer is running \(v(.+)\). You may need to restart Steam and then relaunch Trimps to get the newest update.$/, '您的游戏版本为$2，但存档的游戏版本更新一些，为$1。请重启steam并重新运行脆皮，以更新游戏。'], //其他消息等

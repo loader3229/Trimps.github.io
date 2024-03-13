@@ -13161,7 +13161,7 @@ function deadInSpire(){
 	game.global.spireDeaths++;
 	if (game.global.spireDeaths >= 10) {
 		if(game.global.lastClearedCell == 98 && checkIfSpireWorld(true) == 8){
-			message("You're not yet ready. Maybe you'll be of use in the next lifetime (Your Trimps dealt " + prettify(1e300-game.global.gridArray[99].health) + " damage to Druopitinity).", "Story");
+			message("You're not yet ready. Maybe you'll be of use in the next lifetime (Your Trimps dealt " + prettify(game.global.gridArray[99].maxHealth-game.global.gridArray[99].health) + " damage to Druopitinity).", "Story");
 		}else message("You're not yet ready. Maybe you'll be of use in the next lifetime (You made it to cell " + (game.global.lastClearedCell + 2) + ").", "Story");
 		endSpire();
 		return;
@@ -13422,7 +13422,7 @@ function giveSpireReward(level){
 			if (spireWorld == 8){
 				giveSingleAchieve("What? Druopitee is revived?");
 				createHeirloom(game.global.world, false, true);
-				text += "You find a <b>brand new Spire Core</b>!";
+				text += "您发现了一个<b>崭新的尖塔核心</b>！";
 				message(text, "Story");
 				break;
 			}
