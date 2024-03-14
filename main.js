@@ -18595,7 +18595,7 @@ var Fluffy = {
 			get description(){
 				var count = 9;
 				if (game.talents.voidSpecial2.purchased) count++;
-				return "Allows an additional 3 Void Maps with the same name to stick together, bringing the max stack size to " + count + ". Each map in the stack that Fluffy clears grants an additional 50% Helium to all other maps in the stack, giving a bonus of up to +" + Math.floor((count - 1) * 50) + "% to each of the " + (count - 1) + " Fluffy maps from a " + count + " stack. Also, Fluffy's E10 bonus per Evolution is increased to 400%."
+				return "使虚空地图的融合张数上限增加3，达到" + count + "张。每融合一张地图，绒绒完成该名字地图后的奖励就增加50%。当融合" + count + "张地图时，奖励达到最高，绒绒完成" + (count - 1) + "张虚空地图后每张虚空地图可以使您额外获得" + Math.floor((count - 1) * 50) + "%氦。并且绒绒进化10的效果中的210%变为400%。"
 			}
 		},
 
