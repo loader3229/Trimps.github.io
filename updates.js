@@ -1659,7 +1659,7 @@ function tooltip(what, isItIn, event, textString, attachFunction, numCheck, rena
 			if (tipSplit[1] == 'incby'){
 				var increase = toTip.increase.by;
 				if (toTip.increase.what == "trimps.max" && game.global.challengeActive == "Downsize") increase = 1;
-				if (toTip.increase.what == "trimps.max" && game.global.challengeActive == "Houseless") increase = 0;
+				if (toTip.increase.what == "trimps.max" && (game.global.challengeActive == "Houseless" || game.global.challengeActive == "Doubleless")) increase = 0;
 				if (getPerkLevel("Carpentry") && toTip.increase.what == "trimps.max") increase *= Math.pow(1.1, getPerkLevel("Carpentry"));
 				if (getPerkLevel("Carpentry_II") && toTip.increase.what == "trimps.max") increase *= (1 + (game.portal.Carpentry_II.modifier * getPerkLevel("Carpentry_II")));
 				if (game.global.expandingTauntimp) increase *= game.badGuys.Tauntimp.expandingMult();
@@ -2647,8 +2647,8 @@ function getBattleStatBd(what) {
 	}
 	//Add Finale
 	if (game.global.challengeActive == "Finale"){
-		currentCalc *= (what == "attack" ? (Fluffy.isRewardActive("FluffyE13")?11*Math.pow(3.1, Fluffy.getCurrentPrestige()):Fluffy.isRewardActive("FluffyE10")?Math.pow(3.1, Fluffy.getCurrentPrestige()):1) : (what == "block" ? Infinity : 1e200));
-		textString += "<tr><td class='bdTitle'>Finale</td><td></td><td></td><td>x "+prettify((what == "attack" ? (Fluffy.isRewardActive("FluffyE13")?11*Math.pow(3.1, Fluffy.getCurrentPrestige()):Fluffy.isRewardActive("FluffyE10")?Math.pow(3.1, Fluffy.getCurrentPrestige()):1) : (what == "block" ? Infinity : 1e200)))+"</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+		currentCalc *= (what == "attack" ? (Fluffy.isRewardActive("FluffyE13")?11*Math.pow((Fluffy.isRewardActive("FluffyE16")?5:3.1), Fluffy.getCurrentPrestige()):Fluffy.isRewardActive("FluffyE10")?Math.pow((Fluffy.isRewardActive("FluffyE16")?5:3.1), Fluffy.getCurrentPrestige()):1) : (what == "block" ? Infinity : 1e200));
+		textString += "<tr><td class='bdTitle'>Finale</td><td></td><td></td><td>x "+prettify((what == "attack" ? (Fluffy.isRewardActive("FluffyE13")?11*Math.pow((Fluffy.isRewardActive("FluffyE16")?5:3.1), Fluffy.getCurrentPrestige()):Fluffy.isRewardActive("FluffyE10")?Math.pow((Fluffy.isRewardActive("FluffyE16")?5:3.1), Fluffy.getCurrentPrestige()):1) : (what == "block" ? Infinity : 1e200)))+"</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
 	}
 	//Add coordination
 	if (what != "shield"){
@@ -2660,7 +2660,7 @@ function getBattleStatBd(what) {
 		currentCalc *= game.buildings.Smithy.getMult();
 		textString += "<tr><td class='bdTitle'>Smithy</td><td>× " + prettify(game.buildings.Smithy.getBaseMult()) + "</td><td>" + game.buildings.Smithy.owned + "</td><td>+ " + prettify((game.buildings.Smithy.getMult() - 1) * 100) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
 	}
-	if ((what == "attack" || what == "health") && game.global.challengeActive == "Smithless"){
+	if ((what == "attack" || what == "health") && (game.global.challengeActive == "Smithless" || game.global.challengeActive == "Doubleless")){
 		currentCalc *= game.challenges.Smithless.getTrimpMult();
 		textString += "<tr><td class='bdTitle'>Enhanced Armor (Smithless)</td><td>× 1.25</td><td>" + game.challenges.Smithless.fakeSmithies + "</td><td>+ " + prettify((game.challenges.Smithless.getTrimpMult() - 1) * 100) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
 	}
@@ -3287,7 +3287,7 @@ function getMaxTrimps() {
 	//Add job count
 	var housing = trimps.max - game.global.totalGifts - game.unlocks.impCount.TauntimpAdded - base - game.global.trimpsGenerated;
 	if (game.global.challengeActive == "Downsize") housing = countTotalHousingBuildings();
-	if (game.global.challengeActive == "Houseless") housing = 0;
+	if (game.global.challengeActive == "Houseless" || game.global.challengeActive == "Doubleless") housing = 0;
 	if (housing < 0) housing = 0;
 	var currentCalc = housing + base;
 	textString += "<tr><td class='bdTitle'>Housing</td><td class='bdPercent'>+ " + prettify(housing) + "</td><td class='bdNumber'>" + prettify(currentCalc) + "</td></tr>";

@@ -22,7 +22,7 @@ function newGame () {
 var toReturn = {
 	global: {
 		//New and accurate version
-		stringVersion: '5.10',
+		stringVersion: '5.10.10',
 		//Leave 'version' at 4.914 forever, for compatability with old saves
 		version: 4.914,
 		isBeta: false,
@@ -513,7 +513,7 @@ var toReturn = {
 				var part1 = (world > 40) ? 40 : world;
 				var part2 = (world > 60) ? 20 : world - 40;
 				var part3 = (world - 60);
-				var part4 = (world - 350);
+				var part4 = (world - 400);
 				if (part2 < 0) part2 = 0;
 				if (part3 < 0) part3 = 0;
 				if (part4 < 0) part4 = 0;
@@ -2629,7 +2629,7 @@ var toReturn = {
 			requires: "tier11a"
 		},
 		tier11c: {
-			get description(){return "突变之种的获取变为原来的2倍。基于突变之种增加黑暗精华的获取量。当前效果："+prettify(Math.log10(game.global.mutatedSeeds+10))+"倍。"},
+			get description(){return "基于黑暗精华增加突变之种的获取量，基于突变之种增加黑暗精华的获取量。当前效果："+prettify(Math.log10(game.global.mutatedSeeds+10))+"倍黑暗精华，"+prettify(Math.log10(game.global.essence+1e60)/10-4)+"倍突变之种。"},
 			name: "突变专精",
 			tier: 11,
 			purchased: false,
@@ -2645,16 +2645,16 @@ var toReturn = {
 			requires: "tier11c"
 		},
 		tier11e: {
-			description: "您可以降级尖塔突击物品和灵戒。",
-			name: "尖塔突击降级器",
+			get description(){ return "您可以降级尖塔突击物品和灵戒。每通过1级尖塔突击，黑暗精华、突变之种、魔尘和晶块获取增加0.5%。当前效果："+prettify(Math.pow(1.005,autoBattle.maxEnemyLevel-1))+"倍。"},
+			name: "突击专精",
 			tier: 11,
 			purchased: false,
 			icon: "*arrow-bold-down",
 			requires: "tier11d"
 		},
 		tier11f: {
-			description: "Tier 11 Mastery 6",
-			name: "Tier 11 Mastery 6",
+			description: "培养挑战完成之后，朽朽会一直留在您的维度。",
+			name: "Cruffys",
 			tier: 11,
 			purchased: false,
 			icon: "road",
@@ -2820,9 +2820,12 @@ var toReturn = {
 		Resourceful: {
 			level: 0,
 			locked: true,
+			radLocked: true,
 			modifier: 0.05,
 			priceBase: 50000,
 			heliumSpent: 0,
+			radLevel: 0,
+			radSpent: 0,
 			tooltip: "Spending time with limited maps has taught you how to be more resourceful. Each level will allow you to spend 5% fewer resources <b>than the current cost</b> per level on all structures."
 		},
 		Coordinated: {
@@ -2913,10 +2916,10 @@ var toReturn = {
 			radLocked: true,
 			priceBase: 100e21,//sx
 			radLevel: 0,
-			max: 10,
+			max: 12,
 			radSpent: 0,
 			specialGrowth: 50,
-			tooltip: "Each level of Masterfulness grants +1 to levels of both Greed and Tenacity beyond their caps. Maximum of 10 levels."
+			tooltip: "Each level of Masterfulness grants +1 to levels of both Greed and Tenacity beyond their caps. Maximum of 12 levels."
 		},
 		Greed: {
 			priceBase: 10e9,
@@ -2954,7 +2957,7 @@ var toReturn = {
 				return mult;
 			},
 			getTime: function(){
-				var minutes = getZoneMinutes();
+				var minutes = (getZoneMinutes() + Fluffy.isRewardActive('Scruffy26') * 20);
 				var lastZone = this.timeLastZone;
 				if (lastZone == -1) lastZone = 0;
 				if (lastZone > 120) lastZone = 120;
@@ -3298,7 +3301,7 @@ var toReturn = {
 			radLocked: true,
 			priceBase: 5e18,
 			radLevel: 0,
-			max: 66,
+			max: 80,
 			radSpent: 0,
 			get tooltip(){
 				var useTemp = false;
@@ -5895,6 +5898,7 @@ var toReturn = {
 				message("You have completed the Nurture challenge! You have gained an extra " + prettify(reward) + " Radon, and your world has been returned to normal.", "Notices");
 				addHelium(reward);
 				game.challenges.Nurture.abandon();
+				if(game.talents.tier11f.purchased)this.cruffysUntil = 999;
 				game.global.challengeActive = "";
 				if (game.portal.Observation.radLocked && this.getLevel() >= 10) {
 					unlockPerk("Observation");
@@ -6555,6 +6559,24 @@ var toReturn = {
 			allowSquared: true,
 			completeAfterZone: 260,
 			unlockString: "到达区域300"
+		},
+		Doubleless: {
+			description: "Your scientists just found a set of combinable dimensions in Universe 2! You can go to Houseless and Smithless at the same time to learn how to use less resources to build structures! Completing <b>Zone 310</b> will return the world to normal.",
+			completed: false,
+			filter: function () {
+				return (getHighestLevelCleared(true) >= 374);
+			},
+			onComplete: function (){
+				game.challenges.Smithless.abandon();
+				game.global.challengeActive = "";
+				unlockPerk("Resourceful");
+				message("You have completed the <b>Doubleless Challenge!</b> Your World has been returned to normal and you have unlocked the Resourceful Perk!", "Notices");
+			},
+			allowU2: true,
+			blockU1: true,
+			completeAfterZone: 310,
+			unlockString: "reach Zone 375",
+			unlocks: "Resourceful"
 		},
 	},
 	stats:{
@@ -8453,7 +8475,7 @@ var toReturn = {
 					num = game.global.totalGifts + game.unlocks.impCount.TauntimpAdded + 10;
 					num += countTotalHousingBuildings();
 				}
-				if (game.global.challengeActive == "Houseless"){
+				if (game.global.challengeActive == "Houseless" || game.global.challengeActive == "Doubleless"){
 					num = game.global.totalGifts + game.unlocks.impCount.TauntimpAdded + 10;
 				}
 				num *= this.maxMod;
@@ -9717,7 +9739,7 @@ var toReturn = {
 						amt += countTotalHousingBuildings();
 						amt = Math.ceil(amt * 0.003);
 					}
-					if (game.global.challengeActive == "Houseless"){
+					if (game.global.challengeActive == "Houseless" || game.global.challengeActive == "Doubleless"){
 						amt = game.global.totalGifts + game.unlocks.impCount.TauntimpAdded + 10;
 						amt = Math.ceil(amt * 0.003);
 					}
@@ -10229,7 +10251,7 @@ var toReturn = {
 			canRunOnce: true,
 			fire: function(){
 				var toAdd = (autoBattle.oneTimers.Smithriffic.owned) ? 2 : 1; 
-				if (game.global.challengeActive == "Smithless"){
+				if (game.global.challengeActive == "Smithless" || game.global.challengeActive == "Doubleless"){
 					game.challenges.Smithless.ranMelting = true;
 					var text = (toAdd == 2) ? "These buildings are" : "This building is";
 					text += " completely useless right now! Maybe you'll be able to hire some Metalworkers eventually...";
@@ -10996,6 +11018,8 @@ var toReturn = {
 		Efficiency: {
 			message: "Hey, this book might be for you!",
 			world: -2,
+			startAt: 2,
+			lastAt: 900,
 			level: 9,
 			icon: "book",
 			title: "效率",
@@ -11029,6 +11053,8 @@ var toReturn = {
 		TrainTacular: {
 			message: "This book is for your Trainers!",
 			world: -5,
+			startAt: 5,
+			lastAt: 900,
 			blockU2: true,
 			level: 9,
 			icon: "book",
@@ -11045,7 +11071,7 @@ var toReturn = {
 			icon: "book",
 			title: "铁匠铺",
 			fire: function(){
-				if (game.global.challengeActive == "Smithless"){
+				if (game.global.challengeActive == "Smithless" || game.global.challengeActive == "Doubleless"){
 					message("Well these plans certainly don't look useful in this Universe. Better put that away for later.", "Notices")
 					game.challenges.Smithless.smithHeld = true;
 					return;
@@ -11132,6 +11158,8 @@ var toReturn = {
 		Potency: {
 			message: "This book will help your Trimps make more Trimps!",
 			world: -5,
+			startAt: 5,
+			lastAt: 900,
 			level: 29,
 			icon: "book",
 			title: "脆皮爱经",
@@ -11444,6 +11472,8 @@ var toReturn = {
 		Foreman: {
 			message: "You found a crafting foreman! He will build buildings automatically for you!",
 			world: -1,
+			startAt: 1,
+			lastAt: 900,
 			level: 89,
 			icon: "user",
 			title: "工头",
@@ -11500,7 +11530,7 @@ var toReturn = {
 			message: "You find an ancient book titled Coordination. Exciting.",
 			world: -1,
 			startAt: 1,
-			lastAt: 900,
+			lastAt: 899,
 			level: 99,
 			get icon (){
 				return (game.global.world == mutations.Magma.start() - 1) ?  "*archive2" : "book";
@@ -11618,7 +11648,7 @@ var toReturn = {
 			repeat: 45,
 			fire: function () {
 				var amt = 5 + (game.portal.Trumps.modifier * getPerkLevel("Trumps"));
-				if (game.global.challengeActive == "Houseless")amt = 0;
+				if (game.global.challengeActive == "Houseless" || game.global.challengeActive == "Doubleless")amt = 0;
 				game.global.totalGifts += amt;
 				amt = addMaxHousing(amt, bwRewardUnlocked("AutoStructure"));
 				message("您清理了足够多的土地，脆皮上限增加了" + prettify(amt) + "！", "Loot", "gift", null, "secondary");
