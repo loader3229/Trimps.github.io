@@ -125,6 +125,7 @@ function save(exportThis, fromManual) {
 	var challenge = saveGame.global.challengeActive;
 	if (!challenge && game.challenges.Nurture.cruffysUntil && game.challenges.Nurture.cruffysUntil >= game.global.world) challenge = "Nurture";
 	if (challenge == "Mapocalypse") challenge = "Electricity";
+	if (challenge == "Doubleless") challenge = "Smithless";
 	for (var itemF in saveGame.challenges){
 		if (itemF != challenge && !saveGame.global.multiChallenge[itemF]){
 			delete saveGame.challenges[itemF];
@@ -2151,9 +2152,9 @@ function getObsidianStart(baseOnly){
 	if (baseOnly) return start;
 	var radLevels = game.global.highestRadonLevelCleared;
 	var bonus = 0;
-	bonus += (radLevels > 100) ? 100 + (Math.floor((radLevels - 100) / 25) * 10) : Math.floor(radLevels / 10) * 10;
+	bonus += (radLevels > 350) ? 200 + (Math.floor((radLevels - 350) / 50) * 10) : (radLevels > 100) ? 100 + (Math.floor((radLevels - 100) / 25) * 10) : Math.floor(radLevels / 10) * 10;
 	start += bonus;
-	if (start > 901) start = 901;
+	if (start > 911) start = 911;
 	return start;
 }
 
@@ -3669,7 +3670,7 @@ function canCommitCarpentry(noInfinity){ //Uh, and Coordinated. This checks coor
 		newMax = game.global.totalGifts + game.unlocks.impCount.TauntimpAdded + 10;
 		newMax += countTotalHousingBuildings();
 	}
-	if (game.global.challengeActive == "Houseless"){
+	if (game.global.challengeActive == "Houseless" || game.global.challengeActive == "Doubleless"){
 		newMax = game.global.totalGifts + game.unlocks.impCount.TauntimpAdded + 10;
 	}
 	newMax *= game.resources.trimps.maxMod;
@@ -8742,7 +8743,7 @@ var mutations = {
 		tooltip: function () {
 			var text = "This enemy is rock solid, and there\\'s no way to get past.";
 			if (Fluffy.checkU2Allowed()){
-				if (game.global.world == 901) text += " This Zone is even more rocky and solid than anything you\\'ve seen before. You don\\'t think there\\'s any way to get past for now.";
+				if (game.global.world == 911) text += " This Zone is even more rocky and solid than anything you\\'ve seen before. You don\\'t think there\\'s any way to get past for now.";
 				else text += " Time to go to the Radon Universe and find a way to melt these Zones!";
 			}
 			else text += " Fluffy suggests that you find a way to get him to Evolution 8 Level 10 as quickly as possible so he can help you melt these Zones!";
@@ -10412,7 +10413,7 @@ function mapsSwitch(updateOnly, fromRecycle) {
 		if (game.global.novaMutStacks > 0) u2Mutations.types.Nova.drawStacks();
     }
 	if (game.global.tutorialActive) tutorial.setWinSize();
-	if (game.global.challengeActive == "Smithless") game.challenges.Smithless.drawStacks();
+	if (game.global.challengeActive == "Smithless" || game.global.challengeActive == "Doubleless") game.challenges.Smithless.drawStacks();
 	toggleVoidMaps(true);
 }
 
@@ -10791,7 +10792,7 @@ function startFight() {
 	else {
 		displayedName = badName.replace('_', ' ');
 	}
-	if (game.global.challengeActive == "Smithless" && !game.global.mapsActive && game.global.world % 25 == 0 && game.global.lastClearedCell == -1 && !cell.failedUber){
+	if ((game.global.challengeActive == "Smithless" || game.global.challengeActive == "Doubleless") && !game.global.mapsActive && game.global.world % 25 == 0 && game.global.lastClearedCell == -1 && !cell.failedUber){
 		ubersmithActive = true;
 		game.challenges.Smithless.saveName = displayedName;
 		displayedName = "Ubersmith";
@@ -11068,7 +11069,7 @@ function startFight() {
 		if (cell.health < 1) {
 			var overkillerCount = 0;
 			if (game.global.universe == 1){
-				var overkillerCount = Fluffy.isRewardActive("overkiller");
+				overkillerCount = Fluffy.isRewardActive("overkiller");
 				if (game.talents.overkill.purchased) overkillerCount++;
 				if (getEmpowerment() == "Ice"){
 					if (game.empowerments.Ice.getLevel() >= 50) overkillerCount++;
@@ -11080,6 +11081,7 @@ function startFight() {
 			else {
 				overkillerCount = 0;
 				if (u2Mutations.tree.MaxOverkill.purchased && canU2Overkill()) overkillerCount++;
+				if (canU2Overkill()) overkillerCount += Fluffy.isRewardActive("overkiller");
 			}
 			if (cell.OKcount <= overkillerCount){
 				var nextCell = (game.global.mapsActive) ? game.global.mapGridArray[cellNum + 1] : game.global.gridArray[cellNum + 1];
@@ -11238,7 +11240,7 @@ function startFight() {
 		if (game.global.universe == 2 && game.buildings.Smithy.owned > 0){
 			game.global.soldierHealthMax *= game.buildings.Smithy.getMult();
 		}
-		if (game.global.challengeActive == "Smithless" && game.challenges.Smithless.fakeSmithies > 0){
+		if ((game.global.challengeActive == "Smithless" || game.global.challengeActive == "Doubleless") && game.challenges.Smithless.fakeSmithies > 0){
 			game.global.soldierHealthMax *= game.challenges.Smithless.getTrimpMult();
 		}
 		//Fluffy U2 Healthy
@@ -11402,7 +11404,7 @@ function startFight() {
 			if (challengeActive("Balance")){
 				healthTemp *= game.challenges.Balance.getHealthMult();
 			}
-			if (game.global.challengeActive == "Smithless" && game.challenges.Smithless.fakeSmithies > 0){
+			if ((game.global.challengeActive == "Smithless" || game.global.challengeActive == "Doubleless") && game.challenges.Smithless.fakeSmithies > 0){
 				healthTemp *= game.challenges.Smithless.getTrimpMult();
 			}
 			if (game.global.challengeActive == "Revenge") healthTemp *= game.challenges.Revenge.getMult();
@@ -11795,9 +11797,9 @@ function calculateDamage(number, buildString, isTrimp, noCheckAchieve, cell, noF
 		if (game.global.challengeActive == "Archaeology") number *= game.challenges.Archaeology.getStatMult("attack");
 		if (game.global.challengeActive == "Storm" && game.global.mapsActive) number *= game.challenges.Storm.getMapMult();
 		if (game.global.challengeActive == "Berserk") number *= game.challenges.Berserk.getAttackMult();
-		if (game.global.challengeActive == "Smithless" && game.challenges.Smithless.fakeSmithies > 0) number *= game.challenges.Smithless.getTrimpMult();
+		if ((game.global.challengeActive == "Smithless" || game.global.challengeActive == "Doubleless") && game.challenges.Smithless.fakeSmithies > 0) number *= game.challenges.Smithless.getTrimpMult();
 		if (game.global.challengeActive == "Desolation") number *= game.challenges.Desolation.trimpAttackMult();
-		if (game.global.challengeActive == "Finale" && Fluffy.isRewardActive("FluffyE10")) number *= Math.pow(3.1, Fluffy.getCurrentPrestige());
+		if (game.global.challengeActive == "Finale" && Fluffy.isRewardActive("FluffyE10")) number *= Math.pow((Fluffy.isRewardActive("FluffyE16")?5:3.1), Fluffy.getCurrentPrestige());
 		if (game.global.challengeActive == "Finale" && Fluffy.isRewardActive("FluffyE13")) number *= 11;
 		if (game.challenges.Nurture.boostsActive()) number *= game.challenges.Nurture.getStatBoost();
 		number = calcHeirloomBonus("Shield", "trimpAttack", number);
@@ -11988,6 +11990,7 @@ function calculateScryingReward(){
 	var num = (1 * Math.pow(modAmt, scryableLevels)) / 3;
 	num = num * Math.pow(1.07, (game.c2.Finale ?? 1) - 1);
 	if(game.talents.tier11c.purchased)num = num * Math.log10(game.global.mutatedSeeds+10);
+	if(game.talents.tier11e.purchased)num = num * Math.pow(1.005,autoBattle.maxEnemyLevel-1);
 	if (num < 1) num = 1;
 	if (game.talents.scry.purchased && !game.global.mapsActive){
 		var worldCell = getCurrentWorldCell();
@@ -12567,7 +12570,7 @@ function nextWorld() {
 	}
 	if (getPerkLevel("Tenacity")){
 		if (game.portal.Tenacity.timeLastZone != -1) game.portal.Tenacity.timeLastZone *= game.portal.Tenacity.getCarryoverMult();
-		game.portal.Tenacity.timeLastZone += getZoneMinutes();
+		game.portal.Tenacity.timeLastZone += (getZoneMinutes() + Fluffy.isRewardActive('Scruffy26') * 20);
 		
 	}
 	game.global.zoneStarted = getGameTime();
@@ -12725,10 +12728,10 @@ function nextWorld() {
 	if (!game.portal.Observation.radLocked && game.global.universe == 2) game.portal.Observation.onNextWorld();
 	if (game.global.capTrimp) message("I'm terribly sorry, but your Trimp<sup>2</sup> run appears to have more than one Trimp fighting, which kinda defeats the purpose. Your score for this Challenge<sup>2</sup> will be capped at 230.", "Notices");
 	if (game.global.world >= getObsidianStart()){
-		var next = (game.global.highestRadonLevelCleared >= 99) ? "25" : "10";
+		var next = (game.global.highestRadonLevelCleared >= 349) ? "50" : (game.global.highestRadonLevelCleared >= 99) ? "25" : "10";
 		var text;
 		if (!Fluffy.checkU2Allowed()) text = " Fluffy has an idea for remelting the world, but it will take a tremendous amount of energy from a place Fluffy isn't yet powerful enough to send you. Fluffy asks you to help him reach the <b>10th Level of his 8th Evolution</b>, and he promises he'll make it worth your time.";
-		else if (game.global.world == 901) text = "";
+		else if (game.global.world == 911) text = "";
 		else text = " However, all is not lost! Every " + next + " Zones of progress you make in the Radon Universe will allow you to harness enough energy for Fluffy to slow down the hardening of your World for an extra 10 Zones in this Universe.";
 		message("The Magma has solidified into impenetrable Obsidian; your Trimps have no hope of progressing here right now." + text, "Notices", null, "obsidianMessage");
 	}
@@ -14750,7 +14753,7 @@ function fight(makeUp) {
 			else chal.addStack();
 			updateBalanceStacks();
 		}
-		if (game.global.challengeActive == "Smithless" && cell.ubersmith && !cell.failedUber){
+		if ((game.global.challengeActive == "Smithless" || game.global.challengeActive == "Doubleless") && cell.ubersmith && !cell.failedUber){
 			game.challenges.Smithless.addStacks(3);
 		}
 		if (game.global.challengeActive == "Daily"){
@@ -15108,7 +15111,7 @@ function fight(makeUp) {
 		if (game.challenges.Duel.enemyStacks < 10) checkFast = true;
 		else if (game.challenges.Duel.trimpStacks < 10 && !game.global.runningChallengeSquared) forceSlow = true;
 	}
-	if (game.global.challengeActive == "Smithless" && cell.ubersmith && !cell.failedUber) checkFast = true;
+	if ((game.global.challengeActive == "Smithless" || game.global.challengeActive == "Doubleless") && cell.ubersmith && !cell.failedUber) checkFast = true;
 	if (cell.u2Mutation && cell.u2Mutation.length) checkFast = true;
 
 	if (trimpAttack > 0 && checkFast && !forceSlow) {
@@ -15215,9 +15218,9 @@ function fight(makeUp) {
 				if (getEmpowerment() == "Poison") stackPoison(burstDamage);
 				if (Fluffy.isRewardActive("FluffyE15") && game.global.challengeActive == "Finale"){
 					if (getEmpowerment() == "Poison"){
-						game.empowerments.Poison.currentDebuffPower += Math.ceil(burstDamage * (game.empowerments.Poison.getLevel() + 100) * 6);
+						game.empowerments.Poison.currentDebuffPower += Math.ceil(burstDamage * (game.empowerments.Poison.getLevel() + 100) * 60);
 					}
-					game.empowerments.Poison.currentDebuffPower += Math.ceil(burstDamage * (game.empowerments.Poison.getLevel() + 100));
+					game.empowerments.Poison.currentDebuffPower += Math.ceil(burstDamage * (game.empowerments.Poison.getLevel() + 100) * 10);
 					if (game.empowerments.Poison.getDamage() > trimpAttack * 1000) giveSingleAchieve("Infected");
 					handlePoisonDebuff();
 				}
@@ -15322,7 +15325,7 @@ function fight(makeUp) {
 			game.challenges.Desolation.mapAttacked(currentMapObj.level);
 		}
 	}
-	if (game.global.challengeActive == "Smithless" && cell.ubersmith){
+	if ((game.global.challengeActive == "Smithless" || game.global.challengeActive == "Doubleless") && cell.ubersmith){
 		game.challenges.Smithless.attackedUber();
 	}
 	var dominating = false;
@@ -17762,8 +17765,8 @@ var Fluffy = {
 	damageModifiers: [1, 1.1, 1.3, 1.6, 2, 2.5, 3.1, 3.8, 4.6, 5.5, 6.5],
 	damageModifiers2: [1, 1.1, 1.3, 1.6, 2, 2.5, 3.1, 3.8, 4.6, 5.5, 25.5, 30.5, 38, 48, 61, 111, 171, 241, 321, 411, 511, 621, 741, 871, 1011, 1161, 1311, 1311],
 	rewards: ["stickler", "helium", "liquid", "purifier", "lucky", "void", "helium", "liquid", "eliminator", "overkiller"],
-	prestigeRewards: ["dailies", "voidance", "overkiller", "critChance", "megaCrit", "superVoid", "voidelicious", "naturesWrath", "voidSiphon", "plaguebrought", "FluffyE10", "critChance", "scruffBurst", "FluffyE13", "FluffyE14", "FluffyE15", "justdam"],
-	rewardsU2: ["trapper", "prism", "heirloopy", "radortle", "healthy", "wealthy", "critChance", "gatherer", "dailies", "exotic", "shieldlayer", "tenacity", "megaCrit", "critChance", "smithy", "biggerbetterheirlooms", "shieldlayer", "void", "moreVoid", "tenacity", "SADailies", "Scruffy21", "Scruffy22", "scruffBurst", "justdam", "justdam", "justdam"],
+	prestigeRewards: ["dailies", "voidance", "overkiller", "critChance", "megaCrit", "superVoid", "voidelicious", "naturesWrath", "voidSiphon", "plaguebrought", "FluffyE10", "critChance", "scruffBurst", "FluffyE13", "FluffyE14", "FluffyE15", "FluffyE16"],
+	rewardsU2: ["trapper", "prism", "heirloopy", "radortle", "healthy", "wealthy", "critChance", "gatherer", "dailies", "exotic", "shieldlayer", "tenacity", "megaCrit", "critChance", "smithy", "biggerbetterheirlooms", "shieldlayer", "void", "moreVoid", "tenacity", "SADailies", "Scruffy21", "Scruffy22", "scruffBurst", "overkiller", "voidelicious", "Scruffy26"],
 	prestigeRewardsU2: [],
 	checkU2Allowed: function(){
 		if (game.global.universe == 2) return true;
@@ -18301,6 +18304,7 @@ var Fluffy = {
 		if (this.isRewardActive('void')) count++;
 		else return 1;
 		if (this.isRewardActive('superVoid')) count += 4;
+		if (this.isRewardActive('FluffyE16')) count += 3;
 		if (game.talents.voidSpecial2.purchased) count++;
 		return count;
 	},
@@ -18461,6 +18465,9 @@ var Fluffy = {
 		Scruffy22: {
 			description: "Gain x10 Mutated Seed Drops. Triple Nullifium gain when recycling Enigmatic Heirlooms."
 		},
+		Scruffy26: {
+			description: "Add 20 minutes to Tenacity time when you reach a new zone."
+		},
 
 
 		FluffyE10: {
@@ -18476,7 +18483,14 @@ var Fluffy = {
 			description: "Permanently active all three Nature Enlightenments at once (even after evolving to Evolution 15+)! Wind Stacks is always 300 after attacking. In Finale challenge, Poison stacks are permanent, and transfer rate of Poison stacks is always 100%."
 		},
 		FluffyE15: {
-			get description(){ return "Corruption and Healthy enemies no longer have special abilities. Corruptions won't affect Improbabilities and Omnipotrimps. In Finale challenge, enemy will gain poison stack equal to Y times Fluffy's Gamma Burst damage. Y = (Poison Empowerment Level + 100) * Z, Z = 7 when Poison Empowerment is active, 1 otherwise.";
+			get description(){ return "Corruption and Healthy enemies no longer have special abilities. Corruptions won't affect Improbabilities and Omnipotrimps. In Finale challenge, enemy will gain poison stack equal to Y times Fluffy's Gamma Burst damage. Y = (Poison Empowerment Level + 100) * Z, Z = 70 when Poison Empowerment is active, 10 otherwise.";
+			}
+		},
+		FluffyE16: {
+			get description(){
+				var count = 9;
+				if (game.talents.voidSpecial2.purchased) count++;
+				return "Allows an additional 3 Void Maps with the same name to stick together, bringing the max stack size to " + count + ". Each map in the stack that Fluffy clears grants an additional 50% Helium to all other maps in the stack, giving a bonus of up to +" + Math.floor((count - 1) * 50) + "% to each of the " + (count - 1) + " Fluffy maps from a " + count + " stack. Also, Fluffy's E10 bonus per Evolution is increased to 400%."
 			}
 		},
 

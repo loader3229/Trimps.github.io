@@ -3311,6 +3311,7 @@ var autoBattle = {
             amt *= this.items.Box_of_Spores.dustMult();
         }
         if (game.global.fluffyExp2 >= 1466015503701000) amt *= 5; //don't even look at this line, just move on
+		if (game.talents.tier11e.purchased) amt *= Math.pow(1.005,autoBattle.maxEnemyLevel-1);
         return amt;
     },
     getEnrageMult: function(){
@@ -4948,7 +4949,8 @@ var u2Mutations = {
             reward *= (1 + (getDailyHeliumValue(countDailyWeight()) / 100));
         }
         if (Fluffy.isRewardActive("Scruffy22")) reward *= 10;
-		if (game.talents.tier11c.purchased) reward *= 2;
+		if (game.talents.tier11c.purchased) reward *= (Math.log10(game.global.essence+1e60)/10-4);
+		if(game.talents.tier11e.purchased)reward *=  Math.pow(1.005,autoBattle.maxEnemyLevel-1);
         game.global.mutatedSeeds += reward;
         if (typeof game.global.messages.Loot.seeds === 'undefined') game.global.messages.Loot.seeds = true;
         message("You found " + prettify(reward) + " Mutated Seed" + needAnS(reward) + nullText + " on that " + this.getName(cell.u2Mutation) + " enemy!", 'Loot', null, 'seedMessage', 'seeds', null, 'background-color: ' + this.getColor(cell.u2Mutation));
