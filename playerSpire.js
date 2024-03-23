@@ -447,15 +447,15 @@ var playerSpire = {
     seal: function(){
         this.sealed = true;
         this.clearEnemies();
-        playerSpireTraps.Knowledge.owned = 11;
-        playerSpireTraps.Strength.owned = 11;
-        playerSpireTraps.Condenser.owned = 11;
+        playerSpireTraps.Knowledge.owned++;
+        playerSpireTraps.Strength.owned++;
+        playerSpireTraps.Condenser.owned++;
         document.getElementById('playerSpireTab').style.display = 'none';
     },
     unseal: function(){
-        playerSpireTraps.Knowledge.owned = 10;
-        playerSpireTraps.Strength.owned = 10;
-        playerSpireTraps.Condenser.owned = 10;
+        playerSpireTraps.Knowledge.owned--;
+        playerSpireTraps.Strength.owned--;
+        playerSpireTraps.Condenser.owned--;
         this.sealed = false;
         document.getElementById('playerSpireTab').style.display = 'table-cell';
         this.drawInfo();
@@ -773,7 +773,7 @@ var playerSpire = {
             var cost = this.getTrapCost(item);
             var color = (this.runestones >= cost) ? trap.color : "grey";
             var costText = prettify(this.getTrapCost(item)) + "符石";
-            if (trap.isTower && trap.owned >= 10) {
+            if (trap.isTower && trap.owned >= 11) {
                 costText = "Max Level"
                 color = "grey";
             }
@@ -809,7 +809,7 @@ var playerSpire = {
             if (playerSpireTraps[item].locked) continue;
             var cost = this.getTrapCost(item);
             var color = (this.runestones >= cost) ? playerSpireTraps[item].color : "grey";
-            if (playerSpireTraps[item].isTower && playerSpireTraps[item].owned >= 10) color = "grey";
+            if (playerSpireTraps[item].isTower && playerSpireTraps[item].owned >= 11) color = "grey";
             var trapIcon = "";
             if (this.settings.trapIcons) trapIcon = "<span class='icomoon icon-" + playerSpireTraps[item].icon + "'></span> ";
             html += "<div style='background-color: " + color + "' onmouseout='tooltip(\"hide\")' onmouseover='playerSpire.trapTooltip(\"" + item + "\", event)' onclick='playerSpire.selectTrap(\"" + item + "\")' id='" + item + "TrapBox' class='spireTrapBoxSmall" + ((item == this.selectedTrap) ? " selected" : "") + "'>" + trapIcon + item + "</div>";
@@ -1408,7 +1408,7 @@ var playerSpire = {
         if (!trap) return;
         var oldTrap = this.layout[cell].trap.name;
         if (trap == oldTrap) return 1;
-        if (playerSpireTraps[trap].isTower && playerSpireTraps[trap].owned >= 10) return;
+        if (playerSpireTraps[trap].isTower && playerSpireTraps[trap].owned >= 11) return;
         var cost = this.getTrapCost(trap);
         var refund = 0;
         if (oldTrap) refund = this.getTrapCost(oldTrap, true);

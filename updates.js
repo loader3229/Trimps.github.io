@@ -698,8 +698,8 @@ function tooltip(what, isItIn, event, textString, attachFunction, numCheck, rena
 		if (game.talents.headstart.purchased) tooltipText += "<p><b>Note that your Headstart mastery will be disabled during Challenge<sup>" + sup + "</sup> runs.</b></p>";
 		if (portalUniverse == 1 && uniArray[0] >= 35000){
 			var color = (uniArray[0] >= 50000) ? " style='color: red;'" : "";
-			var extra = (uniArray[0] >= 140000) ? " You've reached this bonus and are officially done with Challenge<sup>2</sup>! Congratulations!" : "";
-			tooltipText += "<p><b" + color + ">Note that Challenge<sup>2</sup> Bonus is capped at " + prettify(140000) + "%." + extra + "</b></p>"
+			var extra = (uniArray[0] >= 170000) ? " You've reached this bonus and are officially done with Challenge<sup>2</sup>! Congratulations!" : "";
+			tooltipText += "<p><b" + color + ">Note that Challenge<sup>2</sup> Bonus is capped at " + prettify(170000) + "%." + extra + "</b></p>"
 		}
 		costText = "";
 	}
@@ -2647,8 +2647,16 @@ function getBattleStatBd(what) {
 	}
 	//Add Finale
 	if (game.global.challengeActive == "Finale"){
-		currentCalc *= (what == "attack" ? (Fluffy.isRewardActive("FluffyE13")?11*Math.pow((Fluffy.isRewardActive("FluffyE16")?5:3.1), Fluffy.getCurrentPrestige()):Fluffy.isRewardActive("FluffyE10")?Math.pow((Fluffy.isRewardActive("FluffyE16")?5:3.1), Fluffy.getCurrentPrestige()):1) : (what == "block" ? Infinity : 1e200));
-		textString += "<tr><td class='bdTitle'>Finale</td><td></td><td></td><td>x "+prettify((what == "attack" ? (Fluffy.isRewardActive("FluffyE13")?11*Math.pow((Fluffy.isRewardActive("FluffyE16")?5:3.1), Fluffy.getCurrentPrestige()):Fluffy.isRewardActive("FluffyE10")?Math.pow((Fluffy.isRewardActive("FluffyE16")?5:3.1), Fluffy.getCurrentPrestige()):1) : (what == "block" ? Infinity : 1e200)))+"</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+		currentCalc *= (what == "attack" ? (Fluffy.isRewardActive("FluffyE10")?((Fluffy.isRewardActive("FluffyE17")?1+game.global.magmite:1)*(Fluffy.isRewardActive("FluffyE13")?11:1)*Math.pow((Fluffy.isRewardActive("FluffyE16")?5:3.1), Fluffy.getCurrentPrestige())):1) : (what == "block" ? Infinity : 1e200));
+		textString += "<tr><td class='bdTitle'>Finale</td><td></td><td></td><td>x "+prettify((what == "attack" ? (Fluffy.isRewardActive("FluffyE10")?((Fluffy.isRewardActive("FluffyE17")?1+game.global.magmite:1)*(Fluffy.isRewardActive("FluffyE13")?11:1)*Math.pow((Fluffy.isRewardActive("FluffyE16")?5:3.1), Fluffy.getCurrentPrestige())):1) : (what == "block" ? Infinity : 1e200)))+"</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+	}
+	//Magma
+	if (mutations.Magma.active() && (what == "attack" || what == "health") && !(Fluffy.isRewardActive("FluffyE13") && game.global.challengeActive == "Finale")){
+		mult = mutations.Magma.getTrimpDecay();
+		var lvls = game.global.world - mutations.Magma.start() + 1;
+		currentCalc *= mult;
+		var display = (mult > 0.0001) ? mult.toFixed(4) : mult.toExponential(3);
+		textString += "<tr style='color: red'><td class='bdTitle'>Overheating (Magma)</td><td>x 0.8</td><td>" + lvls + "</td><td class='bdPercent'>x " + display + "</td><td class='bdNumber'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
 	}
 	//Add coordination
 	if (what != "shield"){
@@ -3062,10 +3070,10 @@ function getBattleStatBd(what) {
 
 	}
 	//Fluffy/Scruffy
-	if (what == "attack" && Fluffy.isActive()){
+	if ((what == "attack" && Fluffy.isActive()) || (what == "health" && Fluffy.isRewardActive("Scruffy28"))){
 		amt = Fluffy.getDamageModifier();
 		currentCalc *= amt;
-		textString += "<tr><td class='bdTitle'>" + Fluffy.getName() + "</td><td></td><td></td><td>+ " + prettify((amt -1 ) * 100) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>"
+		textString += "<tr><td class='bdTitle'>" + Fluffy.getName() + "</td><td></td><td></td><td>+ " + prettify((amt -1 ) * 100) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>"
 	}
 	//Fluffy E8
 	if (what == "attack" && Fluffy.isRewardActive('voidSiphon') && game.stats.totalVoidMaps.value){
@@ -3531,7 +3539,7 @@ function getLootBd(what) {
 			if (Fluffy.isRewardActive("radortle")){
 				amt = Fluffy.getRadortleMult();
 				currentCalc *= amt;
-				textString += "<tr><td class='bdTitle'>" + Fluffy.getName() + heliumOrRadon() + "</td><td>× 1.03</td><td>" + game.global.lastRadonPortal + "</td><td>+ " + prettify((amt - 1) * 100) + "%</td><td>" + prettify(currentCalc) + "</td></tr>";
+				textString += "<tr><td class='bdTitle'>" + Fluffy.getName() + heliumOrRadon() + "</td><td>× 1.03</td><td>" + (Fluffy.isRewardActive("Scruffy21") ? (game.global.highestRadonLevelCleared + 1) : game.global.lastRadonPortal) + "</td><td>+ " + prettify((amt - 1) * 100) + "%</td><td>" + prettify(currentCalc) + "</td></tr>";
 			}
 			if (game.jobs.Meteorologist.vestedHires > 0){
 				amt = game.jobs.Meteorologist.getMult();
@@ -3551,9 +3559,9 @@ function getLootBd(what) {
 				textString += "<tr><td class='bdTitle'>Radon Relic</td><td>× 1.05</td><td>" + points + "</td><td>× " + prettify(mult) + "</td><td>" + prettify(currentCalc) + "</td></tr>";
 			}
 			if (game.global.universe == 2 && game.global.glassDone && game.global.world > 175){
-				var mult = Math.pow(1.1, game.global.world - 175);
+				var mult = Math.pow(1.1, Math.min(game.global.world - 175, 250));
 				currentCalc *= mult;
-				textString += "<tr><td class='bdTitle'>Advanced Processing (Glass)</td><td>× 1.1</td><td>" + (game.global.world - 175) + "</td><td>× " + prettify(mult) + "</td><td>" + prettify(currentCalc) + "</td></tr>";
+				textString += "<tr><td class='bdTitle'>Advanced Processing (Glass)</td><td>× 1.1</td><td>" + Math.min(game.global.world - 175, 250) + "</td><td>× " + prettify(mult) + "</td><td>" + prettify(currentCalc) + "</td></tr>";
 			}
 			if (game.global.universe == 2 && game.global.world >= 201){
 				var mult = 400;
@@ -4387,6 +4395,9 @@ function resetGame(keepPortal, resetting) {
 			magmite = (game.global.magmite > 0) ? Math.floor(game.global.magmite * ((100 - getMagmiteDecayAmt()) / 100)) : 0;
 		}
 		else magmite = game.global.magmite;
+		if(Fluffy.isRewardActive("FluffyE17")){
+			magmite=Math.max(magmite,game.generatorUpgrades.Efficiency.upgrades*7);
+		}
 		genUpgrades = game.generatorUpgrades;
 		permanentGenUpgrades = game.permanentGeneratorUpgrades;
 		genMode = game.global.generatorMode;

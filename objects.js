@@ -5309,7 +5309,7 @@ var u2Mutations = {
                     var roll = getRandomIntSeeded(game.global.u2MutationSeed++, 0, 100);
                     if (roll < chance) repeat++;
                 }
-				if(game.global.world == 400)repeat = 5;
+				if(game.global.world == 400)repeat = 0;
                 var allowedCells = 98 - count;
                 var repeatFreq = allowedCells / repeat;
                 var min = 0;

@@ -22,7 +22,7 @@ function newGame () {
 var toReturn = {
 	global: {
 		//New and accurate version
-		stringVersion: '5.10.10',
+		stringVersion: '5.10.11',
 		//Leave 'version' at 4.914 forever, for compatability with old saves
 		version: 4.914,
 		isBeta: false,
@@ -513,7 +513,7 @@ var toReturn = {
 				var part1 = (world > 40) ? 40 : world;
 				var part2 = (world > 60) ? 20 : world - 40;
 				var part3 = (world - 60);
-				var part4 = (world - 400);
+				var part4 = (world - 425);
 				if (part2 < 0) part2 = 0;
 				if (part3 < 0) part3 = 0;
 				if (part4 < 0) part4 = 0;
@@ -2550,7 +2550,7 @@ var toReturn = {
 				var number = (game.global.highestRadonLevelCleared >= 49) ? "2/3" : "2";
 				var totalDesc = (game.global.highestRadonLevelCleared >= 49) ? "<span class='icomoon icon-infinity'></span>" : "2";
 				var challengeList = (game.global.highestRadonLevelCleared >= 49) ? "Trappapalooza, " : "";
-				challengeList += "Trapper, Coordinate, Trimp, Obliterated, Eradicated or Spired"
+				challengeList += "Trapper, Coordinate, Trimp, Obliterated or Eradicated"
 				var text = "<p>Triples the Challenge<sup>" + number + "</sup> bonus for all Challenge<sup>" + number + "</sup>s that have normal reward scaling (Does not include " + challengeList + ").</p>";
 				var currentC2 = countChallengeSquaredReward(true);
 				text += "<p>You currently have a C<sup>" + totalDesc + "</sup> bonus of " + prettify(currentC2) + "%.";
@@ -2661,35 +2661,37 @@ var toReturn = {
 			requires: "tier11e"
 		},
 		tier12a: {
-			description: "Tier 12 Mastery 1",
-			name: "Tier 12 Mastery 1",
+			get description(){
+				return "Completing a Void Map gives 200% of current zone's "+Fluffy.getName()+" Exp.";
+			},
+			name: "Master of the Void II",
 			tier: 12,
 			purchased: false,
-			icon: "road",
-			requires: "tier11f"
+			requires: "tier11f",
+			icon: "*podcast"
 		},
 		tier12b: {
-			description: "Tier 12 Mastery 2",
-			name: "Tier 12 Mastery 2",
+			get description(){return "When you get Magmite, auto-upgrade Dimensional Generator without actually spend Magmite. Magmamancer is always at max effect. Magmite boost Dark Essence gain. Currently: "+prettify(Math.log10(game.global.magmite+10))+"x";},
+			name: "MagMastery",
 			tier: 12,
 			purchased: false,
 			icon: "road",
 			requires: "tier12a"
 		},
 		tier12c: {
-			description: "Tier 12 Mastery 3",
-			name: "Tier 12 Mastery 3",
+			description: "You can spend another extra 50% of your Nu on your Heirlooms, bringing the total to 170%.",
+			name: "Heirnuum III",
 			tier: 12,
 			purchased: false,
-			icon: "road",
+			icon: "grain",
 			requires: "tier12b"
 		},
 		tier12d: {
-			description: "Tier 12 Mastery 4",
-			name: "Tier 12 Mastery 4",
+			description: "Each Randimp now give all 5 different exotic import rewards in current location at once.",
+			name: "Randimp III",
 			tier: 12,
 			purchased: false,
-			icon: "road",
+			icon: "*dice",
 			requires: "tier12c"
 		},
 		tier12e: {
@@ -2916,10 +2918,10 @@ var toReturn = {
 			radLocked: true,
 			priceBase: 100e21,//sx
 			radLevel: 0,
-			max: 12,
+			max: 15,
 			radSpent: 0,
 			specialGrowth: 50,
-			tooltip: "Each level of Masterfulness grants +1 to levels of both Greed and Tenacity beyond their caps. Maximum of 12 levels."
+			tooltip: "Each level of Masterfulness grants +1 to levels of both Greed and Tenacity beyond their caps. Maximum of 15 levels."
 		},
 		Greed: {
 			priceBase: 10e9,
@@ -3203,7 +3205,6 @@ var toReturn = {
 				if (this.radLevel + extra > 0) text += "<br/><br/>You are currently gaining " + formatMultAsPercent(this.getMult(0, extra), true) + " attack and health. Your next Spire Assault level will increase this bonus to " + formatMultAsPercent(this.getMult(1, extra), true) + ", or your next perk level will increase this bonus to " + formatMultAsPercent(this.getMult(0, 1 + extra), true) + ".";
 				return text;
 			},
-			max: 50,
 			getMult: function(addAb, addLev){
 				var level = this.radLevel;
 				var abLevel = autoBattle.maxEnemyLevel - 1;
@@ -3301,7 +3302,7 @@ var toReturn = {
 			radLocked: true,
 			priceBase: 5e18,
 			radLevel: 0,
-			max: 80,
+			max: 100,
 			radSpent: 0,
 			get tooltip(){
 				var useTemp = false;
@@ -8248,23 +8249,28 @@ var toReturn = {
 			strengthBonus: {
 				name: "力量塔世界加成",
 				currentBonus: 0,
-				steps: [-1,-1,-1,-1,-1,-1,[2,2,2],[5,5,5],[5,5,5]]
+				steps: [-1,-1,-1,-1,-1,-1,[2,2,2],[5,5,5],[6,6,6]]
 			},
 			condenserBonus: {
 				name: "冷凝塔世界加成",
 				currentBonus: 0,
-				steps: [-1,-1,-1,-1,-1,-1,[2,2,2],[5,5,5],[5,5,5]]
+				steps: [-1,-1,-1,-1,-1,-1,[2,2,2],[5,5,5],[6,6,6]]
 			},
 			knowledgeBonus: {
 				name: "知识塔世界加成",
 				currentBonus: 0,
-				steps: [-1,-1,-1,-1,-1,-1,[2,2,2],[5,5,5],[5,5,5]]
+				steps: [-1,-1,-1,-1,-1,-1,[2,2,2],[5,5,5],[6,6,6]]
 			},
 			worldBonus: {
 				name: "所有的尖塔世界加成",
 				currentBonus: 0,
-				steps: [-1,-1,-1,-1,-1,-1,-1,[1,1,1],[1,1,1]]
+				steps: [-1,-1,-1,-1,-1,-1,-1,[1,1,1],[2,2,2]]
 			},
+			empty: {
+				name: "Empty",
+				currentBonus: 0,
+				steps: [-1,-1,-1,-1,-1,-1,-1,-1,[1,1,1]]
+			}
 		},
 		Staff: {
 			metalDrop: {
@@ -9132,6 +9138,10 @@ var toReturn = {
 				if (game.talents.voidSpecial.purchased){
 					amt *= ((getLastPortal() * 0.0025) + 1);
 				}
+				var ExpGain = 0;
+				if (game.talents.tier12a.purchased){
+					ExpGain = Fluffy.rewardExp(2 * (fluffyCount ?? 1));
+				}
 
 				var fluffyBonus = 1;
 				if (fromFluffy){
@@ -9150,6 +9160,18 @@ var toReturn = {
 				if (fluffyCount) bonusMagmite *= fluffyCount;
 				if (game.talents.quickGen.purchased && game.global.world >= 230 && game.global.universe == 1){
 					game.global.magmite += bonusMagmite;
+					if (game.talents.tier12b.purchased){
+						game.generatorUpgrades.Efficiency.upgrades = Math.max(game.generatorUpgrades.Efficiency.upgrades, Math.floor(game.global.magmite/8));
+						game.generatorUpgrades.Capacity.upgrades = Math.max(game.generatorUpgrades.Capacity.upgrades, Math.floor(game.global.magmite/32));
+						game.generatorUpgrades.Capacity.modifier = 3+0.4*game.generatorUpgrades.Capacity.upgrades;
+						game.generatorUpgrades.Supply.upgrades = Math.max(game.generatorUpgrades.Supply.upgrades, Math.floor(game.global.magmite/64));
+						game.generatorUpgrades.Supply.modifier = 0.2+0.02*game.generatorUpgrades.Supply.upgrades;
+						if(game.permanentGeneratorUpgrades.Hybridization.owned && game.permanentGeneratorUpgrades.Storage.owned){
+							game.generatorUpgrades.Overclocker.upgrades = Math.max(game.generatorUpgrades.Overclocker.upgrades, Math.floor((game.global.magmite-480)/32));
+							game.generatorUpgrades.Overclocker.modifier = 0.5*Math.pow(0.99,game.generatorUpgrades.Overclocker.upgrades-1)
+						}
+					}
+					updateGeneratorUpgradeHtml();
 					updateGeneratorInfo();
 				}
 				if (game.talents.scry2.purchased && game.global.canScryCache) amt *= 1.5;
@@ -9169,12 +9191,19 @@ var toReturn = {
 					msg = "在您刚发现进入了新的虚空地图时，" + Fluffy.getName() + "已经悄悄地把所有东西都顺走了。";
 					if (!game.global.runningChallengeSquared) msg += "您额外获得了" + prettify(amt) + heliumOrRadon() + "！";
 					message(msg, "Loot", heliumIcon(true), "helium", "helium");
+					if (game.talents.tier12a.purchased && ExpGain){
+						message(Fluffy.getName() + " gained " + prettify(ExpGain) + " Exp!", "Loot", "*library", "expMessage", "exp");
+					}
 					return;
 				}
 				else if (fromFluffy){
 					msg = "在您还没搞清楚情况的时候，" + Fluffy.getName() + "已经通过了剩下的" + fluffyCount + "张虚空地图，并迅速把所有东西都顺走了！";
 					if (!game.global.runningChallengeSquared) msg += "由于每张地图可以额外获得" + prettify((fluffyBonus - 1) * 100) + "%" + heliumOrRadon() + "，您最后额外获得了" + prettify(amt) + heliumOrRadon() + "！";
+					if (game.talents.tier12a.purchased && ExpGain){
+						message(Fluffy.getName() + " gained " + prettify(ExpGain) + " Exp!", "Loot", "*library", "expMessage", "exp");
+					}
 					message(msg, "Loot", heliumIcon(true), "helium", "helium");
+					
 					return;
 				}
 				if (game.options.menu.repeatVoids.enabled && game.global.totalVoidMaps > 1){
@@ -9185,6 +9214,9 @@ var toReturn = {
 				}
 				if (game.global.runningChallengeSquared) msg += "。";
 				else msg += "，并额外获取了" + prettify(amt) + heliumOrRadon() + "！";
+				if (game.talents.tier12a.purchased){
+						message(Fluffy.getName() + " gained " + prettify(ExpGain) + " Exp!", "Loot", "*library", "expMessage", "exp");
+				}
 				message(msg, "Loot", heliumIcon(true), "helium", "helium");
 				
 			}
@@ -12257,6 +12289,9 @@ var toReturn = {
 					var extraMax = game.global.spireRows * 0.5;
 					max = Math.floor((extraMax + max) / 10) * 10;
 				}
+				if (game.talents.tier12b.purchased){
+					timeOnZone = max;
+				}
 				var bonus = (this.getBonusPercent() - 1) * 100;
 
 				if (timeOnZone >= max)
@@ -12296,7 +12331,10 @@ var toReturn = {
 						timeMax = Math.floor(extraMax + timeMax);
 					}
 					timeOnZone = Math.floor(timeOnZone / 600000);
-					
+					if (game.talents.tier12b.purchased){
+						timeOnZone = timeMax;
+					}
+
 					if (timeOnZone > timeMax) timeOnZone = timeMax;
 					else if (timeOnZone <= 0) return 1;
 				}
