@@ -3092,7 +3092,7 @@ var cnItems = {
     'Bonfires': '篝火',
     'Embers': '余烬',
     'Glass': '玻璃',
-    ' with this Challenge active will permanently cause all Radon earned to be increased by 10% (compounding) per Zone above Z175.': '后，超过区域175时，氡获取量每个区域比上个区域多10%(相互叠乘)。',
+    ' with this Challenge active will permanently cause all Radon earned to be increased by 10% (compounding) per Zone above Z175.': '后，超过区域175时，氡获取量每个区域比上个区域多10%(相互叠乘)，该效果在区域425达到上限。',
     'You hit 10 Crystallized stacks and have failed the Glass Challenge! Your World has been returned to normal.': '敌人的晶化层数到达了10层，玻璃挑战以失败告终！世界恢复了正常。',
     'You have completed the Glass Challenge! Your World has been returned to normal, and from now on every Zone above Z175 will grant an extra 10% compounding Radon per Zone!': '您完成了玻璃挑战！世界恢复了正常，从现在起，超过区域175时，氡获取量每个区域比上个区域多10%(相互叠乘)。',
     'Crystallized': '晶化',
