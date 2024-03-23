@@ -1562,7 +1562,7 @@ function countChallengeSquaredReward(numberOnly, mesmerPreview, getUniverseArray
 		if (challenge.allowU2 && challenge.blockU1) rewardU2 += thisReward;
 		else reward += thisReward;
 	}
-	if (reward > 140000) reward = 140000;
+	if (reward > 170000) reward = 170000;
 	if (reward >= 2000 && !mesmerPreview) giveSingleAchieve("Challenged");
 	if (rewardU2 >= 2000 && !mesmerPreview) giveSingleAchieve("Superchallenged");
 	if (getUniverseArray) return [reward, rewardU2];
@@ -4045,7 +4045,7 @@ function rewardResource(what, baseAmt, level, checkMapLootScale, givePercentage)
 		}
 		if (game.jobs.Meteorologist.vestedHires > 0) amt *= game.jobs.Meteorologist.getMult();
 		if (game.global.universe == 2 && game.global.glassDone && game.global.world > 175){
-			var glassMult = Math.pow(1.1, game.global.world - 175);
+			var glassMult = Math.pow(1.1, Math.min(game.global.world - 175, 250));
 			amt *= glassMult;
 		}
 		if (game.global.universe == 2 && game.global.world >= 201){
@@ -7347,7 +7347,8 @@ function upgradeMod(confirmed, count){
 
 function getNuSpendMult(){
 	var mult = 1;
-	if (game.talents.heirloom2.purchased) mult = 1.2;
+	if (game.talents.tier12c.purchased) mult = 1.7;
+	else if (game.talents.heirloom2.purchased) mult = 1.2;
 	else if (game.talents.heirloom.purchased) mult = 1.1;
 	if ((game.global.universe == 2 && Fluffy.isRewardActive('biggerbetterheirlooms')) || (game.global.universe == 1 && game.global.fluffyExp2 >= 357913941000)) mult += 0.3;
 	return mult;
@@ -7534,6 +7535,8 @@ function createHeirloom(zone, fromBones, spireCore, forceBest){
 		rarity = Math.floor((zone - 200) / 100);
 		if (rarity > 7) rarity = 7;
 		if (rarity < 0) rarity = 0;
+		if (game.global.universe == 2)rarity += 6;
+		if (rarity > 8) rarity = 8;
 		game.stats.coresFound.value++;
 		seed = game.global.coreSeed;
 	}
@@ -7966,7 +7969,7 @@ function natureTooltip(event, doing, spending, convertTo){
 	else if (doing == 'convert'){
 		tipTitle = "Convert " + spending + " to " + convertTo;
 		tipCost = ctrlPressed ? Math.floor(game.empowerments[spending].tokens / 10) * 10 : 10;
-		var convertRate = (game.talents.nature.purchased) ? 8 : 5;
+		var convertRate = ((game.talents.nature.purchased) ? 8 : 5) + (Fluffy.isRewardActive("FluffyE18") ? 2 : 0);
 		tipText = "<p>Trade " + tipCost + " Tokens of " + spending + " and get back " + (tipCost / 10 * convertRate) + " Tokens of " + convertTo + ".</p>";
 		if (!ctrlPressed) tipText += "<p><b>Hold Ctrl to convert as many tokens as you can afford!</b></p>";
 	}
@@ -8037,6 +8040,11 @@ function rewardToken(empowerment, countOnly, atZone){
 	if (countOnly) return tokens;
 	game.empowerments[empowerment].tokens += tokens;
 	message("You found " + prettify(tokens) + " Token" + ((tokens == 1) ? "" : "s") + " of " + empowerment + "!", "Loot", "*medal2", "empoweredCell" + empowerment, 'token');
+	if(Fluffy.isRewardActive("FluffyE18")){
+		game.empowerments.Poison.level=Math.max(game.empowerments.Poison.level,Math.floor(game.empowerments.Poison.tokens/80+1));
+		game.empowerments.Wind.level=Math.max(game.empowerments.Wind.level,Math.floor(game.empowerments.Wind.tokens/80+1));
+		game.empowerments.Ice.level=Math.max(game.empowerments.Ice.level,Math.floor(game.empowerments.Ice.tokens/80+1));
+	}
 	if (game.global.buyTab == "nature")
 		updateNatureInfoSpans();
 	game.stats.bestTokens.value += unbuffedTokens;
@@ -8078,8 +8086,13 @@ function naturePurchase(doing, spending, convertTo){
 		var amount = ctrlPressed ? Math.floor(game.empowerments[spending].tokens / 10) * 10 : 10;
 		if (spendEmp.tokens < amount) return;
 		spendEmp.tokens -= amount;
-		var convertRate = (game.talents.nature.purchased) ? 8 : 5;
+		var convertRate = ((game.talents.nature.purchased) ? 8 : 5) + (Fluffy.isRewardActive("FluffyE18") ? 2 : 0);
 		game.empowerments[convertTo].tokens += amount / 10 * convertRate;
+		if(Fluffy.isRewardActive("FluffyE18")){
+			game.empowerments.Poison.level=Math.max(game.empowerments.Poison.level,Math.floor(game.empowerments.Poison.tokens/80+1));
+			game.empowerments.Wind.level=Math.max(game.empowerments.Wind.level,Math.floor(game.empowerments.Wind.tokens/80+1));
+			game.empowerments.Ice.level=Math.max(game.empowerments.Ice.level,Math.floor(game.empowerments.Ice.tokens/80+1));
+		}
 		updateNatureInfoSpans();
 		natureTooltip('update', doing, spending, convertTo);
 		return;
@@ -8716,6 +8729,17 @@ var mutations = {
 				amt = getMagmiteReward();
 				text = "You earned " + prettify(amt) + " Magmite!";
 				game.global.magmite += amt;
+				if (game.talents.tier12b.purchased){
+					game.generatorUpgrades.Efficiency.upgrades = Math.max(game.generatorUpgrades.Efficiency.upgrades, Math.floor(game.global.magmite/8));
+					game.generatorUpgrades.Capacity.upgrades = Math.max(game.generatorUpgrades.Capacity.upgrades, Math.floor(game.global.magmite/32));
+					game.generatorUpgrades.Capacity.modifier = 3+0.4*game.generatorUpgrades.Capacity.upgrades;
+					game.generatorUpgrades.Supply.upgrades = Math.max(game.generatorUpgrades.Supply.upgrades, Math.floor(game.global.magmite/64));
+					game.generatorUpgrades.Supply.modifier = 0.2+0.02*game.generatorUpgrades.Supply.upgrades;
+					if(game.permanentGeneratorUpgrades.Hybridization.owned && game.permanentGeneratorUpgrades.Storage.owned){
+						game.generatorUpgrades.Overclocker.upgrades = Math.max(game.generatorUpgrades.Overclocker.upgrades, Math.floor((game.global.magmite-480)/32));
+						game.generatorUpgrades.Overclocker.modifier = 0.5*Math.pow(0.99,game.generatorUpgrades.Overclocker.upgrades-1)
+					}
+				}
 				updateGeneratorUpgradeHtml();
 				var elem = document.getElementById('upgradeMagmiteTotal');
 				if (elem)
@@ -9243,7 +9267,7 @@ function buyGeneratorUpgrade(item){
 	}
 	var cost = upgrade.cost();
 	if (game.global.magmite < cost) return;
-	game.global.magmite -= cost;
+	if (!game.talents.tier12b.purchased) game.global.magmite -= cost;
 	if (game.global.magmite <= 0) game.global.magmite = 0;
 	if (typeof upgrade.nextModifier !== 'undefined')
 		upgrade.modifier = upgrade.nextModifier();
@@ -10453,14 +10477,14 @@ function setNonMapBox(){
 	document.getElementById("mapsBtnText").innerHTML = "Maps";
 	if (game.global.totalVoidMaps > 0) addVoidAlert();
 	var worldNumElem = document.getElementById("worldNumber");
-	worldNumElem.style.display = (game.global.spireActive && (game.global.challengeActive != "Spired")) ? 'none' : 'inline';
+	worldNumElem.style.display = (game.global.spireActive && (game.global.challengeActive != "Spired") && game.global.universe == 1) ? 'none' : 'inline';
 	document.getElementById("worldNumber").innerHTML = game.global.world;
 	var mapBonus = document.getElementById("mapBonus");
 	var bonus = game.global.mapBonus;
 	if (game.talents.mapBattery.purchased && bonus == 10) bonus *= 2;
 	if (bonus > 0) mapBonus.innerHTML = prettify(bonus * 20) + "% Map Bonus";
 	else mapBonus.innerHTML = "";
-	document.getElementById("worldName").innerHTML = (game.global.spireActive && (game.global.challengeActive != "Spired")) ? ((checkIfSpireWorld(true) == 1) ? "Spire" : "Spire " + romanNumeral(checkIfSpireWorld(true))) : "Zone";	
+	document.getElementById("worldName").innerHTML = (game.global.spireActive && (game.global.challengeActive != "Spired") && game.global.universe == 1) ? ((checkIfSpireWorld(true) == 1) ? "Spire" : "Spire " + romanNumeral(checkIfSpireWorld(true))) : "Zone";	
 }
 
 function repeatClicked(updateOnly){
@@ -10766,6 +10790,7 @@ function startFight() {
 		if (game.global.challengeActive == "Coordinate") displayedName = "Druopitee and Pals";
 		if(game.global.world > 200){
 			displayedName = "Echo of Druopitee";
+			if (game.global.universe == 2)displayedName = "Stuffy";
 			if (game.global.challengeActive == "Coordinate") displayedName = "<span class='smallEnemyName'>Echoes of Druopitee and Pals</span>";
 		}
 	}
@@ -11243,9 +11268,12 @@ function startFight() {
 		if ((game.global.challengeActive == "Smithless" || game.global.challengeActive == "Doubleless") && game.challenges.Smithless.fakeSmithies > 0){
 			game.global.soldierHealthMax *= game.challenges.Smithless.getTrimpMult();
 		}
-		//Fluffy U2 Healthy
+		//Scruffy
 		if (Fluffy.isRewardActive("healthy")){
 			game.global.soldierHealthMax *= 1.5;
+		}
+		if (Fluffy.isRewardActive("Scruffy28")){
+			game.global.soldierHealthMax *= Fluffy.getDamageModifier();
 		}
 		if (game.buildings.Antenna.owned >= 10){
 			game.global.soldierHealthMax *= game.jobs.Meteorologist.getExtraMult();
@@ -11389,6 +11417,7 @@ function startFight() {
 			if (game.global.frigidCompletions > 0 && game.global.universe == 1) healthTemp *= game.challenges.Frigid.getTrimpMult();
 			if (game.talents.mapHealth.purchased && game.global.mapsActive) healthTemp *= 2;
 			if (Fluffy.isRewardActive("healthy")) healthTemp *= 1.5;
+			if (Fluffy.isRewardActive("Scruffy28")) healthTemp *= Fluffy.getDamageModifier();
 			if (game.jobs.Geneticist.owned > 0) healthTemp *= Math.pow(1.01, game.global.lastLowGen);
 			if (game.goldenUpgrades.Battle.currentBonus > 0) healthTemp *= game.goldenUpgrades.Battle.currentBonus + 1;
 			if (game.global.universe == 2 && game.buildings.Smithy.owned > 0) healthTemp *= game.buildings.Smithy.getMult();
@@ -11801,6 +11830,7 @@ function calculateDamage(number, buildString, isTrimp, noCheckAchieve, cell, noF
 		if (game.global.challengeActive == "Desolation") number *= game.challenges.Desolation.trimpAttackMult();
 		if (game.global.challengeActive == "Finale" && Fluffy.isRewardActive("FluffyE10")) number *= Math.pow((Fluffy.isRewardActive("FluffyE16")?5:3.1), Fluffy.getCurrentPrestige());
 		if (game.global.challengeActive == "Finale" && Fluffy.isRewardActive("FluffyE13")) number *= 11;
+		if (game.global.challengeActive == "Finale" && Fluffy.isRewardActive("FluffyE17")) number *= (1+game.global.magmite);
 		if (game.challenges.Nurture.boostsActive()) number *= game.challenges.Nurture.getStatBoost();
 		number = calcHeirloomBonus("Shield", "trimpAttack", number);
 		if (Fluffy.isActive()){
@@ -11991,6 +12021,7 @@ function calculateScryingReward(){
 	num = num * Math.pow(1.07, (game.c2.Finale ?? 1) - 1);
 	if(game.talents.tier11c.purchased)num = num * Math.log10(game.global.mutatedSeeds+10);
 	if(game.talents.tier11e.purchased)num = num * Math.pow(1.005,autoBattle.maxEnemyLevel-1);
+	if(game.talents.tier12b.purchased)num = num * Math.log10(game.global.magmite+10);
 	if (num < 1) num = 1;
 	if (game.talents.scry.purchased && !game.global.mapsActive){
 		var worldCell = getCurrentWorldCell();
@@ -12305,6 +12336,7 @@ function getTotalTalentCost(){
 
 function checkIfSpireWorld(getNumber){
 	if (game.global.challengeActive == "Liquified") return false;
+	if (game.global.universe == 2 && game.global.world == 400) return (getNumber ? true : 1);
 	if (game.global.universe == 2) return false; //until 5.1.0
 	if (game.global.challengeActive == "Spired"){
 		if(getNumber)return Math.floor(Math.max(1,(game.global.world-100)/100));
@@ -13276,6 +13308,11 @@ function giveSpireReward(level){
 			game.empowerments.Ice.tokens += tokReward;
 			game.stats.bestTokens.value += (tokReward * 3);
 			message(getSpireStory(spireWorld, 8) + "You found " + tokReward + " of each type of Nature Token!", "Story");
+			if(Fluffy.isRewardActive("FluffyE18")){
+				game.empowerments.Poison.level=Math.max(game.empowerments.Poison.level,Math.floor(game.empowerments.Poison.tokens/80+1));
+				game.empowerments.Wind.level=Math.max(game.empowerments.Wind.level,Math.floor(game.empowerments.Wind.tokens/80+1));
+				game.empowerments.Ice.level=Math.max(game.empowerments.Ice.level,Math.floor(game.empowerments.Ice.tokens/80+1));
+			}
 			if (game.global.buyTab == "nature")
 				updateNatureInfoSpans();
 			break;
@@ -13371,6 +13408,17 @@ function giveSpireReward(level){
 }
 
 function rewardSpire1(level){
+	if(game.global.universe == 2 && level != 100)return;
+	if(game.global.universe == 2 && level == 100){
+		text = "Stuffy is fallen. You found a Plagued Spire Core!";
+		message(text, "Story");
+		createHeirloom(400, false, true);
+		game.global.spireActive = false;
+		game.global.lastSpireCleared = 1;
+		setNonMapBox();
+		handleExitSpireBtn();
+		return;
+	}
 	if(game.global.challengeActive == "Spired" && level != 100 && game.global.world != 200)return;
 	var amt = 0;
 	var text = "";
@@ -15235,7 +15283,11 @@ function fight(makeUp) {
 		overkill = 0;
 		if (plaguebringer == 0) plaguebringer = 1;
 	}
-	if ((cell.health / cell.maxHealth < 0.5) && (getUberEmpowerment() == "Ice" || getUberEmpowerment() == "ALL") && getEmpowerment() == "Ice" && game.empowerments.Ice.currentDebuffPower > 20) {
+	if ((cell.health / cell.maxHealth < 0.9) && (game.global.challengeActive == "Finale") && Fluffy.isRewardActive("FluffyE18")) {
+		cell.health = 0;
+		thisKillsTheBadGuy();
+		overkill = "shatter";
+	}else if ((cell.health / cell.maxHealth < 0.5) && (getUberEmpowerment() == "Ice" || getUberEmpowerment() == "ALL") && getEmpowerment() == "Ice" && game.empowerments.Ice.currentDebuffPower > 20) {
 		cell.health = 0;
 		thisKillsTheBadGuy();
 		overkill = "shatter";
@@ -16660,6 +16712,11 @@ function boostHe(checkOnly) {
 		game.empowerments.Poison.tokens += tokenReward;
 		game.empowerments.Wind.tokens += tokenReward;
 		game.empowerments.Ice.tokens += tokenReward;
+		if(Fluffy.isRewardActive("FluffyE18")){
+			game.empowerments.Poison.level=Math.max(game.empowerments.Poison.level,Math.floor(game.empowerments.Poison.tokens/80+1));
+			game.empowerments.Wind.level=Math.max(game.empowerments.Wind.level,Math.floor(game.empowerments.Wind.tokens/80+1));
+			game.empowerments.Ice.level=Math.max(game.empowerments.Ice.level,Math.floor(game.empowerments.Ice.tokens/80+1));
+		}
 		if (game.global.buyTab == "nature")
 			updateNatureInfoSpans();
 	}
@@ -17763,10 +17820,10 @@ var Fluffy = {
 	prestigeExpModifier: 5,
 	currentExp: [],
 	damageModifiers: [1, 1.1, 1.3, 1.6, 2, 2.5, 3.1, 3.8, 4.6, 5.5, 6.5],
-	damageModifiers2: [1, 1.1, 1.3, 1.6, 2, 2.5, 3.1, 3.8, 4.6, 5.5, 25.5, 30.5, 38, 48, 61, 111, 171, 241, 321, 411, 511, 621, 741, 871, 1011, 1161, 1311, 1311],
+	damageModifiers2: [1, 1.1, 1.3, 1.6, 2, 2.5, 3.1, 3.8, 4.6, 5.5, 25.5, 30.5, 38, 48, 61, 111, 171, 241, 321, 411, 511, 621, 741, 871, 1011, 1161, 1321, 1501, 1701, 2001, 2501, 3001, 3001, 3001],
 	rewards: ["stickler", "helium", "liquid", "purifier", "lucky", "void", "helium", "liquid", "eliminator", "overkiller"],
-	prestigeRewards: ["dailies", "voidance", "overkiller", "critChance", "megaCrit", "superVoid", "voidelicious", "naturesWrath", "voidSiphon", "plaguebrought", "FluffyE10", "critChance", "scruffBurst", "FluffyE13", "FluffyE14", "FluffyE15", "FluffyE16"],
-	rewardsU2: ["trapper", "prism", "heirloopy", "radortle", "healthy", "wealthy", "critChance", "gatherer", "dailies", "exotic", "shieldlayer", "tenacity", "megaCrit", "critChance", "smithy", "biggerbetterheirlooms", "shieldlayer", "void", "moreVoid", "tenacity", "SADailies", "Scruffy21", "Scruffy22", "scruffBurst", "overkiller", "voidelicious", "Scruffy26"],
+	prestigeRewards: ["dailies", "voidance", "overkiller", "critChance", "megaCrit", "superVoid", "voidelicious", "naturesWrath", "voidSiphon", "plaguebrought", "FluffyE10", "critChance", "scruffBurst", "FluffyE13", "FluffyE14", "FluffyE15", "FluffyE16", "FluffyE17", "FluffyE18", "justdam"],
+	rewardsU2: ["trapper", "prism", "heirloopy", "radortle", "healthy", "wealthy", "critChance", "gatherer", "dailies", "exotic", "shieldlayer", "tenacity", "megaCrit", "critChance", "smithy", "biggerbetterheirlooms", "shieldlayer", "void", "moreVoid", "tenacity", "SADailies", "Scruffy21", "Scruffy22", "scruffBurst", "overkiller", "voidelicious", "Scruffy26", "overkiller", "Scruffy28", "justdam", "justdam", "justdam"],
 	prestigeRewardsU2: [],
 	checkU2Allowed: function(){
 		if (game.global.universe == 2) return true;
@@ -17962,11 +18019,12 @@ var Fluffy = {
 		if (getHeirloomBonus("Staff", "FluffyExp") > 0){
 			reward *= (1 + (getHeirloomBonus("Staff", "FluffyExp") / 100));
 		}
+		if ((getUberEmpowerment() == "Ice" || getUberEmpowerment() == "ALL") && Fluffy.isRewardActive("FluffyE18")) reward *= (1 + (game.empowerments.Ice.getLevel() * 0.0025));
 		if (givingExp) this.getBestExpStat().value += reward;
 		//----Modifiers below this comment will not apply to best fluffy exp bone portal credit or stats----
 		if (game.global.challengeActive == "Daily")
 			reward *= (1 + (getDailyHeliumValue(countDailyWeight()) / 100));
-		if ((getUberEmpowerment() == "Ice" || getUberEmpowerment() == "ALL")) reward *= (1 + (game.empowerments.Ice.getLevel() * 0.0025));
+		if ((getUberEmpowerment() == "Ice" || getUberEmpowerment() == "ALL") && !Fluffy.isRewardActive("FluffyE18")) reward *= (1 + (game.empowerments.Ice.getLevel() * 0.0025));
 		return reward;
 	},
 	getLevel: function(ignoreCapable){
@@ -18230,7 +18288,7 @@ var Fluffy = {
 		if (!big) return topText;
 		//clicked
 
-		if (Fluffy.currentLevel == 10 && this.getCurrentPrestige() < (game.global.challengeActive == "Finale"? 0 : game.global.finaleChallDone ? 16 /*prestigeRewardsList.length*/ : 10))
+		if (Fluffy.currentLevel == 10 && this.getCurrentPrestige() < ((game.global.challengeActive == "Finale" || game.global.universe == 2)? 0 : game.global.finaleChallDone ? 19 : 10))
 			topText += "<span class='fluffyEvolveText'>" + name + " is ready to Evolve! This will reset his damage bonus and most abilities back to level 0, but he will regrow to be stronger than ever. You can cancel this Evolution at any point to return to level 10.<br/><span class='btn btn-md btn-success' onclick='Fluffy.prestige(); Fluffy.refreshTooltip(true);'>Evolve!</span></span><br/>";
 		if (Fluffy.canGainExp() && game.global.world >= minZoneForExp && (!showCruffys || fluffyInfo[0] < 19)) {
 			topText += "- " + name + "'s Exp gain at the end of each Zone is equal to: ";
@@ -18468,6 +18526,9 @@ var Fluffy = {
 		Scruffy26: {
 			description: "Add 20 minutes to Tenacity time when you reach a new zone."
 		},
+		Scruffy28: {
+			description: "Scruffy's damage bonus is applied to health."
+		},
 
 
 		FluffyE10: {
@@ -18491,6 +18552,17 @@ var Fluffy = {
 				var count = 9;
 				if (game.talents.voidSpecial2.purchased) count++;
 				return "Allows an additional 3 Void Maps with the same name to stick together, bringing the max stack size to " + count + ". Each map in the stack that Fluffy clears grants an additional 50% Helium to all other maps in the stack, giving a bonus of up to +" + Math.floor((count - 1) * 50) + "% to each of the " + (count - 1) + " Fluffy maps from a " + count + " stack. Also, Fluffy's E10 bonus per Evolution is increased to 400%."
+			}
+		},
+		FluffyE17: {
+			description: "When you portal, if your Magmite is less than (Efficiency level * 7), set your Magmite to (Efficiency level * 7). In Finale challenge, Fluffy gain +100% attack per Magmite!"
+		},
+		FluffyE18: {
+			get description(){
+				var str="";
+				if (!game.talents.nature.purchased) str="Increase your token trading ratio from 10:5 to 10:7.";
+				else str="Increase your token trading ratio from 10:8 to 10:10.";
+				return str+" Automatically use 5% of your tokens to upgrade Nature Empowerments without actually spending tokens, Enlightened Ice apply to best Fluffy Exp. In Finale challenge, Enemies will shatter by Enlightened Ice if health is below 90%, regardless of Ice Empowerment.";
 			}
 		},
 
