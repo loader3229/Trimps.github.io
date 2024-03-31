@@ -1040,8 +1040,8 @@ function load(saveString, autoLoad, fromPf) {
 		game.stats.runetrinkets.valueTotal = game.portal.Observation.trinkets;
 	}
 	if (compareVersion([5,9,0], oldStringVersion)){
-		if (autoBattle.maxEnemyLevel > 150) autoBattle.maxEnemyLevel = 150;
-		if (autoBattle.enemyLevel > 150) autoBattle.enemyLevel = 150;
+		if (autoBattle.maxEnemyLevel > 160) autoBattle.maxEnemyLevel = 160;
+		if (autoBattle.enemyLevel > 160) autoBattle.enemyLevel = 160;
 		var spentValue = 0;
 		if (game.global.CoreEquipped.name) spentValue += getTotalHeirloomRefundValue(game.global.CoreEquipped, true);
 		for (var hc = 0; hc < game.global.heirloomsCarried.length; hc++){
@@ -1562,7 +1562,7 @@ function countChallengeSquaredReward(numberOnly, mesmerPreview, getUniverseArray
 		if (challenge.allowU2 && challenge.blockU1) rewardU2 += thisReward;
 		else reward += thisReward;
 	}
-	if (reward > 170000) reward = 170000;
+	if (reward > 190000) reward = 190000;
 	if (reward >= 2000 && !mesmerPreview) giveSingleAchieve("Challenged");
 	if (rewardU2 >= 2000 && !mesmerPreview) giveSingleAchieve("Superchallenged");
 	if (getUniverseArray) return [reward, rewardU2];
@@ -1784,6 +1784,7 @@ function displayChallenges() {
 		else if (what == "Glass") done = game.global.glassDone;
 		else if (what == "Liquified") done = game.global.liquifiedChallDone;
 		else if (what == "Houseless") done = game.global.houselessChallDone;
+		else if (what == "Randomized") done = game.global[what+"ChallDone"];
 		done = (done) ? "finishedChallenge" : "";
 		if (what == "Finale") done = '" style="background-color: hsl(' + ((game.global.finaleChallDone + 1) * 60) + ',50%,50%)';
 		if (challenge.heliumThrough || what == "Experience") done = "challengeRepeatable";
@@ -2154,7 +2155,7 @@ function getObsidianStart(baseOnly){
 	var bonus = 0;
 	bonus += (radLevels > 350) ? 200 + (Math.floor((radLevels - 350) / 50) * 10) : (radLevels > 100) ? 100 + (Math.floor((radLevels - 100) / 25) * 10) : Math.floor(radLevels / 10) * 10;
 	start += bonus;
-	if (start > 911) start = 911;
+	if (start > 921) start = 921;
 	return start;
 }
 
@@ -4002,6 +4003,9 @@ function rewardResource(what, baseAmt, level, checkMapLootScale, givePercentage)
 		if (game.global.universe == 2 && u2Mutations.tree.Loot.purchased){
 			amt *= 1.5;
 		}
+		if (u2Mutations.tree.Loot2.purchased){
+			amt *= 1.5;
+		}
 		if (game.global.challengeActive == "Decay" || game.global.challengeActive == "Melt"){
 			var challenge = game.challenges[game.global.challengeActive];
 			amt *= 10;
@@ -4045,7 +4049,7 @@ function rewardResource(what, baseAmt, level, checkMapLootScale, givePercentage)
 		}
 		if (game.jobs.Meteorologist.vestedHires > 0) amt *= game.jobs.Meteorologist.getMult();
 		if (game.global.universe == 2 && game.global.glassDone && game.global.world > 175){
-			var glassMult = Math.pow(1.1, Math.min(game.global.world - 175, 250));
+			var glassMult = Math.pow(1.1,Fluffy.isRewardActive("Scruffy29")?250:Math.min(game.global.world - 175, 250));
 			amt *= glassMult;
 		}
 		if (game.global.universe == 2 && game.global.world >= 201){
@@ -4105,7 +4109,8 @@ function addResCheckMax(what, number, noStat, fromGather, nonFilteredLoot, trans
 	}
 	if (res.max == -1) {
 		res.owned += number;
-		if (what == "gems" && res.owned > 1e300)res.owned = 1e300;
+		var absMax = 500*Math.pow(2,995)*(1 + game.portal.Packrat.modifier * getPerkLevel("Packrat"))*(1+game.heirlooms.Shield.storageSize.currentBonus/100);
+		if (res.owned > absMax)res.owned = absMax;
 		if (!noStat && what == "gems") game.stats.gemsCollected.value += number;
 		return;
 	}
@@ -4125,6 +4130,8 @@ function addResCheckMax(what, number, noStat, fromGather, nonFilteredLoot, trans
 		else
 			res.owned = newMax;
 	}
+	var absMax = 500*Math.pow(2,995)*(1 + game.portal.Packrat.modifier * getPerkLevel("Packrat"))*(1+game.heirlooms.Shield.storageSize.currentBonus/100);
+	if (res.owned > absMax)res.owned = absMax;
 }
 
 function getMaxForResource(what){
@@ -4563,9 +4570,9 @@ function buyBuilding(what, confirmed, fromAuto, forceAmt) {
     if (typeof toBuy === 'undefined') return false;
 	var canAfford = ((forceAmt) ? canAffordBuilding(what, false, false, false, false, purchaseAmt) : canAffordBuilding(what));
 	
-	if (what == "Barn") purchaseAmt = Math.min(purchaseAmt, 999 - game.buildings.Barn.purchased);
-	if (what == "Shed") purchaseAmt = Math.min(purchaseAmt, 999 - game.buildings.Shed.purchased);
-	if (what == "Forge") purchaseAmt = Math.min(purchaseAmt, 999 - game.buildings.Forge.purchased);
+	if (what == "Barn") purchaseAmt = Math.min(purchaseAmt, 995 - game.buildings.Barn.purchased);
+	if (what == "Shed") purchaseAmt = Math.min(purchaseAmt, 995 - game.buildings.Shed.purchased);
+	if (what == "Forge") purchaseAmt = Math.min(purchaseAmt, 995 - game.buildings.Forge.purchased);
 	
 	if (purchaseAmt == 0) return false;
 	if (canAfford){
@@ -5535,7 +5542,7 @@ function prestigeEquipment(what, fromLoad, noInc) {
 	else stat = (typeof equipment.health !== 'undefined') ? "health" : "attack";
 	if (!fromLoad) game.global[stat] -= (equipment[stat + "Calculated"] * equipment.level);
 	if (!fromLoad) game.global.difs[stat] -= (equipment[stat + "Calculated"] * equipment.level);
-    equipment[stat + "Calculated"] = Math.round(equipment[stat] * Math.pow(1.19, ((equipment.prestige - 1) * game.global.prestige[stat]) + 1));
+    equipment[stat + "Calculated"] = Math.round(equipment[stat] * Math.pow(1.19, (Math.max(0,equipment.prestige - 1 - game.global.druopitinityDefeated) * game.global.prestige[stat]) + 1));
 	//No need to touch level if it's newNum
 	if (fromLoad) return;
 	equipment.level = 0;
@@ -5560,6 +5567,7 @@ function getNextPrestigeValue(what){
 	var stat;
 	if (equipment.blockNow) stat = "block";
 	else stat = (typeof equipment.health !== 'undefined') ? "health" : "attack";
+	if(equipment.prestige<=game.global.druopitinityDefeated)return equipment[stat];
 	var toReturn = Math.round(equipment[stat] * Math.pow(1.19, ((equipment.prestige) * game.global.prestige[stat]) + 1));
 	if (stat == "block"){
 		stat = "格挡";
@@ -7296,7 +7304,9 @@ function getRecycleValueByRarity(heirloomRarity){
 		base *= (1 + (getDailyHeliumValue(countDailyWeight()) / 100));
 	}
 	if (autoBattle.oneTimers.Nullicious.owned && game.global.universe == 2) base *= autoBattle.oneTimers.Nullicious.getMult();
-	if (game.global.universe == 2 && u2Mutations.tree.Nullifium.purchased) base *= 1.1;
+	if (u2Mutations.tree.Nullifium.purchased) base *= 1.1;
+	if (Fluffy.isRewardActive("Scruffy22") && heirloomRarity == 11) base *= 3;
+	if (game.talents.tier12f.purchased) base *= 5;
 	return base;
 }
 
@@ -7629,9 +7639,12 @@ function createHeirloom(zone, fromBones, spireCore, forceBest){
 	if (game.global.challengeActive == "Spired" && spireCore)buildHeirloom.nuMod *= (game.global.world * game.global.world);
 	if (game.global.challengeActive == "Spired" && spireCore && game.global.world >= 200 && (game.global.world % 100) == 0)buildHeirloom.nuMod *= 10;
 	if (game.global.challengeActive == "Spired" && spireCore && game.global.world >= 230)buildHeirloom.nuMod *= (game.global.world/200*Math.pow(10,(game.global.world%100)/100));
+	if (game.global.challengeActive == "Spired" && spireCore && game.global.world >= 300 && Fluffy.isRewardActive("FluffyE19"))buildHeirloom.nuMod *= 3;
+	if (game.global.challengeActive == "Spired" && spireCore && game.global.world >= 300 && (game.global.world % 100) == 0 && Fluffy.isRewardActive("FluffyE19"))buildHeirloom.nuMod *= 3;
 	if (autoBattle.oneTimers.Nullicious.owned && game.global.universe == 2) buildHeirloom.nuMod *= autoBattle.oneTimers.Nullicious.getMult();
 	if (u2Mutations.tree.Nullifium.purchased) buildHeirloom.nuMod *= 1.1;
 	if (Fluffy.isRewardActive("Scruffy22") && !spireCore && rarity == 11) buildHeirloom.nuMod *= 3;
+	if (!spireCore && game.talents.tier12f.purchased) buildHeirloom.nuMod *= 5;
 	game.global.heirloomsExtra.push(buildHeirloom);
 	if (game.options.menu.voidPopups.enabled != 2 || type == "Core" || (getHeirloomRarityRanges(zone, fromBones).length == (rarity + 1))){
 		displaySelectedHeirloom(false, 0, false, "heirloomsExtra", game.global.heirloomsExtra.length - 1, true);
@@ -8808,7 +8821,7 @@ var mutations = {
 		tooltip: function () {
 			var text = "This enemy is rock solid, and there\\'s no way to get past.";
 			if (Fluffy.checkU2Allowed()){
-				if (game.global.world == 911) text += " This Zone is even more rocky and solid than anything you\\'ve seen before. You don\\'t think there\\'s any way to get past for now.";
+				if (game.global.world == 921) text += " This Zone is even more rocky and solid than anything you\\'ve seen before. You don\\'t think there\\'s any way to get past for now.";
 				else text += " Time to go to the Radon Universe and find a way to melt these Zones!";
 			}
 			else text += " Fluffy suggests that you find a way to get him to Evolution 8 Level 10 as quickly as possible so he can help you melt these Zones!";
@@ -11164,8 +11177,8 @@ function startFight() {
 			}
 			else {
 				overkillerCount = 0;
-				if (u2Mutations.tree.MaxOverkill.purchased && canU2Overkill()) overkillerCount++;
-				if (canU2Overkill()) overkillerCount += Fluffy.isRewardActive("overkiller");
+				if (u2Mutations.tree.MaxOverkill.purchased && (canU2Overkill() || (game.global.mapsActive && u2Mutations.tree.MadMap2.purchased))) overkillerCount++;
+				if (canU2Overkill() || (game.global.mapsActive && u2Mutations.tree.MadMap2.purchased)) overkillerCount += Fluffy.isRewardActive("overkiller");
 			}
 			if (cell.OKcount <= overkillerCount){
 				var nextCell = (game.global.mapsActive) ? game.global.mapGridArray[cellNum + 1] : game.global.gridArray[cellNum + 1];
@@ -11877,7 +11890,7 @@ function calculateDamage(number, buildString, isTrimp, noCheckAchieve, cell, noF
 				number *= dailyModifiers.rampage.getMult(game.global.dailyChallenge.rampage.strength, game.global.dailyChallenge.rampage.stacks);
 			}
 			if (Fluffy.isRewardActive("SADailies")) number *= Fluffy.rewardConfig.SADailies.attackMod();
-		}
+		}else if (Fluffy.isRewardActive("Scruffy32")) number *= Fluffy.rewardConfig.SADailies.attackMod();
 		if (game.global.challengeActive == "Revenge") number *= game.challenges.Revenge.getMult();
 		if (game.global.challengeActive == "Duel" && game.challenges.Duel.trimpStacks > 50) number *= 3;
 		if (game.global.challengeActive == "Quest") number *= game.challenges.Quest.getAttackMult();
@@ -11890,6 +11903,7 @@ function calculateDamage(number, buildString, isTrimp, noCheckAchieve, cell, noF
 		if (game.global.challengeActive == "Finale" && Fluffy.isRewardActive("FluffyE10")) number *= Math.pow((Fluffy.isRewardActive("FluffyE16")?5:3.1), Fluffy.getCurrentPrestige());
 		if (game.global.challengeActive == "Finale" && Fluffy.isRewardActive("FluffyE13")) number *= 11;
 		if (game.global.challengeActive == "Finale" && Fluffy.isRewardActive("FluffyE17")) number *= (1+game.global.magmite);
+		if (game.global.challengeActive == "Finale" && Fluffy.isRewardActive("FluffyE19")) number *= (1+playerSpire.spirestones/100);
 		if (game.challenges.Nurture.boostsActive()) number *= game.challenges.Nurture.getStatBoost();
 		number = calcHeirloomBonus("Shield", "trimpAttack", number);
 		if (Fluffy.isActive()){
@@ -12079,7 +12093,7 @@ function calculateScryingReward(){
 	var num = (1 * Math.pow(modAmt, scryableLevels)) / 3;
 	num = num * Math.pow(1.07, (game.c2.Finale ?? 1) - 1);
 	if(game.talents.tier11c.purchased)num = num * Math.log10(game.global.mutatedSeeds+10);
-	if(game.talents.tier11e.purchased)num = num * Math.pow(1.005,autoBattle.maxEnemyLevel-1);
+	if(game.talents.tier11e.purchased)num = num * Math.pow(game.talents.tier12e.purchased?1.01:1.005,autoBattle.maxEnemyLevel-1);
 	if(game.talents.tier12b.purchased)num = num * Math.log10(game.global.magmite+10);
 	if (num < 1) num = 1;
 	if (game.talents.scry.purchased && !game.global.mapsActive){
@@ -12558,7 +12572,7 @@ function checkIfLiquidZone(){
 		return true;
 	}
 	if (game.global.challengeActive == "Liquified") return true;
-	if (game.options.menu.liquification.enabled == 0 || game.global.challengeActive == "Obliterated" || game.global.challengeActive == "Eradicated" || game.global.challengeActive == "Finale") return false;
+	if (game.options.menu.liquification.enabled == 0 || ((game.global.challengeActive == "Obliterated" || game.global.challengeActive == "Eradicated" || game.global.challengeActive == "Finale") && !Fluffy.isRewardActive("FluffyE20"))) return false;
 	var spireCount = game.global.spiresCompleted;
 	if (game.talents.liquification.purchased) spireCount++;
 	if (game.talents.liquification2.purchased) spireCount++;
@@ -12724,6 +12738,7 @@ function nextWorld() {
 	}
 	if (game.talents.bionic.purchased && game.global.universe == 1){
 		var bTier = ((game.global.world - 126) / 15);
+		if(bTier > 52.9)bTier = 52.9;
 		if (game.global.world >= 126) game.mapUnlocks.BionicWonderland.canRunOnce = false;
 		if (bTier % 1 === 0 && bTier == game.global.bionicOwned && game.global.roboTrimpLevel >= bTier) {
 			game.mapUnlocks.roboTrimp.createMap(bTier);
@@ -12832,7 +12847,7 @@ function nextWorld() {
 		var next = (game.global.highestRadonLevelCleared >= 349) ? "50" : (game.global.highestRadonLevelCleared >= 99) ? "25" : "10";
 		var text;
 		if (!Fluffy.checkU2Allowed()) text = " Fluffy has an idea for remelting the world, but it will take a tremendous amount of energy from a place Fluffy isn't yet powerful enough to send you. Fluffy asks you to help him reach the <b>10th Level of his 8th Evolution</b>, and he promises he'll make it worth your time.";
-		else if (game.global.world == 911) text = "";
+		else if (game.global.world == 921) text = "";
 		else text = " However, all is not lost! Every " + next + " Zones of progress you make in the Radon Universe will allow you to harness enough energy for Fluffy to slow down the hardening of your World for an extra 10 Zones in this Universe.";
 		message("The Magma has solidified into impenetrable Obsidian; your Trimps have no hope of progressing here right now." + text, "Notices", null, "obsidianMessage");
 	}
@@ -13175,6 +13190,7 @@ function getSpireStats(cellNum, name, what){
 		mod = 1.1+game.global.world/100;
 		if(mod >= 2)mod = mod * 1.5 - 1;
 		if(mod >= 2.5)mod = mod * 3.4 - 6;
+		if (what == "attack" && mod >= 19) mod = 19;
 	} else if (spireNum == 8){
 		var modRaiser = 0;
 		if (what == "attack") mod = 1.35;
@@ -13196,6 +13212,15 @@ function deadInSpire(){
 	game.global.spireDeaths++;
 	if (game.global.spireDeaths >= 10) {
 		if(game.global.lastClearedCell == 98 && checkIfSpireWorld(true) == 8){
+			if(game.global.druopitinityDefeated){
+				game.global.spireActive = false;
+				game.global.spireRows++;
+				game.global.lastSpireCleared = 8;
+				setNonMapBox();
+				handleExitSpireBtn();
+				message("Since you defeated Druopitinity at least once, you get the Reward of Cell 100. (Your Trimps dealt " + prettify(game.global.gridArray[99].maxHealth-game.global.gridArray[99].health) + " damage to Druopitinity).", "Story");
+				return;
+			}
 			message("You're not yet ready. Maybe you'll be of use in the next lifetime (Your Trimps dealt " + prettify(game.global.gridArray[99].maxHealth-game.global.gridArray[99].health) + " damage to Druopitinity).", "Story");
 		}else message("You're not yet ready. Maybe you'll be of use in the next lifetime (You made it to cell " + (game.global.lastClearedCell + 2) + ").", "Story");
 		endSpire();
@@ -13396,17 +13421,21 @@ function giveSpireReward(level){
 			if (game.global.spireDeaths == 0) giveSingleAchieve("Invincible");
 			if (spireWorld >= 5 && game.global.spireDeaths == 0) giveSingleAchieve("Invisible");
 			if (spireWorld >= 7) giveSingleAchieve("Lucky Spirer");
+			if (spireWorld >= 8) giveSingleAchieve("Infinity Spirer");
 			if (game.global.challengeActive == "Finale"){
 				giveSingleAchieve("Druopitee's plan is completely failed");
 				game.global.finaleChallDone = Math.max(game.global.finaleChallDone ?? 0, spireWorld);
 			}
 			if (game.global.challengeActive == "Spired" && game.global.world >= 300) giveSingleAchieve("Spires-In-Spires");
 			var text = getSpireStory(spireWorld, 10);
-			if (!game.global.runningChallengeSquared){
+			if(spireWorld == 8){
+				text += "德罗披提·无限倒下了，您发现了真正的飞船钥匙！由于德罗披提·无限的影响，您的装备属性下降了一些，但是敌人的属性同样也下降了一些。";
+				game.global.druopitinityDefeated++;
+			}else if (!game.global.runningChallengeSquared){
 				var amt = giveHeliumReward(100);
 				text += "您发现了<b>" + prettify(amt) + "氦</b>和<b>一个崭新的尖塔核心</b>！";
 			}else if(game.global.challengeActive == "Spired")text += "您得到了一个尖塔核心传家宝，回收它可以得到"+Math.floor((game.global.world**3)*Math.pow(10,(game.global.world-300)/100)*(game.global.world%100==0?10:1)*(u2Mutations.tree.Nullifium.purchased?1.1:1))+"尖塔石！";
-			else if(spireWorld != 8)text += "您发现了一个<b>崭新的尖塔核心</b>！";
+			else text += "您发现了一个<b>崭新的尖塔核心</b>！";
 			if (spireWorld == 6){
 				//var talentCount = countPurchasedTalents();
 				//var maxTalents = Object.keys(game.talents).length;
@@ -15750,7 +15779,7 @@ function getPlayerCritChance(){ //returns decimal: 1 = 100%
 			critChance -= dailyModifiers.trimpCritChanceDown.getMult(game.global.dailyChallenge.trimpCritChanceDown.strength);
 		}
 		if (Fluffy.isRewardActive('SADailies')) critChance += Fluffy.rewardConfig.SADailies.critChance();
-	}
+	}else if (Fluffy.isRewardActive("Scruffy32")) critChance += Fluffy.rewardConfig.SADailies.critChance();
 	if (critChance > 7) critChance = 7;
 	return critChance;
 }
@@ -16421,7 +16450,8 @@ function scaleLootBonuses(amt, ignoreScry){
 	if (game.unlocks.impCount.Magnimp) amt *= Math.pow(1.003, game.unlocks.impCount.Magnimp);
 	if (getPerkLevel("Looting")) amt += (amt * getPerkLevel("Looting") * game.portal.Looting.modifier);
 	if (getPerkLevel("Looting_II")) amt *= (1 + (getPerkLevel("Looting_II") * game.portal.Looting_II.modifier));
-	if (game.global.universe == 2 && u2Mutations.tree.Loot.purchased) amt *= 1.5;
+	if (game.global.universe == 2 && u2Mutations.tree.Loot.purchased) amt *= 1.5
+	if (u2Mutations.tree.Loot2.purchased) amt *= 1.5;
 	if (game.global.challengeActive == "Alchemy") amt *= alchObj.getPotionEffect("Potion of Finding");
 	amt *= alchObj.getPotionEffect("Elixir of Finding");
 	if (getPerkLevel("Greed")) amt *= game.portal.Greed.getMult();
@@ -17917,7 +17947,7 @@ var Fluffy = {
 		return 50;
 	},
 	get expGrowth(){
-		if (game.global.universe == 2) return 1.02;
+		if (game.global.universe == 2) return 1.061;
 		return 1.015
 	},
 	currentLevel: 0,
@@ -17925,10 +17955,10 @@ var Fluffy = {
 	prestigeExpModifier: 5,
 	currentExp: [],
 	damageModifiers: [1, 1.1, 1.3, 1.6, 2, 2.5, 3.1, 3.8, 4.6, 5.5, 6.5],
-	damageModifiers2: [1, 1.1, 1.3, 1.6, 2, 2.5, 3.1, 3.8, 4.6, 5.5, 25.5, 30.5, 38, 48, 61, 111, 171, 241, 321, 411, 511, 621, 741, 871, 1011, 1161, 1321, 1501, 1701, 2001, 2501, 3001, 3001, 3001],
+	damageModifiers2: [1, 1.1, 1.3, 1.6, 2, 2.5, 3.1, 3.8, 4.6, 5.5, 25.5, 30.5, 38, 48, 61, 111, 171, 241, 321, 411, 511, 621, 741, 871, 1011, 1161, 1321, 1501, 1701, 2001, 2501, 3201, 4001, 5001, 6001, 7001, 8001, 9001, 10001, 10001, 10001, 10001, 10001, 10001, 10001, 10001],
 	rewards: ["stickler", "helium", "liquid", "purifier", "lucky", "void", "helium", "liquid", "eliminator", "overkiller"],
-	prestigeRewards: ["dailies", "voidance", "overkiller", "critChance", "megaCrit", "superVoid", "voidelicious", "naturesWrath", "voidSiphon", "plaguebrought", "FluffyE10", "critChance", "scruffBurst", "FluffyE13", "FluffyE14", "FluffyE15", "FluffyE16", "FluffyE17", "FluffyE18", "justdam"],
-	rewardsU2: ["trapper", "prism", "heirloopy", "radortle", "healthy", "wealthy", "critChance", "gatherer", "dailies", "exotic", "shieldlayer", "tenacity", "megaCrit", "critChance", "smithy", "biggerbetterheirlooms", "shieldlayer", "void", "moreVoid", "tenacity", "SADailies", "Scruffy21", "Scruffy22", "scruffBurst", "overkiller", "voidelicious", "Scruffy26", "overkiller", "Scruffy28", "justdam", "justdam", "justdam"],
+	prestigeRewards: ["dailies", "voidance", "overkiller", "critChance", "megaCrit", "superVoid", "voidelicious", "naturesWrath", "voidSiphon", "plaguebrought", "FluffyE10", "critChance", "scruffBurst", "FluffyE13", "FluffyE14", "FluffyE15", "FluffyE16", "FluffyE17", "FluffyE18", "FluffyE19", "FluffyE20"],
+	rewardsU2: ["trapper", "prism", "heirloopy", "radortle", "healthy", "wealthy", "critChance", "gatherer", "dailies", "exotic", "shieldlayer", "tenacity", "megaCrit", "critChance", "smithy", "biggerbetterheirlooms", "shieldlayer", "void", "moreVoid", "tenacity", "SADailies", "Scruffy21", "Scruffy22", "scruffBurst", "overkiller", "voidelicious", "Scruffy26", "overkiller", "Scruffy28", "Scruffy29", "Scruffy30", "overkiller", "Scruffy32", "justdam", "justdam", "justdam"],
 	prestigeRewardsU2: [],
 	checkU2Allowed: function(){
 		if (game.global.universe == 2) return true;
@@ -18102,7 +18132,6 @@ var Fluffy = {
 	},
 	getExpReward: function(givingExp, count) {
 		var xpZone = game.global.world - this.getMinZoneForExp();
-		if (game.global.universe == 2) xpZone *= 3;
 		var reward = (this.baseExp + (getPerkLevel("Curious") * game.portal.Curious.modifier)) * Math.pow(this.expGrowth, xpZone) * (1 + (getPerkLevel("Cunning") * game.portal.Cunning.modifier));
 		reward *= this.specialExpModifier;
 		if (game.talents.fluffyExp.purchased)
@@ -18393,7 +18422,7 @@ var Fluffy = {
 		if (!big) return topText;
 		//clicked
 
-		if (Fluffy.currentLevel == 10 && this.getCurrentPrestige() < ((game.global.challengeActive == "Finale" || game.global.universe == 2)? 0 : game.global.finaleChallDone ? 19 : 10))
+		if (Fluffy.currentLevel == 10 && this.getCurrentPrestige() < ((game.global.challengeActive == "Finale" || game.global.universe == 2)? 0 : game.global.finaleChallDone ? 20 : 10))
 			topText += "<span class='fluffyEvolveText'>" + name + "做好了进化的准备！进化后，它的攻击力加成和大部分技能将回到初始水平，但成长起来以后它将变得比之前更强大。您可以在任何时候取消进化，回到上一次进化的等级10。<br/><span class='btn btn-md btn-success' onclick='Fluffy.prestige(); Fluffy.refreshTooltip(true);'>Evolve!</span></span><br/>";
 		if (Fluffy.canGainExp() && game.global.world >= minZoneForExp && (!showCruffys || fluffyInfo[0] < 19)) {
 			topText += "- " + name + "通过每个区域获得的经验值等于：";
@@ -18402,7 +18431,7 @@ var Fluffy = {
 			if (isPerkUnlocked("Classy")) startNumber = '<span class="fluffFormClassy" onmouseover="Fluffy.expBreakdown(\'classy\')" onmouseout="Fluffy.expBreakdown(\'clear\')">' + (startNumber + 1) + "</span> - 1";
 			if (isPerkUnlocked("Curious")) fluffFormula += "(" + Fluffy.baseExp + " + (Curious × " + game.portal.Curious.modifier + ")) × (" + Fluffy.expGrowth + "^(Zone - " + startNumber + ")) × (1 + (Cunning × " + game.portal.Cunning.modifier + "))";
 			else if (isPerkUnlocked("Cunning")) fluffFormula += Fluffy.baseExp + " × (" + Fluffy.expGrowth + "^(Zone - " + startNumber + ")) × (1 + (Cunning × " + game.portal.Cunning.modifier + "))";
-			else if (game.global.universe == 2) fluffFormula += Fluffy.baseExp + " × (" + Fluffy.expGrowth + "^(Zone × 3))";
+			else if (game.global.universe == 2) fluffFormula += Fluffy.baseExp + " × (" + Fluffy.expGrowth + "^Zone)";
 			else fluffFormula += Fluffy.baseExp + " × (" + Fluffy.expGrowth + "^(Zone - " + startNumber + "))";
 			fluffFormula += "</span>";
 			if (getHighestLevelCleared() >= 29) fluffFormula += ' × <span class="fluffFormDaily" onmouseover="Fluffy.expBreakdown(\'daily\')" onmouseout="Fluffy.expBreakdown(\'clear\')">日常' + heliumOrRadon() + '倍率</span>';
@@ -18634,6 +18663,15 @@ var Fluffy = {
 		Scruffy28: {
 			description: "Scruffy's damage bonus is applied to health."
 		},
+		Scruffy29: {
+			description: "Glass's effect is always maxed (Z425)."
+		},
+		Scruffy30: {
+			description: "Tenacity's effect is always maxed."
+		},
+		Scruffy32: {
+			description: "Scruffy's Level 20 effect is applied to non-dailies."
+		},
 
 
 		FluffyE10: {
@@ -18669,6 +18707,12 @@ var Fluffy = {
 				else str="Increase your token trading ratio from 10:8 to 10:10.";
 				return str+" Automatically use 5% of your tokens to upgrade Nature Empowerments without actually spending tokens, Enlightened Ice apply to best Fluffy Exp. In Finale challenge, Enemies will shatter by Enlightened Ice if health is below 90%, regardless of Ice Empowerment.";
 			}
+		},
+		FluffyE19: {
+			description: "Triple Spirestone worth of core dropped in Spired challenge when your Zone number >= 300. Triple Spirestone worth again if the core dropped in Spired challenge comes from a real spire when your Zone number >= 300. In Finale challenge, Fluffy gain +1% attack per Spirestone!"
+		},
+		FluffyE20: {
+			description: "Remove the limit of Liquification in Obliterated, Eradicated and Finale challenges."
 		},
 
 

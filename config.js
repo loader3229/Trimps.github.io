@@ -22,7 +22,7 @@ function newGame () {
 var toReturn = {
 	global: {
 		//New and accurate version
-		stringVersion: '5.10.11',
+		stringVersion: '5.10.12',
 		//Leave 'version' at 4.914 forever, for compatability with old saves
 		version: 4.914,
 		isBeta: false,
@@ -309,7 +309,9 @@ var toReturn = {
 		infblock: false,
 		liquifiedChallDone: false,
 		houselessChallDone: false,
+		RandomizedChallDone: false,
 		finaleChallDone: 0,
+		druopitinityDefeated: 0,
 		
 		lastHeirlooms: {
 			u1: {
@@ -491,6 +493,9 @@ var toReturn = {
 			var attackBase = (game.global.universe == 2) ? 750 : 50;
 			amt += attackBase * Math.sqrt(world) * Math.pow(3.27, world / 2);
 			amt -= 10;
+			if(game.global.druopitinityDefeated){
+				amt /= Math.pow(1.19,14*game.global.druopitinityDefeated);
+			}
 			if (world == 1){
 				amt *= 0.35;
 				amt = (amt * 0.20) + ((amt * 0.75) * (level / 100));
@@ -513,15 +518,16 @@ var toReturn = {
 				var part1 = (world > 40) ? 40 : world;
 				var part2 = (world > 60) ? 20 : world - 40;
 				var part3 = (world - 60);
-				var part4 = (world - 425);
+				//var part4 = (world - 425);
 				if (part2 < 0) part2 = 0;
 				if (part3 < 0) part3 = 0;
-				if (part4 < 0) part4 = 0;
+				//if (part4 < 0) part4 = 0;
 				amt *= Math.pow(1.5, part1);
 				amt *= Math.pow(1.4, part2);
 				amt *= Math.pow(1.32, part3);
-				amt *= Math.pow(1.15, part4);
+				//amt *= Math.pow(1.15, part4);
 			}
+			if(amt<1)return amt;
 			return Math.floor(amt);
 		},
 		getEnemyHealth: function (level, name, ignoreImpStat) {
@@ -531,6 +537,9 @@ var toReturn = {
 			var healthBase = (game.global.universe == 2) ? 10e7 : 130;
 			amt += healthBase * Math.sqrt(world) * Math.pow(3.265, world / 2);
 			amt -= 110;
+			if(game.global.druopitinityDefeated){
+				amt /= Math.pow(1.19,13*game.global.druopitinityDefeated);
+			}
 			if (world == 1 || world == 2 && level < 10){
 				amt *= 0.6;
 			amt = (amt * 0.25) + ((amt * 0.72) * (level / 100));
@@ -548,13 +557,14 @@ var toReturn = {
 			if (game.global.universe == 2){
 				var part1 = (world > 60) ? 60 : world;
 				var part2 = (world - 60);
-				var part3 = (world - 350);
+				var part3 = (world > 425) ? 75 : (world - 350);
 				if (part2 < 0) part2 = 0;
 				if (part3 < 0) part3 = 0;
 				amt *= Math.pow(1.4, part1);
 				amt *= Math.pow(1.32, part2);
 				amt *= Math.pow(1.15, part3);
 			}
+			if(amt<1)return amt;
 			return Math.floor(amt);
 		}
 	},
@@ -2633,7 +2643,7 @@ var toReturn = {
 			name: "突变专精",
 			tier: 11,
 			purchased: false,
-			icon: "road",
+			icon: "*star",
 			requires: "tier11b"
 		},
 		tier11d: {
@@ -2645,7 +2655,7 @@ var toReturn = {
 			requires: "tier11c"
 		},
 		tier11e: {
-			get description(){ return "您可以降级尖塔突击物品和灵戒。每通过1级尖塔突击，黑暗精华、突变之种、魔尘和晶块获取增加0.5%。当前效果："+prettify(Math.pow(1.005,autoBattle.maxEnemyLevel-1))+"倍。"},
+			get description(){ return "您可以降级尖塔突击物品和灵戒。每通过1级尖塔突击，黑暗精华、突变之种、魔尘和晶块获取增加"+(game.talents.tier12e.purchased?1:0.5)+"%（相互叠乘）。当前效果："+prettify(Math.pow(game.talents.tier12e.purchased?1.01:1.005,autoBattle.maxEnemyLevel-1))+"倍。"},
 			name: "突击专精",
 			tier: 11,
 			purchased: false,
@@ -2695,19 +2705,27 @@ var toReturn = {
 			requires: "tier12c"
 		},
 		tier12e: {
-			description: "Tier 12 Mastery 5",
-			name: "Tier 12 Mastery 5",
+			description: "Increase Assault Mastery's percentage to 1%. Greatly reduce kills required to clear a Spire Assault level. Unlock the third customizable slot of the Ring.",
+			name: "Assault Mastery II",
 			tier: 12,
 			purchased: false,
-			icon: "road",
+			onPurchase(){
+				var slots = autoBattle.getRingSlots();
+				while (autoBattle.rings.mods.length < slots){  // Adding random mods until all the slots are filled, this is based on the lvl 15 update code. Thanks Hatterson for the fix
+					var availableMods = autoBattle.getAvailableRingMods();
+					var randomMod = availableMods[Math.floor(Math.random() * availableMods.length)];
+					autoBattle.rings.mods.push(randomMod);
+				}
+			},
+			icon: "*arrow-bold-down",
 			requires: "tier12d"
 		},
 		tier12f: {
-			description: "Tier 12 Mastery 6",
-			name: "Tier 12 Mastery 6",
+			description: "5x Nullifium gain.",
+			name: "NullifiuMastery",
 			tier: 12,
 			purchased: false,
-			icon: "road",
+			icon: "grain",
 			requires: "tier12e"
 		},
 		//don't forget to add new talent tier to getHighestTalentTier()
@@ -2918,7 +2936,7 @@ var toReturn = {
 			radLocked: true,
 			priceBase: 100e21,//sx
 			radLevel: 0,
-			max: 15,
+			max: 20,
 			radSpent: 0,
 			specialGrowth: 50,
 			tooltip: "Each level of Masterfulness grants +1 to levels of both Greed and Tenacity beyond their caps. Maximum of 15 levels."
@@ -2959,6 +2977,7 @@ var toReturn = {
 				return mult;
 			},
 			getTime: function(){
+				if(Fluffy.isRewardActive('Scruffy30'))return 120;
 				var minutes = (getZoneMinutes() + Fluffy.isRewardActive('Scruffy26') * 20);
 				var lastZone = this.timeLastZone;
 				if (lastZone == -1) lastZone = 0;
@@ -3350,7 +3369,8 @@ var toReturn = {
 			},
 			getTrinketCap: function(){
 				var cap = (this.trinketsPerLevel * (this.radLevel + 1));
-				if (u2Mutations.tree.Runed.purchased) cap *= 1.5;
+				if (u2Mutations.tree.Runed2.purchased) cap *= 2;
+				else if (u2Mutations.tree.Runed.purchased) cap *= 1.5;
 				return cap;
 			},
 			giveTrinket: function(amt){
@@ -3431,6 +3451,7 @@ var toReturn = {
 		Glass: 0,
 		Smithless: 0,
 		Houseless: 0,
+		Randomized: 0,
 	},
 	challenges: {
 		Daily: {
@@ -4152,7 +4173,14 @@ var toReturn = {
 			},
 			shattered: 0,
 			warmth: 0,
-			maxRuns: 15,
+			get maxRuns(){
+				let a=15;
+				if(game.global.RandomizedChallDone)a+=5;
+				return a;
+			},
+			set maxRuns(a){
+				
+			},
 			completeAfterZone: 460,
 			getShatteredMult: function(){
 				return Math.pow(0.99, this.shattered);
@@ -5414,7 +5442,14 @@ var toReturn = {
 				game.challenges.Mayhem.abandon();
 			},
 			completed: false,
-			maxRuns: 25,
+			get maxRuns(){
+				let a=25;
+				if(game.global.RandomizedChallDone)a+=5;
+				return a;
+			},
+			set maxRuns(a){
+				
+			},
 			blockU1: true,
 			allowU2: true,
 			allowSquared: false,
@@ -5922,7 +5957,8 @@ var toReturn = {
 				var scaleMult = this.getEnemyMult();
 				text += " <b>You have completed Pandemonium " + game.global.pandCompletions + " / " + this.maxRuns + " maximum times. Your Trimps have +" + prettify((this.getTrimpMult() - 1) * 100) + "% Attack, Health, Radon or Helium, and gathered resources in U1 and U2, and your next run of Pandemonium will spawn Bad Guys with " + prettify(scaleMult) + "x Attack and Health";
 				var disabledCount = this.disabledEquipCount();
-				if (disabledCount == 0) text += " and all Equipment will be " + prettify(scaleMult) + "x more expensive.</b>";
+				if (disabledCount == 13) text += " and all Equipments will be disabled.</b>";
+				else if (disabledCount == 0) text += " and all Equipment will be " + prettify(scaleMult) + "x more expensive.</b>";
 				else text += ", all Equipment will be " + prettify(scaleMult) + "x more expensive, and the first " + disabledCount + " Equipment" + needAnS(disabledCount) + " will be disabled.</b>";
 				return text;
 			},
@@ -5931,7 +5967,7 @@ var toReturn = {
 			blockedEquips: [],
 			fireAbandon: true,
 			isEquipBlocked: function(which){
-				var equips = ["Shield", "Dagger", "Boots", "Mace", "Helmet", "Polearm", "Pants", "Battleaxe", "Shoulderguards", "Greatsword", "Breastplate"];
+				var equips = ["Shield", "Dagger", "Boots", "Mace", "Helmet", "Polearm", "Pants", "Battleaxe", "Shoulderguards", "Greatsword", "Breastplate", "Arbalest", "Gambeson"];
 				var index = equips.indexOf(which);
 				if (index == -1) return false;
 				var blocked = this.disabledEquipCount();
@@ -5939,10 +5975,13 @@ var toReturn = {
 				return true;
 			},
 			unlockEquips: function(){
-				var equips = ["Shield", "Dagger", "Boots", "Mace", "Helmet", "Polearm", "Pants", "Battleaxe", "Shoulderguards", "Greatsword", "Breastplate"];
+				var equips = ["Shield", "Dagger", "Boots", "Mace", "Helmet", "Polearm", "Pants", "Battleaxe", "Shoulderguards", "Greatsword", "Breastplate", "Arbalest", "Gambeson"];
 				var blocked = this.disabledEquipCount();
 				for (var x = 0; x < blocked; x++){
 					var equipName = equips[x];
+					if(x >= 11){
+						unlockEquipment(equipName);continue;
+					}
 					var worldUnlock = game.worldUnlocks[equipName];
 					if (worldUnlock.world > game.global.world) continue;
 					unlockEquipment(equipName);
@@ -6045,7 +6084,7 @@ var toReturn = {
 			disabledEquipCount: function(){
 				var count = game.global.pandCompletions - 2;
 				if (count <= 0) return 0;
-				return Math.min(11, Math.ceil(count / 2));
+				return Math.min(13, Math.ceil(count / 2));
 			},
 			start: function(){
 				this.drawStacks();
@@ -6071,7 +6110,14 @@ var toReturn = {
 				
 			},
 			completed: false,
-			maxRuns: 25,
+			get maxRuns(){
+				let a=25;
+				if(game.global.RandomizedChallDone)a+=5;
+				return a;
+			},
+			set maxRuns(a){
+				
+			},
 			blockU1: true,
 			allowU2: true,
 			allowSquared: false,
@@ -6528,7 +6574,14 @@ var toReturn = {
 				
 			},
 			completed: false,
-			maxRuns: 25,
+			get maxRuns(){
+				let a=25;
+				if(game.global.RandomizedChallDone)a+=5;
+				return a;
+			},
+			set maxRuns(a){
+				
+			},
 			blockU1: true,
 			allowU2: true,
 			allowSquared: false,
@@ -6578,6 +6631,24 @@ var toReturn = {
 			completeAfterZone: 310,
 			unlockString: "reach Zone 375",
 			unlocks: "Resourceful"
+		},
+		Randomized: {
+			description: "In this challenge, world enemies always have Randomized mutation, and Randomized enemies are stronger. Completing <b>Zone 440</b> will return the world to normal, gain 10x more Mutated Seeds, increase Frigid/Mayhem/Pandemonium/Desolation max completions by 5, and unlock new blue mutators.",
+			squaredDescription: "In this challenge, world enemies always have Randomized mutation, and Randomized enemies are stronger.",
+			completed: false,
+			filter: function () {
+				return (getHighestLevelCleared(true) >= 450);
+			},
+			onComplete: function (){
+				game.global.challengeActive = "";
+				game.global.RandomizedChallDone = true;
+				message("You have completed the <b>Randomized Challenge!</b> You unlocked more mutators!", "Notices");
+			},
+			allowU2: true,
+			blockU1: true,
+			allowSquared: true,
+			completeAfterZone: 440,
+			unlockString: "reach Zone 450"
 		},
 	},
 	stats:{
@@ -7288,9 +7359,9 @@ var toReturn = {
 				return "最高为" + game.global.highestRadonLevelCleared;
 			},
 			evaluate: function() {return game.global.highestRadonLevelCleared;},
-			breakpoints: [2, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 225, 250, 275, 300, 325, 350, 375, 400],
-			tiers: [9, 9, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 13, 13, 13, 13, 13, 14, 14, 14, 14, 14, 14, 14, 14],
-			names: ["This is Harder", "Second Coming", "Blimp Destroyer", "Improbable Again", "Unstoppable", "Progresser", "Fifty Fifty", "Actually Unbroken", "幸运数字", "Apt", "The Unshocked", "Universalist", "Through the Unknown", "Swarming", "Steamroller", "Universal Destroyer", "Eater of Zones", "Bringer of Progress", "Major Zonage", "Master of Alchemy", "Ballistic", "Neverending Journey", "Zone Eater", "Zone Feaster", "Mutated Master", "Progression Professional", "Zonepocalypse", "Universal Specialist", "Zoning Committee", "Quadcentennial"],
+			breakpoints: [2, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500],
+			tiers: [9, 9, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 13, 13, 13, 13, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14],
+			names: ["This is Harder", "Second Coming", "Blimp Destroyer", "Improbable Again", "Unstoppable", "Progresser", "Fifty Fifty", "Actually Unbroken", "幸运数字", "Apt", "The Unshocked", "Universalist", "Through the Unknown", "Swarming", "Steamroller", "Universal Destroyer", "Eater of Zones", "Bringer of Progress", "Major Zonage", "Master of Alchemy", "Ballistic", "Neverending Journey", "Zone Eater", "Zone Feaster", "Mutated Master", "Progression Professional", "Zonepocalypse", "Universal Specialist", "Zoning Committee", "Quadcentennial", "Z425 Completed", "Z450 Completed", "Z475 Completed", "Z500 Completed"],
 			icon: "icomoon icon-navigation",
 			newStuff: [],
 			size: 1.4
@@ -8249,17 +8320,17 @@ var toReturn = {
 			strengthBonus: {
 				name: "力量塔世界加成",
 				currentBonus: 0,
-				steps: [-1,-1,-1,-1,-1,-1,[2,2,2],[5,5,5],[6,6,6]]
+				steps: [-1,-1,-1,-1,-1,-1,[2,2,2],[5,5,5],[8,8,8]]
 			},
 			condenserBonus: {
 				name: "冷凝塔世界加成",
 				currentBonus: 0,
-				steps: [-1,-1,-1,-1,-1,-1,[2,2,2],[5,5,5],[6,6,6]]
+				steps: [-1,-1,-1,-1,-1,-1,[2,2,2],[5,5,5],[8,8,8]]
 			},
 			knowledgeBonus: {
 				name: "知识塔世界加成",
 				currentBonus: 0,
-				steps: [-1,-1,-1,-1,-1,-1,[2,2,2],[5,5,5],[6,6,6]]
+				steps: [-1,-1,-1,-1,-1,-1,[2,2,2],[5,5,5],[8,8,8]]
 			},
 			worldBonus: {
 				name: "所有的尖塔世界加成",
@@ -8827,11 +8898,17 @@ var toReturn = {
 				if(!game.talents.tier11d.purchased){
 					var selected = imports[getRandomIntSeeded(enemySeed, 0, imports.length)];
 					game.badGuys[selected].loot(level, true);
-				}else{
+				}else if(!game.talents.tier12d.purchased){
 					var a = getAmountInRange(imports.length, 3, 2);
 					game.badGuys[imports[a[0]]].loot(level, true);
 					game.badGuys[imports[a[1]]].loot(level, true);
 					game.badGuys[imports[a[2]]].loot(level, true);
+				}else{
+					game.badGuys[imports[0]].loot(level, true);
+					game.badGuys[imports[1]].loot(level, true);
+					game.badGuys[imports[2]].loot(level, true);
+					game.badGuys[imports[3]].loot(level, true);
+					game.badGuys[imports[4]].loot(level, true);
 				}
 			}
 		},
@@ -12664,8 +12741,10 @@ var toReturn = {
 				game.global.BattleClock = -1;
 				fadeIn("metal", 10);
 				if (game.global.slowDone && game.global.challengeActive != "Finale") {
-					unlockEquipment("Gambeson");
-					unlockEquipment("Arbalest");
+					if (!(game.global.challengeActive == "Pandemonium")) unlockEquipment("Gambeson");
+					if (!(game.global.challengeActive == "Pandemonium")) unlockEquipment("Arbalest");
+					if (game.global.challengeActive == "Pandemonium" && !game.challenges.Pandemonium.isEquipBlocked("Gambeson")) unlockEquipment("Gambeson");
+					if (game.global.challengeActive == "Pandemonium" && !game.challenges.Pandemonium.isEquipBlocked("Arbalest")) unlockEquipment("Arbalest");
 				}
 				if (bwRewardUnlocked("AutoJobs")){
 					unlockJob("Lumberjack");
@@ -12769,7 +12848,7 @@ var toReturn = {
 				prestigeEquipment("Shield", false, true);
 				equipment.blockNow = true;
 				equipment.tooltip = game.equipment.Shield.blocktip;
-				equipment.blockCalculated = Math.round(equipment.block * Math.pow(1.19, ((equipment.prestige - 1) * game.global.prestige.block) + 1));
+				equipment.blockCalculated = Math.round(equipment.block * Math.pow(1.19, (Math.max(0,equipment.prestige - 1 - game.global.druopitinityDefeated) * game.global.prestige.block) + 1));
 				levelEquipment("Shield", 1);
 			}
 		},

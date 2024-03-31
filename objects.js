@@ -3107,6 +3107,7 @@ var autoBattle = {
         
         seed += (100 * this.enemyLevel);
         if (this.enemyLevel >= 51) seed += 3125; //Generated with Shold brain RNG
+        if (this.enemyLevel >= 144) seed += 11; //new upd
         var doubleResist = true;
         if (this.enemyLevel > 50){
             doubleResist = getRandomIntSeeded(seed++, 0, 100);
@@ -3138,7 +3139,7 @@ var autoBattle = {
         for (var x = 0; x < effectsCount; x++){
             var roll = getRandomIntSeeded(seed++, 0, effects.length);
             var effect = effects[roll];
-            if (!doubleResist && effect.search("Resistant") != -1){
+            if (!doubleResist && effect.search("Resistant") != -1 && this.enemyLevel < 144){
                 var offset = this.enemyLevel % 3;
                 roll = getRandomIntSeeded(seed++, 0, 100);
                 if (roll >= 40){
@@ -3201,18 +3202,21 @@ var autoBattle = {
                 case "Poison Resistant":
                     this.enemy.poisonResist += (10 * this.enemyLevel);
                     effects.splice(effects.indexOf(effect), 1);
+					if(this.enemyLevel >= 144)break;
                     if (!doubleResist || selectedEffects.indexOf('Bleed Resistant') != -1) effects.splice(effects.indexOf('Shock Resistant'), 1);
                     if (!doubleResist || selectedEffects.indexOf('Shock Resistant') != -1) effects.splice(effects.indexOf('Bleed Resistant'), 1);
                     break;
                 case "Bleed Resistant":
                     this.enemy.bleedResist += (10 * this.enemyLevel);
                     effects.splice(effects.indexOf(effect), 1);
+					if(this.enemyLevel >= 144)break;
                     if (!doubleResist || selectedEffects.indexOf('Poison Resistant') != -1) effects.splice(effects.indexOf('Shock Resistant'), 1);
                     if (!doubleResist || selectedEffects.indexOf('Shock Resistant') != -1) effects.splice(effects.indexOf('Poison Resistant'), 1);
                     break;
                 case "Shock Resistant":
                     this.enemy.shockResist += (10 * this.enemyLevel);
                     effects.splice(effects.indexOf(effect), 1);
+					if(this.enemyLevel >= 144)break;
                     if (!doubleResist || selectedEffects.indexOf('Bleed Resistant') != -1) effects.splice(effects.indexOf('Poison Resistant'), 1);
                     if (!doubleResist || selectedEffects.indexOf('Poison Resistant') != -1) effects.splice(effects.indexOf('Bleed Resistant'), 1);
                     break;
@@ -3304,6 +3308,12 @@ var autoBattle = {
             if (u2Mutations.tree.Dust2.purchased){
                 mutMult += 0.25;
             }
+            if (u2Mutations.tree.Dust3.purchased){
+                mutMult += 3.5;
+            }
+            if (u2Mutations.tree.Dust4.purchased){
+                mutMult += 5;
+            }
             amt *= mutMult;
         }
         if (this.items.Box_of_Spores.equipped && !this.enemy.hadBleed && this.enemy.poison.time > 0){
@@ -3311,7 +3321,7 @@ var autoBattle = {
             amt *= this.items.Box_of_Spores.dustMult();
         }
         if (game.global.fluffyExp2 >= 1466015503701000) amt *= 5; //don't even look at this line, just move on
-		if (game.talents.tier11e.purchased) amt *= Math.pow(1.005,autoBattle.maxEnemyLevel-1);
+		if (game.talents.tier11e.purchased) amt *= Math.pow(game.talents.tier12e.purchased?1.01:1.005,autoBattle.maxEnemyLevel-1);
         return amt;
     },
     getEnrageMult: function(){
@@ -3322,6 +3332,7 @@ var autoBattle = {
     getDustReward: function(){
         var amt = (1 + ((this.enemy.level - 1) * 5)) * Math.pow(1.19, (this.enemy.level - 1));
         if (this.enemy.level >= 50) amt *= Math.pow(1.1, (this.enemy.level - 49));
+        if (this.enemy.level >= 144) amt *= 3;
         amt *= this.getDustMult();
         return amt;
     },
@@ -3349,7 +3360,7 @@ var autoBattle = {
         }
         this.lootAvg.accumulator += amt;
         this.lootAvg.counter += this.battleTime;
-        if (this.enemy.level == this.maxEnemyLevel && this.speed == 1 && this.maxEnemyLevel < 150){
+        if (this.enemy.level == this.maxEnemyLevel && this.speed == 1 && this.maxEnemyLevel < 160){
             this.enemiesKilled++;
             if (this.enemiesKilled >= this.nextLevelCount()) {
                 this.maxEnemyLevel++;
@@ -3365,6 +3376,7 @@ var autoBattle = {
         this.popup(true, false, false, false, true);
     },
     nextLevelCount: function(){
+		if (game.talents.tier12e.purchased)return this.enemyLevel + 1;
         if (this.enemyLevel < 20) return 10 * this.enemyLevel;
         return (190 + (15 * (this.enemyLevel - 19)))
     },
@@ -3757,6 +3769,7 @@ var autoBattle = {
     getRingSlots: function(){
         var amt = Math.floor((this.rings.level - 5) / 10) + 1;
         if (amt > 2) amt = 2;
+		if (game.talents.tier12e.purchased)amt++;
         return amt;
     },
     levelRing: function(){
@@ -3815,7 +3828,7 @@ var autoBattle = {
             text += mod.formatEffect(amt) + "<br/>";
         }
         text += "</div><div class='ringContainer'>";
-        if (this.rings.level < 5) text += "Level The Ring to 5 to earn your first customizable slot!";
+        if (this.rings.level < 5 && !game.talents.tier12e.purchased) text += "Level The Ring to 5 to earn your first customizable slot!";
         else{
             text += "<span style='font-size: 1.2em'>Customizable Slots:</span>"
             var slots = this.getRingSlots();
@@ -3830,6 +3843,7 @@ var autoBattle = {
                 text += options;
                 text += "</select>";
             }
+            if (this.rings.level < 5) text += "Unlock another slot at Level 5!<br/>"
             if (this.rings.level < 15) text += "Unlock another slot at Level 15!"
             
         }
@@ -3970,7 +3984,7 @@ var autoBattle = {
                 }
             }
         }
-        var topText = prettify(this.dust) + "魔尘(每秒" + prettify(dustPs) + ")" + shardText + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + ((this.settings.practice.enabled == 1) ? "<b style='color: #921707'>Practicing</b>" : ((this.enemyLevel == this.maxEnemyLevel) ? ((this.maxEnemyLevel == 150) ? "刷怪中(等级已达上限)" : "需击杀" + (this.nextLevelCount() - this.enemiesKilled)) : "刷怪中")) + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;敌人击杀数：" + this.sessionEnemiesKilled + "&nbsp;" + pctWon + "&nbsp;&nbsp;&nbsp;战斗失利数：" + this.sessionTrimpsKilled + "<br/>敌人等级" + this.enemy.level + ((this.profile) ? "(" + this.profile + ")" : "") + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+        var topText = prettify(this.dust) + "魔尘(每秒" + prettify(dustPs) + ")" + shardText + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + ((this.settings.practice.enabled == 1) ? "<b style='color: #921707'>Practicing</b>" : ((this.enemyLevel == this.maxEnemyLevel) ? ((this.maxEnemyLevel == 160) ? "刷怪中(等级已达上限)" : "需击杀" + (this.nextLevelCount() - this.enemiesKilled)) : "刷怪中")) + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;敌人击杀数：" + this.sessionEnemiesKilled + "&nbsp;" + pctWon + "&nbsp;&nbsp;&nbsp;战斗失利数：" + this.sessionTrimpsKilled + "<br/>敌人等级" + this.enemy.level + ((this.profile) ? "(" + this.profile + ")" : "") + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
         var buttons = "";
 
         if (!(updateOnly && statsOnly)) buttons = "<div id='abLevelButtons'><span id='abDecreaseLevel' onclick='autoBattle.levelDown()' class='btn-md btn auto'>-降低敌人等级-</span><span onclick='autoBattle.toggleAutoLevel()' id='abAutoLevel' class='btn btn-md auto'>Set AutoLevel On</span><span onclick='autoBattle.levelUp()' id='abIncreaseLevel' class='btn btn-md auto'>+提高敌人等级+</span><span id='abHelpBtn' onclick='autoBattle.help()' class='icomoon icon-question-circle'></span><span id='abCloseBtn' onclick='cancelTooltip()' class='icomoon icon-close'></span></div>";
@@ -4437,7 +4451,7 @@ var u2Mutations = {
             pos: [-13, 16],
             color: 'orange',
             require: ['Heirlots'],
-            description: "You find all Heirlooms at 1 reward tier higher than normal.",
+            description: "You find all non-Core Heirlooms at 1 reward tier higher than normal.",
             ring: 1,
             purchased: false
         },
@@ -4654,7 +4668,7 @@ var u2Mutations = {
             purchased: false
         },
         Dust: {
-            pos: [10, -2],
+            pos: [7, -4],
             dn: 'Dusty',
             color: '#377cff',
             require: ['MaZ'],
@@ -4670,12 +4684,32 @@ var u2Mutations = {
             purchased: false
         },
         Dust2: {
-            pos: [12.65, -5.65],
+            pos: [13, -6],
             dn: 'Dustier',
             color: '#377cff',
             require: ['Dust'],
             description: "Huffy earns an additional 25% Dust from all sources.",
             purchased: false
+        },
+        Dust3: {
+            pos: [19, -8],
+            dn: 'Dusty II',
+            color: '#377cff',
+            require: ['Dust2'],
+            description: "Huffy earns an additional 350% Dust from all sources.",
+            purchased: false,
+			chall: 'Randomized',
+            ring: 1
+        },
+        Dust4: {
+            pos: [25, -10],
+            dn: 'Dustier II',
+            color: '#377cff',
+            require: ['Dust3'],
+            description: "Huffy earns an additional 500% Dust from all sources.",
+            purchased: false,
+			chall: 'Randomized',
+            ring: 1
         },
         Runed: {
             pos: [18, -12],
@@ -4684,6 +4718,16 @@ var u2Mutations = {
             require: ['RandLoot2'],
             description: "Increases your Runetrinket cap by 50%. Speccing out of this Mutator stops any bonus earned from Runetrinkets above your cap, but does not remove them.",
             purchased: false,
+            ring: 1
+        },
+        Runed2: {
+            pos: [23, -17],
+            dn: 'Runed II',
+            color: '#377cff',
+            require: ['Runed'],
+            description: "Increases your Runetrinket cap by an additional 50%. Speccing out of this Mutator stops any bonus earned from Runetrinkets above your cap, but does not remove them.",
+            purchased: false,
+			chall: 'Randomized',
             ring: 1
         },
         Brains: {
@@ -4709,7 +4753,27 @@ var u2Mutations = {
             description: "100% of your damage can Overkill in maps at any level. Limited to 1 cell of Overkill if above World Overkill Zone. Only applies to U2.",
             purchased: false,
             ring: 1
-        }
+        },
+        MadMap2: {
+            pos: [20, -20],
+            dn: 'Mad Mapper II',
+            color: '#377cff',
+            require: ['MadMap'],
+            description: "Remove 1 cell limit if above World Overkill Zone in Mad Mapper.",
+            purchased: false,
+			chall: 'Randomized',
+            ring: 1
+        },
+        Loot2: {
+            pos: [17, -23],
+            dn: 'Loot II',
+            color: '#377cff',
+            require: ['Brains'],
+            description: "All non-Helium & non-Radon loot gained is increased by 50%.",
+            purchased: false,
+			chall: 'Randomized',
+            ring: 1
+        },
 
     },
     purchase: function(what){
@@ -4775,6 +4839,7 @@ var u2Mutations = {
     checkRequirements: function(what, ignoreRings){
         var itemObj = this.tree[what];
         if (!ignoreRings && itemObj.ring && itemObj.ring > 0 && this.purchaseCount < this.rings[itemObj.ring]) return false;
+        if (itemObj.chall && !game.global[itemObj.chall+"ChallDone"]) return false;
         if (!itemObj.require) return true;
         for (var y = 0; y < itemObj.require.length; y++){
             if (!this.tree[itemObj.require[y]].purchased){
@@ -4900,7 +4965,7 @@ var u2Mutations = {
     },
     rewardMutation: function(cell){
         if (!cell.u2Mutation || !cell.u2Mutation.length) return 0;
-        var reward = game.global.world - 199;
+        var reward = Math.max(game.global.world - 199, 1);
         var rewardMult = 0;
         if (cell.u2Mutation.length >= 2) giveSingleAchieve("Double Trouble");
         var nullText = "";
@@ -4958,8 +5023,9 @@ var u2Mutations = {
             reward *= (1 + (getDailyHeliumValue(countDailyWeight()) / 100));
         }
         if (Fluffy.isRewardActive("Scruffy22")) reward *= 10;
+        if (game.global.RandomizedChallDone) reward *= 10;
 		if (game.talents.tier11c.purchased) reward *= (Math.log10(game.global.essence+1e60)/10-4);
-		if(game.talents.tier11e.purchased)reward *=  Math.pow(1.005,autoBattle.maxEnemyLevel-1);
+		if(game.talents.tier11e.purchased)reward *=  Math.pow(game.talents.tier12e.purchased?1.01:1.005,autoBattle.maxEnemyLevel-1);
         game.global.mutatedSeeds += reward;
         if (typeof game.global.messages.Loot.seeds === 'undefined') game.global.messages.Loot.seeds = true;
         message("您击杀了那个<i></i>" + this.getName(cell.u2Mutation) + "<i></i>敌人，获得了" + nullText + "" + prettify(reward) + "突变之种！", 'Loot', null, 'seedMessage', 'seeds', null, 'background-color: ' + this.getColor(cell.u2Mutation));
@@ -4975,7 +5041,7 @@ var u2Mutations = {
         this.setAlert();
     },
     addMutations: function(array){
-        if (game.global.world < 201) return array;
+        if (game.global.world < 201 && game.global.challengeActive != "Randomized") return array;
         var thisTypes = this.getTypes();
         if (thisTypes.length == 0) return array;
         for (var item in this.types){
@@ -4995,6 +5061,7 @@ var u2Mutations = {
         else if (cell.u2Mutation.indexOf('NVX') != -1) baseAttack *= 10;
         baseAttack += addAttack;
         baseAttack *= Math.pow(1.01, (game.global.world - 201));
+		if (game.global.challengeActive == "Randomized") baseAttack *= Math.pow(1.01, 200)*400;
         return baseAttack;
     },
     getHealth: function(cell){
@@ -5010,10 +5077,29 @@ var u2Mutations = {
         baseHealth += addHealth;
         baseHealth *= 2;
         baseHealth *= Math.pow(1.02, (game.global.world - 201));
+		if (game.global.challengeActive == "Randomized") baseHealth *= Math.pow(1.02, 200)*400;
         return baseHealth;
     },
     getTypes: function(){
         if (game.global.universe != 2) return [];
+		
+		if (game.global.challengeActive == "Randomized"){
+			if (game.global.world == 204 || game.global.world <= 200) return ["Swapper"];
+			if (game.global.world == 201) return ["Swapper","Rage"];
+			else if (game.global.world == 202) return ["Swapper","Compression"];
+			else if (game.global.world == 203) return ["Swapper","Nova"];
+			var thisMutations = ["Swapper"];
+			var options = ["Rage", "Compression", "Nova"];
+			var runTimes = Math.floor((game.global.world - 201) / 50) + 1;
+			if (runTimes > 3) runTimes = 3;
+			for (var x = 0; x < runTimes; x++){
+				var roll = getRandomIntSeeded(game.global.u2MutationSeed++, 0, options.length);
+				var result = options.splice(roll, 1);
+				thisMutations.push(result[0]);
+			}
+			return thisMutations;
+		}
+		
         if (game.global.world == 201) return ["Rage"];
         else if (game.global.world == 202) return ["Compression"];
         else if (game.global.world == 203) return ["Nova"];
@@ -5270,6 +5356,8 @@ var u2Mutations = {
                     var swapTo = getRandomIntSeeded(game.global.u2MutationSeed++, 0, tos.length);
                     swapFrom = froms.splice(swapFrom, 1)[0];
                     swapTo = tos.splice(swapTo, 1)[0];
+					if(game.global.challengeActive == this.name)swapFrom = y;
+					if(game.global.challengeActive == this.name)swapTo = y+5;
 					if(game.global.world == 400)swapFrom = y*2;
 					if(game.global.world == 400)swapTo = y*2+1;
                     for (var x = 0; x < 10; x++){
@@ -5284,9 +5372,11 @@ var u2Mutations = {
                 return currentArray;
             },
             rewardMult: function(){
+				if(game.global.challengeActive == this.name)return 1;
                 return (u2Mutations.types.Rage.cellCount() / (this.repeats() * 20));
             },
             repeats: function(){
+				if(game.global.challengeActive == this.name)return 5;
 				if(game.global.world == 400)return 3;
                 var max = 4;
                 var stacks = 1 + Math.floor((game.global.world - 201) / 50);

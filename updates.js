@@ -152,29 +152,16 @@ function tooltip(what, isItIn, event, textString, attachFunction, numCheck, rena
 		elem.style.left = "33.75%";
 		elem.style.top = "25%";
 	}
-	if (what == "Trimps Info"){
-		var kongMode = (document.getElementById('boneBtn') !== null);
-		var text = '<div class="trimpsInfoPopup">Need help, found a bug or just want to talk about Trimps? Check out the <a href="https://www.reddit.com/r/trimps" target="_blank">/r/Trimps SubReddit</a>';
-		if (kongMode) text += ' or the <a href="https://www.kongregate.com/forums/11405-trimps" target="_blank">Kongregate Forums</a>.<br/><br/>';
-		else text +=' or come hang out in the new <a href="https://discord.gg/kSpNHte" target="_blank">Trimps Official Discord</a>！<br/><br/>';
-		text += ' If you want to read about or discuss the finer details of Trimps mechanics, check out the <a href="https://trimps.wikia.com/wiki/Trimps_Wiki" target="_blank">community-created Trimps Wiki!</a><br/><br/>';
-		if (kongMode) text += ' If you need to contact the developer for any reason, <a target="_blank" href="https://www.kongregate.com/accounts/Greensatellite/private_messages?focus=true">send a private message to GreenSatellite</a> on Kongregate.';
-		else text += ' If you need to contact the developer for any reason, <a href="https://www.reddit.com/message/compose/?to=Greensatellite" target="_blank">click here to send a message on Reddit</a> or find Greensatellite in the Trimps Discord.<hr/><br/>';
-		if (!kongMode) text += "If you would like to make a donation to help support the development of Trimps, you can now do so with PayPal! If you want to contribute but can't afford a donation, you can still give back by joining the community and sharing your feedback or helping others. Thank you either way, you're awesome! <form id='donateForm' style='text-align: center' action='https://www.paypal.com/cgi-bin/webscr' method='post' target='_blank'><input type='hidden' name='cmd' value='_s-xclick'><input type='hidden' name='hosted_button_id' value='MGFEJS3VVJG6U'><input type='image' src='https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif' border='0' name='submit' alt='PayPal - The safer, easier way to pay online!'><img alt='' border='0' src='https://www.paypalobjects.com/en_US/i/scr/pixel.gif' width='1' height='1'></form>";
-		text += '</div>';
-		tooltipText = text;
-		costText = '<div class="btn btn-info" onclick="cancelTooltip()">Close</div>';
-		game.global.lockTooltip = true;
-		elem.style.left = "33.75%";
-		elem.style.top = "25%";
-		noExtraCheck = true;
-	}
 	if (what == "NW Trimps Info"){
 		what = "Trimps Info";
-		var text = '<div class="trimpsInfoPopup">Need help, found a bug or just want to talk about Trimps? Check out the <a class="nwWebLink" onclick="nwWebLink(\'https://www.reddit.com/r/trimps\')">/r/Trimps SubReddit</a>';
-		text +=' or come hang out in the <a class="nwWebLink" onclick="nwWebLink(\'https://discord.gg/Trimps\')">Trimps Official Discord</a>!<br/><br/>';
-		text += ' If you want to read about or discuss the finer details of Trimps mechanics, check out the <a class="nwWebLink" onclick="nwWebLink(\'https://trimps.wikia.com/wiki/Trimps_Wiki\')">community-created Trimps Wiki!</a><br/><br/>';
-		text += ' If you need to contact the developer for any reason, <a class="nwWebLink" onclick="nwWebLink(\'https://www.reddit.com/message/compose/?to=Greensatellite\')">click here to send a message on Reddit</a> or find Greensatellite#7771 in the Trimps Discord.';
+	}
+	if (what == "Trimps Info"){
+		var text = '<div class="trimpsInfoPopup">Need help, found a bug or just want to talk about Trimps? Check out the <a href="https://www.reddit.com/r/trimps" target="_blank">/r/Trimps SubReddit</a>';
+		text +=' or come hang out in the new <a href="https://discord.gg/kSpNHte" target="_blank">Trimps Official Discord</a>!<br/>';
+		text +=' If you want to discuss new contents in the loader3229\'s Extension of Trimps, you can go to <a href="https://discord.gg/jztUReQ2vT" target="_blank">loader3229\'s Discord Server</a>!<br/>';
+		text += ' If you want to read about or discuss the finer details of Trimps mechanics, check out the <a href="https://trimps.wikia.com/wiki/Trimps_Wiki" target="_blank">community-created Trimps Wiki!</a><br/><br/>';
+		text += ' If you need to contact the developer for any reason, <a href="https://www.reddit.com/message/compose/?to=Greensatellite" target="_blank">click here to send a message on Reddit</a> or find Greensatellite in the Trimps Discord.<br/>';
+		text += ' If you need to contact the modder for any reason, find loader3229 in the Trimps Discord or loader3229\'s Discord Server.<br/>';
 		text += '</div>';
 		tooltipText = text;
 		costText = '<div class="btn btn-info" onclick="cancelTooltip()">Close</div>';
@@ -698,8 +685,8 @@ function tooltip(what, isItIn, event, textString, attachFunction, numCheck, rena
 		if (game.talents.headstart.purchased) tooltipText += "<p><b>Note that your Headstart mastery will be disabled during Challenge<sup>" + sup + "</sup> runs.</b></p>";
 		if (portalUniverse == 1 && uniArray[0] >= 35000){
 			var color = (uniArray[0] >= 50000) ? " style='color: red;'" : "";
-			var extra = (uniArray[0] >= 170000) ? " You've reached this bonus and are officially done with Challenge<sup>2</sup>! Congratulations!" : "";
-			tooltipText += "<p><b" + color + ">Note that Challenge<sup>2</sup> Bonus is capped at " + prettify(170000) + "%." + extra + "</b></p>"
+			var extra = (uniArray[0] >= 190000) ? " You've reached this bonus and are officially done with Challenge<sup>2</sup>! Congratulations!" : "";
+			tooltipText += "<p><b" + color + ">Note that Challenge<sup>2</sup> Bonus is capped at " + prettify(190000) + "%." + extra + "</b></p>"
 		}
 		costText = "";
 	}
@@ -1021,6 +1008,13 @@ function tooltip(what, isItIn, event, textString, attachFunction, numCheck, rena
 				if (problem) costText += "<br/>";
 				var listText = (mutator.singleRequire) ? listWithAnd(missingRequire, '-or-') : listWithAnd(missingRequire);
 				costText += "您必须先购买<i></i>" + listText + "<i></i>！";
+				problem = true;
+			}
+		}
+		if (mutator.chall){
+			if (!game.global[mutator.chall+"ChallDone"]){
+				if (problem) costText += "<br/>";
+				costText += "You must first complete " + mutator.chall + " Challenge!";
 				problem = true;
 			}
 		}
@@ -2647,8 +2641,8 @@ function getBattleStatBd(what) {
 	}
 	//Add Finale
 	if (game.global.challengeActive == "Finale"){
-		currentCalc *= (what == "attack" ? (Fluffy.isRewardActive("FluffyE10")?((Fluffy.isRewardActive("FluffyE17")?1+game.global.magmite:1)*(Fluffy.isRewardActive("FluffyE13")?11:1)*Math.pow((Fluffy.isRewardActive("FluffyE16")?5:3.1), Fluffy.getCurrentPrestige())):1) : (what == "block" ? Infinity : 1e200));
-		textString += "<tr><td class='bdTitle'>Finale</td><td></td><td></td><td>x "+prettify((what == "attack" ? (Fluffy.isRewardActive("FluffyE10")?((Fluffy.isRewardActive("FluffyE17")?1+game.global.magmite:1)*(Fluffy.isRewardActive("FluffyE13")?11:1)*Math.pow((Fluffy.isRewardActive("FluffyE16")?5:3.1), Fluffy.getCurrentPrestige())):1) : (what == "block" ? Infinity : 1e200)))+"</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+		currentCalc *= (what == "attack" ? (Fluffy.isRewardActive("FluffyE10")?((Fluffy.isRewardActive("FluffyE19")?1+playerSpire.spirestones/100:1)*(Fluffy.isRewardActive("FluffyE17")?1+game.global.magmite:1)*(Fluffy.isRewardActive("FluffyE13")?11:1)*Math.pow((Fluffy.isRewardActive("FluffyE16")?5:3.1), Fluffy.getCurrentPrestige())):1) : (what == "block" ? Infinity : 1e200));
+		textString += "<tr><td class='bdTitle'>Finale</td><td></td><td></td><td>x "+prettify((what == "attack" ? (Fluffy.isRewardActive("FluffyE10")?((Fluffy.isRewardActive("FluffyE19")?1+playerSpire.spirestones/100:1)*(Fluffy.isRewardActive("FluffyE17")?1+game.global.magmite:1)*(Fluffy.isRewardActive("FluffyE13")?11:1)*Math.pow((Fluffy.isRewardActive("FluffyE16")?5:3.1), Fluffy.getCurrentPrestige())):1) : (what == "block" ? Infinity : 1e200)))+"</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
 	}
 	//Magma
 	if (mutations.Magma.active() && (what == "attack" || what == "health") && !(Fluffy.isRewardActive("FluffyE13") && game.global.challengeActive == "Finale")){
@@ -2936,6 +2930,10 @@ function getBattleStatBd(what) {
 		var mult = Fluffy.rewardConfig.SADailies.attackMod();
 		currentCalc *= mult;
 		textString += "<tr><td class='bdTitle'>Scruffy Dailies</td><td>+ 4%</td><td>" + (autoBattle.maxEnemyLevel - 1) + "</td><td>+ " + prettify((mult - 1) * 100) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>"
+	}else if (what == "attack" && Fluffy.isRewardActive('Scruffy32')){
+		var mult = Fluffy.rewardConfig.SADailies.attackMod();
+		currentCalc *= mult;
+		textString += "<tr><td class='bdTitle'>Scruffy Level 32</td><td>+ 4%</td><td>" + (autoBattle.maxEnemyLevel - 1) + "</td><td>+ " + prettify((mult - 1) * 100) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>"
 	}
 	if ((what == "attack" || what == "health") && game.global.challengeActive == "Alchemy" && game.global.universe == 2){
 		var mult = alchObj.getPotionEffect("Potion of Strength");
@@ -3551,9 +3549,9 @@ function getLootBd(what) {
 				textString += "<tr><td class='bdTitle'>Radon Relic</td><td>× 1.05</td><td>" + points + "</td><td>× " + prettify(mult) + "</td><td>" + prettify(currentCalc) + "</td></tr>";
 			}
 			if (game.global.universe == 2 && game.global.glassDone && game.global.world > 175){
-				var mult = Math.pow(1.1, Math.min(game.global.world - 175, 250));
+				var mult = Math.pow(1.1,Fluffy.isRewardActive("Scruffy29")?250:Math.min(game.global.world - 175, 250));
 				currentCalc *= mult;
-				textString += "<tr><td class='bdTitle'>Advanced Processing (Glass)</td><td>× 1.1</td><td>" + Math.min(game.global.world - 175, 250) + "</td><td>× " + prettify(mult) + "</td><td>" + prettify(currentCalc) + "</td></tr>";
+				textString += "<tr><td class='bdTitle'>Advanced Processing (Glass)</td><td>× 1.1</td><td>" + (Fluffy.isRewardActive("Scruffy29")?250:Math.min(game.global.world - 175, 250)) + "</td><td>× " + prettify(mult) + "</td><td>" + prettify(currentCalc) + "</td></tr>";
 			}
 			if (game.global.universe == 2 && game.global.world >= 201){
 				var mult = 400;
@@ -3775,6 +3773,10 @@ function getLootBd(what) {
 	if (game.global.universe == 2 && u2Mutations.tree.Loot.purchased && what != "Helium"){
 		currentCalc *= 1.5;
 		textString += "<tr><td class='bdTitle'>Loot Mutator</td><td>+ 50%</td><td></td><td>+ 50%</td><td>" + prettify(currentCalc) + "</td></tr>";
+	}
+	if (u2Mutations.tree.Loot2.purchased && what != "Helium"){
+		currentCalc *= 1.5;
+		textString += "<tr><td class='bdTitle'>Loot II Mutator</td><td>+ 50%</td><td></td><td>+ 50%</td><td>" + prettify(currentCalc) + "</td></tr>";
 	}
 	if (game.global.challengeActive == "Hypothermia" && what == "Helium"){
 		var mult = game.challenges.Hypothermia.getRadonMult();
@@ -4271,6 +4273,8 @@ function resetGame(keepPortal, resetting) {
 	var tabForMastery;
 	var liquifiedChallDone;
 	var houselessChallDone;
+	var RandomizedChallDone;
+	var druopitinityDefeated;
 	if (keepPortal){
 		oldUniverse = game.global.universe;
 		if (oldUniverse == 2 && (game.global.world > 25 || game.stats.totalVoidMaps.value > 0)) lastU2Voids = game.stats.totalVoidMaps.value;
@@ -4298,7 +4302,9 @@ function resetGame(keepPortal, resetting) {
 		decayDone = game.global.decayDone;
 		liquifiedChallDone = game.global.liquifiedChallDone;
 		houselessChallDone = game.global.houselessChallDone;
+		RandomizedChallDone = game.global.RandomizedChallDone;
 		finaleChallDone = game.global.finaleChallDone;
+		druopitinityDefeated = game.global.druopitinityDefeated;
 		if (game.global.dailyHelium) {
 			if (game.global.universe == 1) game.global.tempHighHelium -= game.global.dailyHelium;
 			else if (game.global.universe == 2) game.global.tempHighRadon -= game.global.dailyHelium;
@@ -4536,7 +4542,9 @@ function resetGame(keepPortal, resetting) {
 		game.global.decayDone = decayDone;
 		game.global.liquifiedChallDone = liquifiedChallDone;
 		game.global.houselessChallDone = houselessChallDone;
+		game.global.RandomizedChallDone = RandomizedChallDone;
 		game.global.finaleChallDone = finaleChallDone;
+		game.global.druopitinityDefeated = druopitinityDefeated;
 		game.global.magmite = magmite;
 		game.generatorUpgrades = genUpgrades;
 		game.permanentGeneratorUpgrades = permanentGenUpgrades;
@@ -7033,8 +7041,9 @@ function toggleSetting(setting, elem, fromPortal, updateOnly, backwards, fromHot
 			else if (bonus <= 50000)
 				html += "伤害加成在" + prettify(10000) + "%和" + prettify(50000) + "%之间时，每有2000%伤害加成，每周目初始就获得一个金色升级";
 			else{
-				if (bonus <= 100000) html += "伤害加成到达" + prettify(100000) + "%以后，升级出现的频率将增加。";
-				else if (bonus <= 120000) html += "伤害加成到达" + prettify(120000) + "%以后，升级出现的频率将增加。";
+				if (bonus < 100000) html += "伤害加成到达" + prettify(100000) + "%以后，升级出现的频率将增加。";
+				else if (bonus < 120000) html += "伤害加成到达" + prettify(120000) + "%以后，升级出现的频率将增加。";
+				else if (bonus < 140000) html += "伤害加成到达" + prettify(140000) + "%以后，升级出现的频率将增加。";
 				html += "伤害加成超过" + prettify(50000) + "%时，每有" + prettify(10000) + "%伤害加成，每周目初始就获得一个金色升级";
 			}
 			html += "。您目前获得了" + count + "个金色升级。";
@@ -7053,7 +7062,8 @@ function toggleSetting(setting, elem, fromPortal, updateOnly, backwards, fromHot
 		else if (percent < 10000) return 6;
 		else if (percent < 100000) return 7;
 		else if (percent < 120000) return 8;
-		return 9;
+		else if (percent < 140000) return 9;
+		return 10;
 	}
 
 	function countExtraAchievementGoldens(){
