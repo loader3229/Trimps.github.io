@@ -2078,10 +2078,16 @@ var cnItems = {
     'Spires-In-Spires': '尖塔中的尖塔 II',
     'Spirentist': '尖塔科学家',
     'Eradicated Warden': '杀绝监狱长',
+    'Eradicated Spirer': '杀绝螺旋者',
     'Eradicated Robotrimp': '杀绝脆皮机器人',
     'Broken Spire': '破碎尖塔',
+    'Druopitee\'s plan is completely failed': '德罗披提的计划彻底失败了',
+    'What? Druopitee is revived?': '什么？德罗披提复活了？',
+    'Infinity Spirer': '无限尖塔大师',
     'Break the Planet on Spired': '在尖塔化挑战中破碎行星',
     'Clear Spire in Scientist V': '在科学家 V挑战中通过尖塔',
+    'Clear Spire in Finale': '在终幕挑战中通过尖塔',
+    'Clear Spire in Eradicated': '在灭绝挑战中通过尖塔',
     'Complete Bionic Wonderland LIII': '通过仿生仙境 LIII',
     'Complete Bionic Wonderland': '通过仿生仙境',
     'Complete The Prison on Eradicated': '在灭绝挑战中通过监狱',
@@ -3121,6 +3127,7 @@ var cnItems = {
 	'Liquified': '液化',
 	'You have completed the Liquified challenge! Liquification Mutators are stronger now!': '您完成了液化挑战，液化突变因子的基础效果已经变为17.5%！',
 	'Houseless': '无住房',
+	'Doubleless': '双重失传',
 	'Finale': '终幕',
 	'Finale Challenge!': '终幕挑战',
 	' You have unlocked new masteries, also Fluffy\'s evolution limit is broken!': '您解锁了新的专精，并且绒绒突破了他的极限！',
@@ -3984,7 +3991,7 @@ var cnItems = {
     'Heirlots': '传家兴盛',
     'In U2 above Z200, gain a +5% chance to find your highest available Heirloom tier, and a -5% chance to find the lowest.': '在宇宙2的区域200及以上区域，使最高稀有度传家宝的掉率增加5%，最低稀有度传家宝的掉率减少5%。',
     'Heirmazing': '传家奇宝',
-    'You find all Heirlooms at 1 reward tier higher than normal.': '您的传家宝掉率视为比正常高一阶。',
+    'You find all non-Core Heirlooms at 1 reward tier higher than normal.': '您的传家宝掉率视为比正常高一阶，对核心无效。',
     'Slowva': '缓慢新星',
     'When attacking a Nova enemy, take only one stack of blinded every 2 attacks.': '攻击新星敌人时，每2次攻击才会叠加1层致盲。',
     'Poppin Off': '将星闪耀',
@@ -4019,6 +4026,7 @@ var cnItems = {
     'Mazzy': '更多进图',
     'Gain an additional Map at Zone row in Universe 2.': '宇宙2中自动进图行数上限增加1行。',
     'All non-Radon loot gained in U2 is increased by 50%.': '宇宙2中非氡战利品获取量增加50%。',
+    'All non-Helium & non-Radon loot gained is increased by 50%.': '非氦/非氡战利品获取量增加50%。',
     'Row Siphon': '排行虹吸',
     'Cells in Randomized Rows drop 0.5 seconds of Food, Wood, and Metal production on death per row number they were swapped with. For example, if you\'re fighting a cell on row 2 that has stats from row 9, you\'ll get 4.5 seconds of production per cell. Your Worshippers don\'t care about this mutated food but your other Trimps don\'t mind.': '乱数敌人相应行的格子中，击杀敌人可以使它们掉落食物、木头和金属，数值为与该行切换的行号乘以0.5秒的相应产量。例如，如果您目前在第2行，且该行敌人为第9行的属性，那么击杀该行每个格子的敌人时可以获得4.5秒相应产量的资源。获得的食物不计入崇信者的花费中。',
     'Dusty': '尘起尘落',
@@ -4027,11 +4035,15 @@ var cnItems = {
     'Gain 50% more seconds of loot from Randomized Rows (0.75 seconds per row).': '切换后掉落的资源数值变为与该行切换的行号乘以0.75秒的相应产量。',
     'Dustier': '风尘仆仆',
     'Huffy earns an additional 25% Dust from all sources.': '怒怒的魔尘获取量再增加25%。',
+    'Huffy earns an additional 350% Dust from all sources.': '怒怒的魔尘获取量再增加350%。',
+    'Huffy earns an additional 500% Dust from all sources.': '怒怒的魔尘获取量再增加500%。',
     'Runed': '强化符饰',
     'Increases your Runetrinket cap by 50%. Speccing out of this Mutator stops any bonus earned from Runetrinkets above your cap, but does not remove them.': '使小符饰的上限增加50%。洗点该突变因子后，超过上限的小符饰暂时失效，但数量不会重置。',
+    'Increases your Runetrinket cap by an additional 50%. Speccing out of this Mutator stops any bonus earned from Runetrinkets above your cap, but does not remove them.': '使小符饰的上限再增加50%。洗点该突变因子后，超过上限的小符饰暂时失效，但数量不会重置。',
     'Brains to Brawn': '智勇双全',
     'Mad Mapper': '制图狂人',
-    '100% of your damage can Overkill in maps at any level. Limited to 1 cell of Overkill if above World Overkill Zone.': '只要在地图中，就可以使用100%的溢出伤害攻击下个敌人。如果地图等级超过了世界的超杀区域，则至多超杀1名敌人。',
+    '100% of your damage can Overkill in maps at any level. Limited to 1 cell of Overkill if above World Overkill Zone. Only applies to U2.': '只要在地图中，就可以使用100%的溢出伤害攻击下个敌人。如果地图等级超过了世界的超杀区域，则至多超杀1名敌人。该效果仅在宇宙2生效。',
+    'Remove 1 cell limit if above World Overkill Zone in Mad Mapper.': '取消制图狂人的“如果地图等级超过了世界的超杀区域，则至多超杀1名敌人。”的限制。',
     'Zoom In': '放大',
     'Click this to Zoom In to the Mutators tree. You can also use mouse wheel to zoom, or click and drag the tree to move it around.': '放大突变因子树。您也可以使用鼠标滚轮来缩放，或者点击并拖动鼠标来移动画面。',
     'Zoom Out': '缩小',
@@ -6201,6 +6213,7 @@ var cnRegReplace = new Map([
     [/^NOTICE: You have already completed Pandemonium (.+) times, and will no longer gain a bonus for future runs.$/, '*注*意*：您已经完成了$1次群魔乱舞挑战，无法再获得加成了。'], //群魔乱舞挑战等
     [/^You have completed Pandemonium (\d+) \/ (\d+) maximum times. Your Trimps have \+(.+)% Attack, Health, Radon or Helium, and gathered resources in U1 and U2, and your next run of Pandemonium will spawn Bad Guys with (.+)x Attack and Health and all Equipment will be (.+)x more expensive.$/, '您完成了$1次群魔乱舞挑战，最高可完成$2次。挑战奖励使我方脆皮的攻击力、生命值、氦或氡获取量、资源获取量增加$3%，且下次挑战时敌人的攻击力和生命值将变为$4倍，所有的装备价格变为原来的$5倍。'], //群魔乱舞挑战等
     [/^You have completed Pandemonium (\d+) \/ (\d+) maximum times. Your Trimps have \+(.+)% Attack, Health, Radon or Helium, and gathered resources in U1 and U2, and your next run of Pandemonium will spawn Bad Guys with (.+)x Attack and Health, all Equipment will be (.+)x more expensive, and the first (.+) Equipments? will be disabled.$/, '您完成了$1次群魔乱舞挑战，最高可完成$2次。挑战奖励使我方脆皮的攻击力、生命值、氦或氡获取量、资源获取量增加$3%，且下次挑战时敌人的攻击力和生命值将变为$4倍，所有的装备价格变为原来的$5倍，前$6种装备无法被我方脆皮使用。'], //群魔乱舞挑战等
+    [/^You have completed Pandemonium (\d+) \/ (\d+) maximum times. Your Trimps have \+(.+)% Attack, Health, Radon or Helium, and gathered resources in U1 and U2, and your next run of Pandemonium will spawn Bad Guys with (.+)x Attack and Health and all Equipments will be disabled.$/, '您完成了$1次群魔乱舞挑战，最高可完成$2次。挑战奖励使我方脆皮的攻击力、生命值、氦或氡获取量、资源获取量增加$3%，且下次挑战时敌人的攻击力和生命值将变为$4倍，所有装备均无法被我方脆皮使用。'], //群魔乱舞挑战等
     [/^This Boss Enemy will shred (.+)% of your resources with each Attack, and has (.+)% increased Attack and Health. Completing maps will remove some of these stacks.$/, '该首领敌人的攻击力和生命值增加$2%，每次攻击后使您的资源减少$1%。通过地图后可以减少该层数。'], //群魔乱舞挑战等
     [/^This Enemy has (.+)% more Attack and Health. Completing maps will remove some of these stacks.$/, '该敌人的攻击力和生命值增加$1%。通过地图后可以减少该层数。'], //群魔乱舞挑战等
     [/^10% of these stacks will convert into Pandemonium stacks when this Zone is completed. Increases the orderliness of your Trimps by (.+)%.$/, '通过该区域后，当前秩序层数的10%将转换为群魔乱舞层数。脆皮的秩序度增加$1%(译者注：无实际效果)。'], //群魔乱舞挑战等

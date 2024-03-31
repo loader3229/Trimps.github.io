@@ -1070,7 +1070,7 @@ function tooltip(what, isItIn, event, textString, attachFunction, numCheck, rena
 				if (getAllowedTalentTiers()[talent.tier - 1] < 1 && thisTierTalents < 6){
 					costText = "<span style='color: red'>未解锁";
 					var lastTierTalents = countPurchasedTalents(talent.tier - 1);
-					if (talent.tier >= 10) costText += " (您还需要购买第" + (talent.tier - 1) + "层的所有专精并通过尖塔 "+romanNumeral(talent.tier - 10)+"才能解锁第" + talent.tier + "层的专精)";
+					if (talent.tier >= 10) costText += " (您还需要购买第" + (talent.tier - 1) + "层的所有专精并在终幕挑战中通过尖塔 "+romanNumeral(talent.tier - 10)+"才能解锁第" + talent.tier + "层的专精)";
 					else if (lastTierTalents <= 1) costText += "(您还需要购买第" + (talent.tier - 1) + "层的" + ((lastTierTalents == 0) ? "2个专精" : "1个专精") + "才能解锁第" + talent.tier + "层的专精)";
 					else costText += "(您还需要购买第" + (talent.tier - 1) + "层的1个专精才能解锁第" + talent.tier + "层的下一个专精)";
 					if (requiresText) costText += "<br>This Mastery also requires " + requiresText + "</span>";

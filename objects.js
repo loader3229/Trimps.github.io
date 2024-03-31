@@ -4693,7 +4693,7 @@ var u2Mutations = {
         },
         Dust3: {
             pos: [19, -8],
-            dn: 'Dusty II',
+            dn: 'Dusty<i></i> II',
             color: '#377cff',
             require: ['Dust2'],
             description: "Huffy earns an additional 350% Dust from all sources.",
@@ -4703,7 +4703,7 @@ var u2Mutations = {
         },
         Dust4: {
             pos: [25, -10],
-            dn: 'Dustier II',
+            dn: 'Dustier<i></i> II',
             color: '#377cff',
             require: ['Dust3'],
             description: "Huffy earns an additional 500% Dust from all sources.",
@@ -4722,7 +4722,7 @@ var u2Mutations = {
         },
         Runed2: {
             pos: [23, -17],
-            dn: 'Runed II',
+            dn: 'Runed<i></i> II',
             color: '#377cff',
             require: ['Runed'],
             description: "Increases your Runetrinket cap by an additional 50%. Speccing out of this Mutator stops any bonus earned from Runetrinkets above your cap, but does not remove them.",
@@ -4756,7 +4756,7 @@ var u2Mutations = {
         },
         MadMap2: {
             pos: [20, -20],
-            dn: 'Mad Mapper II',
+            dn: 'Mad Mapper<i></i> II',
             color: '#377cff',
             require: ['MadMap'],
             description: "Remove 1 cell limit if above World Overkill Zone in Mad Mapper.",
@@ -4766,7 +4766,7 @@ var u2Mutations = {
         },
         Loot2: {
             pos: [17, -23],
-            dn: 'Loot II',
+            dn: 'Loot<i></i> II',
             color: '#377cff',
             require: ['Brains'],
             description: "All non-Helium & non-Radon loot gained is increased by 50%.",

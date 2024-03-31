@@ -18639,7 +18639,7 @@ var Fluffy = {
 		SADailies: {
 			get description(){
 				var cleared = autoBattle.maxEnemyLevel - 1;
-				return "Your Trimps gain +4% Attack and +0.25% (Capped at 50%) Crit Chance per Spire Assault level cleared while on a Daily Challenge. You have cleared " + cleared + " SA levels, granting +" + prettify((this.attackMod() - 1) * 100) + "% Attack and +" + prettify(this.critChance() * 100) + "% Crit Chance on Daily Challenges." 
+				return "每通过1级尖塔突击，就使我方脆皮在日常挑战中攻击力增加4%，暴击概率增加0.25%（不超过50%）。您通过了" + cleared + "级尖塔突击，我方脆皮在日常挑战中攻击力增加" + prettify((this.attackMod() - 1) * 100) + "%，暴击概率增加" + prettify(this.critChance() * 100) + "%。" 
 			},
 			critChance: function(){
 				return Math.min(0.0025 * (autoBattle.maxEnemyLevel - 1), 0.5);
@@ -18655,22 +18655,22 @@ var Fluffy = {
 			description: "Scruffy's 4th bonus that increases Radon gain based on last Portal's highest Zone is no longer based on last Portal, and is now based on your highest Zone ever reached in Universe 2.<i></i>并且尖塔突击奖励变为5倍。"
 		},
 		Scruffy22: {
-			description: "Gain x10 Mutated Seed Drops. Triple Nullifium gain when recycling Enigmatic Heirlooms."
+			description: "突变之种掉落数量变为10倍。回收神秘传家宝的虚空物质获取变为3倍。"
 		},
 		Scruffy26: {
-			description: "Add 20 minutes to Tenacity time when you reach a new zone."
+			description: "进入每个区域时，额外将20分钟（固定）计入本区域坚持特权的时间。"
 		},
 		Scruffy28: {
-			description: "Scruffy's damage bonus is applied to health."
+			description: "污污攻击力加成对生命值也生效。"
 		},
 		Scruffy29: {
-			description: "Glass's effect is always maxed (Z425)."
+			description: "玻璃挑战的效果永远为最大值（区域425）。"
 		},
 		Scruffy30: {
-			description: "Tenacity's effect is always maxed."
+			description: "坚持特权的效果永远为最大值。"
 		},
 		Scruffy32: {
-			description: "Scruffy's Level 20 effect is applied to non-dailies."
+			description: "污污等级20的技能在日常挑战外也可以生效。"
 		},
 
 
@@ -18698,21 +18698,21 @@ var Fluffy = {
 			}
 		},
 		FluffyE17: {
-			description: "When you portal, if your Magmite is less than (Efficiency level * 7), set your Magmite to (Efficiency level * 7). In Finale challenge, Fluffy gain +100% attack per Magmite!"
+			description: "传送时如果岩浆岩的数量小于7倍维度发生器效率等级，岩浆岩的数量将被设为7倍维度发生器效率等级。终幕挑战中每个岩浆岩增加100%绒绒攻击力。"
 		},
 		FluffyE18: {
 			get description(){
 				var str="";
-				if (!game.talents.nature.purchased) str="Increase your token trading ratio from 10:5 to 10:7.";
-				else str="Increase your token trading ratio from 10:8 to 10:10.";
-				return str+" Automatically use 5% of your tokens to upgrade Nature Empowerments without actually spending tokens, Enlightened Ice apply to best Fluffy Exp. In Finale challenge, Enemies will shatter by Enlightened Ice if health is below 90%, regardless of Ice Empowerment.";
+				if (!game.talents.nature.purchased) str="将符记的转换比例由10:5增加到10:7。";
+				else str="将符记的转换比例由10:8增加到10:10。";
+				return str+"自动使用至多5%的符记升级自然赋能（不消耗符记）。冰之启迪现在开始影响本周目绒绒经验值的记录。终幕挑战中当敌人生命值小于90%的时候，冰之启迪的即死效果即可生效，即使不在冰区。";
 			}
 		},
 		FluffyE19: {
-			description: "Triple Spirestone worth of core dropped in Spired challenge when your Zone number >= 300. Triple Spirestone worth again if the core dropped in Spired challenge comes from a real spire when your Zone number >= 300. In Finale challenge, Fluffy gain +1% attack per Spirestone!"
+			description: "回收尖塔化挑战中区域300及以后掉落的尖塔核心获得的尖塔石变为3倍。回收尖塔化挑战中区域300及以后的真正的尖塔掉落的尖塔核心获得的尖塔石再次变为3倍。终幕挑战中每个尖塔石增加1%绒绒攻击力。"
 		},
 		FluffyE20: {
-			description: "Remove the limit of Liquification in Obliterated, Eradicated and Finale challenges."
+			description: "抹杀、灭绝和终幕挑战中可以启用液化。"
 		},
 
 

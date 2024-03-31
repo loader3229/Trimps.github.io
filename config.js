@@ -2672,41 +2672,41 @@ var toReturn = {
 		},
 		tier12a: {
 			get description(){
-				return "Completing a Void Map gives 200% of current zone's "+Fluffy.getName()+" Exp.";
+				return "每通过一张虚空地图，"+Fluffy.getName()+"会获得相当于当前区域经验值200%的经验值。";
 			},
-			name: "Master of the Void II",
+			name: "虚空大师 II",
 			tier: 12,
 			purchased: false,
 			requires: "tier11f",
 			icon: "*podcast"
 		},
 		tier12b: {
-			get description(){return "When you get Magmite, auto-upgrade Dimensional Generator without actually spend Magmite. Magmamancer is always at max effect. Magmite boost Dark Essence gain. Currently: "+prettify(Math.log10(game.global.magmite+10))+"x";},
-			name: "MagMastery",
+			get description(){return "当您获得岩浆岩时，自动将岩浆岩用于升级维度发生器，并且不消耗岩浆岩。岩浆巫师的效果始终为最大值。基于岩浆岩增加黑暗精华的获取量。当前效果："+prettify(Math.log10(game.global.magmite+10))+"倍。";},
+			name: "岩浆专精",
 			tier: 12,
 			purchased: false,
 			icon: "road",
 			requires: "tier12a"
 		},
 		tier12c: {
-			description: "You can spend another extra 50% of your Nu on your Heirlooms, bringing the total to 170%.",
-			name: "Heirnuum III",
+			description: "传家宝可使用的虚空物质上限再额外增加50%，达到虚空物质总量的170%。",
+			name: "传家虚物 III",
 			tier: 12,
 			purchased: false,
 			icon: "grain",
 			requires: "tier12b"
 		},
 		tier12d: {
-			description: "Each Randimp now give all 5 different exotic import rewards in current location at once.",
-			name: "Randimp III",
+			description: "脆皮百变怪现在会同时给予当前位置所有不同的5个奇异外皮的效果。",
+			name: "脆皮百变怪 III",
 			tier: 12,
 			purchased: false,
 			icon: "*dice",
 			requires: "tier12c"
 		},
 		tier12e: {
-			description: "Increase Assault Mastery's percentage to 1%. Greatly reduce kills required to clear a Spire Assault level. Unlock the third customizable slot of the Ring.",
-			name: "Assault Mastery II",
+			description: "突击专精的每级加成从0.5%增加到1%。极大减少通过尖塔突击等级所需的击杀数。解锁第三个灵戒自定义词缀槽位。",
+			name: "突击专精 II",
 			tier: 12,
 			purchased: false,
 			onPurchase(){
@@ -2721,8 +2721,8 @@ var toReturn = {
 			requires: "tier12d"
 		},
 		tier12f: {
-			description: "5x Nullifium gain.",
-			name: "NullifiuMastery",
+			description: "获得5倍虚空物质",
+			name: "虚空物质专精",
 			tier: 12,
 			purchased: false,
 			icon: "grain",
@@ -4374,7 +4374,7 @@ var toReturn = {
 		Finale: {
 			get description(){return this.desc(1);},
 			get squaredDescription(){return this.desc(2);},
-			desc(a){return (a==1?"<b>这个挑战和它对应的挑战<sup>2</sup>共享最高通过的区域/尖塔！您不用再担心运行同一个挑战两次了！</b><br>":a==2?"<b>这个挑战和它对应的普通挑战共享最高通过的区域/尖塔！您不用再担心运行同一个挑战两次了！</b><br>":"")+"德罗披提意识到在以前的时间线里面，您终止了他的计划非常多次。他现在正在想，如果他比您先一步将这个行星上所有的脆皮，装备和地图全都抹除，他的计划会成功吗？但是，他并没有想到，您可以将绒绒带进传送门并且和您一起战斗，并且彻底破坏德罗披提的计划！绒绒也想体验一下其他脆皮战斗时的感觉了！在这个挑战里面，所有的装备和所有世界掉落全部被禁用了，您不能运行地图，同时您不能获得任何脆皮（除了绒绒）。但是绒绒自带无限格挡，且敌人的伤害不能穿透绒绒的无限格挡！"+(a!=2?"<span class=green>在该挑战里面，每通过一个区域，黑暗精华的获取量增加7%，效果叠乘！当前效果："+prettify(Math.pow(1.07, (game.c2.Finale ?? 1)-1))+"倍。</span>并且，在该挑战里面通过<b>尖塔 I</b>可以解锁新的专精，并且使绒绒突破他的极限！":"");},
+			desc(a){return (a==1?"<b>这个挑战和它对应的挑战<sup>2</sup>共享最高通过的区域/尖塔！您不用再担心运行同一个挑战两次了！</b><br>":a==2?"<b>这个挑战和它对应的普通挑战共享最高通过的区域/尖塔！您不用再担心运行同一个挑战两次了！</b><br>":"")+"德罗披提意识到在以前的时间线里面，您终止了他的计划非常多次。他现在正在想，如果他比您先一步将这个行星上所有的脆皮，装备和地图全都抹除，他的计划会成功吗？但是，他并没有想到，您可以将绒绒带进传送门并且和您一起战斗，并且彻底破坏德罗披提的计划！绒绒也想体验一下其他脆皮战斗时的感觉了！在这个挑战里面，所有的装备和所有世界掉落全部被禁用了，您不能运行地图，同时您不能获得任何脆皮（除了绒绒）。但是绒绒自带无限格挡，且敌人的伤害不能穿透绒绒的无限格挡！"+(a!=2?"<span class=green>在该挑战里面，每通过一个区域，黑暗精华的获取量增加7%，效果叠乘！当前效果："+prettify(Math.pow(1.07, (game.c2.Finale ?? 1)-1))+"倍。</span>并且，在该挑战里面通过<b>尖塔 I</b>可以解锁新的专精，并且使绒绒突破他的极限！":"")+"（这是loader3229的mod里面的一个新挑战！）";},
 			completed: false,
 			filter: function () {
 				return (getHighestLevelCleared(true) >= 889);
@@ -6615,7 +6615,7 @@ var toReturn = {
 			unlockString: "到达区域300"
 		},
 		Doubleless: {
-			description: "Your scientists just found a set of combinable dimensions in Universe 2! You can go to Houseless and Smithless at the same time to learn how to use less resources to build structures! Completing <b>Zone 310</b> will return the world to normal.",
+			description: "在宇宙2里面，也有像宇宙1一样相互结合的维度哦~ 科学家在宇宙2发现了一组相互结合的维度。同时前往铁匠失传和无住房的维度，以证明自己的资源分配能力！通过<b>区域310</b> will return the world to normal.<i></i>（这是loader3229的mod里面的一个新挑战！）",
 			completed: false,
 			filter: function () {
 				return (getHighestLevelCleared(true) >= 374);
@@ -6633,8 +6633,8 @@ var toReturn = {
 			unlocks: "Resourceful"
 		},
 		Randomized: {
-			description: "In this challenge, world enemies always have Randomized mutation, and Randomized enemies are stronger. Completing <b>Zone 440</b> will return the world to normal, gain 10x more Mutated Seeds, increase Frigid/Mayhem/Pandemonium/Desolation max completions by 5, and unlock new blue mutators.",
-			squaredDescription: "In this challenge, world enemies always have Randomized mutation, and Randomized enemies are stronger.",
+			description: "您有没有感受过，如果所有的敌人都是突变敌人会是什么样子的？这个挑战中所有的敌人都是被增强过的乱数敌人。在这个挑战中通过<b>区域440</b>之后，您可以获得10倍突变之种，解锁新的蓝色突变因子，并且增加5次寒冷/暴乱/群魔乱舞/荒凉挑战最大次数。（这是loader3229的mod里面的一个新挑战！）",
+			squaredDescription: "您有没有感受过，如果所有的敌人都是突变敌人会是什么样子的？这个挑战中所有的敌人都是被增强过的乱数敌人。（这是loader3229的mod里面的一个新挑战！）",
 			completed: false,
 			filter: function () {
 				return (getHighestLevelCleared(true) >= 450);
@@ -8221,7 +8221,7 @@ var toReturn = {
 			title: "Feats",
 			get descriptions () {
 				return ["Complete the Dimension of Anger before buying Bounty", "Reach Z30 with no respec and 60 or less He spent", "Have over " + prettify(1e6) + " traps at once", "Die 50 times to a single Voidsnimp", "Beat Balance, never having more than 100 stacks", "Reach Zone 10 with 5 or fewer dead Trimps", "Reach exactly 1337 He/Hr", "Attack 20 times without dying in Electricity", "Create a perfect Map", "Use up all 7 Daily Challenges", "Equip a magnificent or better Staff and Shield", "Reach Z60 with 1000 or fewer dead Trimps", "Reach Z120 without using manual research", "Reach Z75 without buying any housing", "Find a Common heirloom at Z146 or higher", "Spend over " + prettify(250e3) + " total He on Wormholes", "Reach Z60 with rank " + romanNumeral(3) + " or lower equipment", "Kill an Improbability in one hit", "Beat a Lv 60+ Destructive Void Map with no deaths", "在到达区域5后未受到过敌人暴击的前提下，完成粉碎挑战", "Kill an enemy with 100 stacks of Nom", "Break the Planet with 5 or fewer lost battles", "Reach Z60 without hiring a single Trimp", "Complete a Zone above 99 without falling below 150 stacks on Life", "Spend at least 10 minutes breeding an army with Geneticists", "Beat Toxicity, never having more than 400 stacks", "Own 100 of all housing buildings", "在到达区域60前，超杀世界上的每个格子", "Complete Watch without entering maps or buying Nurseries", "Complete Lead with 100 or fewer lost battles", "Build your 10th Spire Floor", "Kill " + prettify(500e3) + " enemies in your Spire", "Equip a Magmatic Staff and Shield", "让世界上一名敌人的攻击力低于1", "Complete Lead with 1 or fewer Gigastations", "Complete Corrupted without Geneticists", "Complete a Void Map at Z215 on Domination", "Complete The Spire with 0 deaths", "Overkill an Omnipotrimp", "Defeat a Healthy enemy with 200 stacks of wind", "Build up a Poison debuff that's 1000x higher than your attack", "使挑战<sup>2</sup>的加成达到2000%", "Complete a Bionic Wonderland map 45 levels higher than your Zone number", "Beat the Spire with no respec and " + prettify(100e6) + " or less He Spent", "Defeat an enemy on Obliterated", "在区域1获得一个合并者", "Get 10 Red Crits in a row", "Beat Z75 on the Scientist V challenge", "Gain at least 01189998819991197253 He from one Bone Portal", "Kill an Enemy on Eradicated", "Complete Spire " + romanNumeral(5) + " with no deaths", "Build your 20th Spire Floor", "Complete a Bionic Wonderland map 200 levels higher than your Zone number", "Complete Spire " + romanNumeral(2) + " on the Coordinate challenge", "Beat Spire " + romanNumeral(2) + " with no respec and " + prettify(1e9) + " or less He spent", "Beat Imploding Star on Obliterated", "Close 750 Nurseries at the same time", "Earn Dark Essence with no respec and 0 He spent", "Reach Magma on Obliterated", "Break the Planet on Eradicated", 
-				"通过尖塔 " + romanNumeral(7), "Break the Planet on Spired", "Complete The Prison on Eradicated", "Complete The Real Spire(Z200) on Spired", "Complete Bionic Wonderland on Eradicated", "Complete Bionic Wonderland " + romanNumeral(53), "Clear Spire in Scientist V", "Complete The Second Real Spire(Z300) on Spired", "Clear Spire in Finale", "Clear Spire in Eradicated", "Reach cell 100 of Spire " + romanNumeral(8), "Clear Spire " + romanNumeral(8)];
+				"通过尖塔 " + romanNumeral(7), "Break the Planet on Spired", "Complete The Prison on Eradicated", "Complete The Real Spire(Z200) on Spired", "Complete Bionic Wonderland on Eradicated", "Complete Bionic Wonderland " + romanNumeral(53), "Clear Spire in Scientist V", "Complete The Second Real Spire(Z300) on Spired", "Clear Spire in Finale", "Clear Spire in Eradicated", "到达尖塔 " + romanNumeral(8) + "的格子100", "通过尖塔 " + romanNumeral(8)];
 			},
 			tiers: [2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 
 				10, 11, 11, 13, 13, 13, 14, 14, 14, 14, 14, 14],
