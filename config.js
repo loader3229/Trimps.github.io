@@ -527,7 +527,7 @@ var toReturn = {
 				amt *= Math.pow(1.32, part3);
 				//amt *= Math.pow(1.15, part4);
 			}
-			if(amt<1)return amt;
+			if(amt<1)return 1;
 			return Math.floor(amt);
 		},
 		getEnemyHealth: function (level, name, ignoreImpStat) {
@@ -564,7 +564,7 @@ var toReturn = {
 				amt *= Math.pow(1.32, part2);
 				amt *= Math.pow(1.15, part3);
 			}
-			if(amt<1)return amt;
+			if(amt<1)return 1;
 			return Math.floor(amt);
 		}
 	},
