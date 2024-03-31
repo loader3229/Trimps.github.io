@@ -685,8 +685,8 @@ function tooltip(what, isItIn, event, textString, attachFunction, numCheck, rena
 		if (game.talents.headstart.purchased) tooltipText += "<p><b>Note that your Headstart mastery will be disabled during Challenge<sup>" + sup + "</sup> runs.</b></p>";
 		if (portalUniverse == 1 && uniArray[0] >= 35000){
 			var color = (uniArray[0] >= 50000) ? " style='color: red;'" : "";
-			var extra = (uniArray[0] >= 170000) ? " You've reached this bonus and are officially done with Challenge<sup>2</sup>! Congratulations!" : "";
-			tooltipText += "<p><b" + color + ">Note that Challenge<sup>2</sup> Bonus is capped at " + prettify(170000) + "%." + extra + "</b></p>"
+			var extra = (uniArray[0] >= 190000) ? " You've reached this bonus and are officially done with Challenge<sup>2</sup>! Congratulations!" : "";
+			tooltipText += "<p><b" + color + ">Note that Challenge<sup>2</sup> Bonus is capped at " + prettify(190000) + "%." + extra + "</b></p>"
 		}
 		costText = "";
 	}
@@ -1007,6 +1007,13 @@ function tooltip(what, isItIn, event, textString, attachFunction, numCheck, rena
 				if (problem) costText += "<br/>";
 				var listText = (mutator.singleRequire) ? listWithAnd(missingRequire, '-or-') : listWithAnd(missingRequire);
 				costText += "You must first purchase " + listText + "!";
+				problem = true;
+			}
+		}
+		if (mutator.chall){
+			if (!game.global[mutator.chall+"ChallDone"]){
+				if (problem) costText += "<br/>";
+				costText += "You must first complete " + mutator.chall + " Challenge!";
 				problem = true;
 			}
 		}
@@ -2635,8 +2642,8 @@ function getBattleStatBd(what) {
 	}
 	//Add Finale
 	if (game.global.challengeActive == "Finale"){
-		currentCalc *= (what == "attack" ? (Fluffy.isRewardActive("FluffyE10")?((Fluffy.isRewardActive("FluffyE17")?1+game.global.magmite:1)*(Fluffy.isRewardActive("FluffyE13")?11:1)*Math.pow((Fluffy.isRewardActive("FluffyE16")?5:3.1), Fluffy.getCurrentPrestige())):1) : (what == "block" ? Infinity : 1e200));
-		textString += "<tr><td class='bdTitle'>Finale</td><td></td><td></td><td>x "+prettify((what == "attack" ? (Fluffy.isRewardActive("FluffyE10")?((Fluffy.isRewardActive("FluffyE17")?1+game.global.magmite:1)*(Fluffy.isRewardActive("FluffyE13")?11:1)*Math.pow((Fluffy.isRewardActive("FluffyE16")?5:3.1), Fluffy.getCurrentPrestige())):1) : (what == "block" ? Infinity : 1e200)))+"</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
+		currentCalc *= (what == "attack" ? (Fluffy.isRewardActive("FluffyE10")?((Fluffy.isRewardActive("FluffyE19")?1+playerSpire.spirestones/100:1)*(Fluffy.isRewardActive("FluffyE17")?1+game.global.magmite:1)*(Fluffy.isRewardActive("FluffyE13")?11:1)*Math.pow((Fluffy.isRewardActive("FluffyE16")?5:3.1), Fluffy.getCurrentPrestige())):1) : (what == "block" ? Infinity : 1e200));
+		textString += "<tr><td class='bdTitle'>Finale</td><td></td><td></td><td>x "+prettify((what == "attack" ? (Fluffy.isRewardActive("FluffyE10")?((Fluffy.isRewardActive("FluffyE19")?1+playerSpire.spirestones/100:1)*(Fluffy.isRewardActive("FluffyE17")?1+game.global.magmite:1)*(Fluffy.isRewardActive("FluffyE13")?11:1)*Math.pow((Fluffy.isRewardActive("FluffyE16")?5:3.1), Fluffy.getCurrentPrestige())):1) : (what == "block" ? Infinity : 1e200)))+"</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + ((what == "attack") ? getFluctuation(currentCalc, minFluct, maxFluct) : "") + "</tr>";
 	}
 	//Magma
 	if (mutations.Magma.active() && (what == "attack" || what == "health") && !(Fluffy.isRewardActive("FluffyE13") && game.global.challengeActive == "Finale")){
@@ -2924,6 +2931,10 @@ function getBattleStatBd(what) {
 		var mult = Fluffy.rewardConfig.SADailies.attackMod();
 		currentCalc *= mult;
 		textString += "<tr><td class='bdTitle'>Scruffy Dailies</td><td>+ 4%</td><td>" + (autoBattle.maxEnemyLevel - 1) + "</td><td>+ " + prettify((mult - 1) * 100) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>"
+	}else if (what == "attack" && Fluffy.isRewardActive('Scruffy32')){
+		var mult = Fluffy.rewardConfig.SADailies.attackMod();
+		currentCalc *= mult;
+		textString += "<tr><td class='bdTitle'>Scruffy Level 32</td><td>+ 4%</td><td>" + (autoBattle.maxEnemyLevel - 1) + "</td><td>+ " + prettify((mult - 1) * 100) + "%</td><td class='bdNumberSm'>" + prettify(currentCalc) + "</td>" + getFluctuation(currentCalc, minFluct, maxFluct) + "</tr>"
 	}
 	if ((what == "attack" || what == "health") && game.global.challengeActive == "Alchemy" && game.global.universe == 2){
 		var mult = alchObj.getPotionEffect("Potion of Strength");
@@ -3539,9 +3550,9 @@ function getLootBd(what) {
 				textString += "<tr><td class='bdTitle'>Radon Relic</td><td>x 1.05</td><td>" + points + "</td><td>x " + prettify(mult) + "</td><td>" + prettify(currentCalc) + "</td></tr>";
 			}
 			if (game.global.universe == 2 && game.global.glassDone && game.global.world > 175){
-				var mult = Math.pow(1.1, Math.min(game.global.world - 175, 250));
+				var mult = Math.pow(1.1,Fluffy.isRewardActive("Scruffy29")?250:Math.min(game.global.world - 175, 250));
 				currentCalc *= mult;
-				textString += "<tr><td class='bdTitle'>Advanced Processing (Glass)</td><td>x 1.1</td><td>" + Math.min(game.global.world - 175, 250) + "</td><td>x " + prettify(mult) + "</td><td>" + prettify(currentCalc) + "</td></tr>";
+				textString += "<tr><td class='bdTitle'>Advanced Processing (Glass)</td><td>x 1.1</td><td>" + (Fluffy.isRewardActive("Scruffy29")?250:Math.min(game.global.world - 175, 250)) + "</td><td>x " + prettify(mult) + "</td><td>" + prettify(currentCalc) + "</td></tr>";
 			}
 			if (game.global.universe == 2 && game.global.world >= 201){
 				var mult = 400;
@@ -3763,6 +3774,10 @@ function getLootBd(what) {
 	if (game.global.universe == 2 && u2Mutations.tree.Loot.purchased && what != "Helium"){
 		currentCalc *= 1.5;
 		textString += "<tr><td class='bdTitle'>Loot Mutator</td><td>+ 50%</td><td></td><td>+ 50%</td><td>" + prettify(currentCalc) + "</td></tr>";
+	}
+	if (u2Mutations.tree.Loot2.purchased && what != "Helium"){
+		currentCalc *= 1.5;
+		textString += "<tr><td class='bdTitle'>Loot II Mutator</td><td>+ 50%</td><td></td><td>+ 50%</td><td>" + prettify(currentCalc) + "</td></tr>";
 	}
 	if (game.global.challengeActive == "Hypothermia" && what == "Helium"){
 		var mult = game.challenges.Hypothermia.getRadonMult();
@@ -4259,6 +4274,8 @@ function resetGame(keepPortal, resetting) {
 	var tabForMastery;
 	var liquifiedChallDone;
 	var houselessChallDone;
+	var RandomizedChallDone;
+	var druopitinityDefeated;
 	if (keepPortal){
 		oldUniverse = game.global.universe;
 		if (oldUniverse == 2 && (game.global.world > 25 || game.stats.totalVoidMaps.value > 0)) lastU2Voids = game.stats.totalVoidMaps.value;
@@ -4286,7 +4303,9 @@ function resetGame(keepPortal, resetting) {
 		decayDone = game.global.decayDone;
 		liquifiedChallDone = game.global.liquifiedChallDone;
 		houselessChallDone = game.global.houselessChallDone;
+		RandomizedChallDone = game.global.RandomizedChallDone;
 		finaleChallDone = game.global.finaleChallDone;
+		druopitinityDefeated = game.global.druopitinityDefeated;
 		if (game.global.dailyHelium) {
 			if (game.global.universe == 1) game.global.tempHighHelium -= game.global.dailyHelium;
 			else if (game.global.universe == 2) game.global.tempHighRadon -= game.global.dailyHelium;
@@ -4524,7 +4543,9 @@ function resetGame(keepPortal, resetting) {
 		game.global.decayDone = decayDone;
 		game.global.liquifiedChallDone = liquifiedChallDone;
 		game.global.houselessChallDone = houselessChallDone;
+		game.global.RandomizedChallDone = RandomizedChallDone;
 		game.global.finaleChallDone = finaleChallDone;
+		game.global.druopitinityDefeated = druopitinityDefeated;
 		game.global.magmite = magmite;
 		game.generatorUpgrades = genUpgrades;
 		game.permanentGeneratorUpgrades = permanentGenUpgrades;
@@ -7020,8 +7041,9 @@ function toggleSetting(setting, elem, fromPortal, updateOnly, backwards, fromHot
 			else if (bonus <= 50000)
 				html += " Start with 1 extra Golden Upgrade after each Portal for every 2000% earned between " + prettify(10000) + " and " + prettify(50000);
 			else{
-				if (bonus <= 100000) html += " Frequency increases at " + prettify(100000) + "% bonus damage.";
-				else if (bonus <= 120000) html += " Frequency increases at " + prettify(120000) + "% bonus damage.";
+				if (bonus < 100000) html += " Frequency increases at " + prettify(100000) + "% bonus damage.";
+				else if (bonus < 120000) html += " Frequency increases at " + prettify(120000) + "% bonus damage.";
+				else if (bonus < 140000) html += " Frequency increases at " + prettify(140000) + "% bonus damage.";
 				html += " Start with 1 extra Golden Upgrade after each Portal for every " + prettify(10000) + "% earned above " + prettify(50000);
 			}
 			html += "%. Currently gaining " + count + " extra Golden Upgrade" + ((count == 1) ? "" : "s") + ".";
@@ -7040,7 +7062,8 @@ function toggleSetting(setting, elem, fromPortal, updateOnly, backwards, fromHot
 		else if (percent < 10000) return 6;
 		else if (percent < 100000) return 7;
 		else if (percent < 120000) return 8;
-		return 9;
+		else if (percent < 140000) return 9;
+		return 10;
 	}
 
 	function countExtraAchievementGoldens(){
