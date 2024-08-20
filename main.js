@@ -13160,8 +13160,18 @@ function deadInSpire(){
 				game.global.spireActive = false;
 				game.global.spireRows++;
 				game.global.lastSpireCleared = 8;
-				setNonMapBox();
-				handleExitSpireBtn();
+				var cell = getCurrentWorldCell();
+				if (cell){
+					cell.health = cell.origHealth;
+					cell.attack = cell.origAttack;
+					cell.maxHealth = cell.origHealth;
+					document.getElementById('grid').className = "";
+					var elem = document.getElementById("actualBadName");
+					if (elem && cell.name == "Druopitinity") elem.innerHTML = elem.innerHTML.replace("Druopitinity", "Obsidimp");
+					clearSpireMetals();
+					setNonMapBox();
+					handleExitSpireBtn();
+				}
 				message("Since you defeated Druopitinity at least once, you get the Reward of Cell 100. (Your Trimps dealt " + prettify(game.global.gridArray[99].maxHealth-game.global.gridArray[99].health) + " damage to Druopitinity).", "Story");
 				return;
 			}
