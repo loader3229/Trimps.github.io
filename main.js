@@ -1075,6 +1075,7 @@ function load(saveString, autoLoad, fromPf) {
 	
 	
 	if (game.global.infblock) game.global.soldierCurrentBlock = Infinity;
+	game.jobs.Dragimp.modifier = (0.5 * Math.pow(1.05, game.buildings.Tribute.owned) * Math.pow(1.003, game.unlocks.impCount.Whipimp));
 	
 	portalUniverse = game.global.universe;
 	Fluffy.handleBox();
@@ -2995,6 +2996,7 @@ function trustworthyTrimps(noTip, forceTime){
 					var storageBuilding = game.buildings[storages[x]];
 					var count;
 					for (count = 1; count < 300; count++){
+						if(storageBuilding.owned >= 995)break;
 						amt -= storageBuilding.cost[resName]();
 						storageBuilding.owned++;
 						storageBuilding.purchased++;
@@ -3010,6 +3012,8 @@ function trustworthyTrimps(noTip, forceTime){
 		}
 		if (amt > 0){
 			resource.owned += amt;
+			var absMax = 500*Math.pow(2,995)*(1 + game.portal.Packrat.modifier * getPerkLevel("Packrat"))*(1+game.heirlooms.Shield.storageSize.currentBonus/100);
+			if (resource.owned > absMax)resource.owned = absMax;
 			textString = prettify(amt) + "<i></i>" + resName + "<i></i>，";
 			textArray.push(textString);
 			if (resName == "gems") game.stats.gemsCollected.value += amt;
@@ -3988,6 +3992,8 @@ function rewardResource(what, baseAmt, level, checkMapLootScale, givePercentage)
 	if (game.challenges.Nurture.boostsActive() && what != "fragments" && what != "helium") amt *= game.challenges.Nurture.getResourceBoost();
 	if (game.global.challengeActive == "Nurture" && what == "helium"){
 		amt *= game.challenges.Nurture.getRadonMult();
+	}else if (game.talents.tier11f.purchased && what == "helium" && game.challenges.Nurture.getLevel()){
+		amt *= game.talents.tier11f.getRadonMult();
 	}
 	if (game.global.challengeActive == "Hypothermia" && what == "helium"){
 		amt *= game.challenges.Hypothermia.getRadonMult();
@@ -4502,7 +4508,6 @@ function canAffordBuilding(what, take, buildCostString, isEquipment, updatingLab
 			var artMult = getEquipPriceMult();
 			price = Math.ceil(price * artMult);
 		}
-		else if (getPerkLevel("Resourceful")) price = Math.ceil(price * (Math.pow(1 - game.portal.Resourceful.modifier, getPerkLevel("Resourceful"))));
 		if (autoPerc > 0){
 			if (price > game.resources[costItem].owned * (autoPerc / 100))
 				return false;
@@ -4545,13 +4550,17 @@ function getBuildingItemPrice(toBuy, costItem, isEquipment, purchaseAmt){
 	var compare = (isEquipment) ? "level" : "purchased";
 	var thisCost = toBuy.cost[costItem];
 		if (typeof thisCost[1] !== 'undefined'){
-			price =  Math.floor((thisCost[0] * Math.pow(thisCost[1], toBuy[compare])) * ((Math.pow(thisCost[1], purchaseAmt) - 1) / (thisCost[1] - 1)));
+			price =  Math.floor(Decimal.mul(thisCost[0] * ((!isEquipment && getPerkLevel("Resourceful")) ? Math.pow(1 - game.portal.Resourceful.modifier, getPerkLevel("Resourceful")) : 1), Decimal.pow(thisCost[1], toBuy[compare])).toNumber() * ((Math.pow(thisCost[1], purchaseAmt) - 1) / (thisCost[1] - 1)));
+			if (price < 1)price = 1;
 		}
 		else if (typeof thisCost === 'function') {
 			price = thisCost();
+			price = Math.floor(price * ((!isEquipment && getPerkLevel("Resourceful")) ? Math.pow(1 - game.portal.Resourceful.modifier, getPerkLevel("Resourceful")) : 1));
+			if (price < 1)price = 1;
 		}
 		else {
-			price = thisCost * purchaseAmt;
+			price = Math.floor(thisCost * ((!isEquipment && getPerkLevel("Resourceful")) ? Math.pow(1 - game.portal.Resourceful.modifier, getPerkLevel("Resourceful")) : 1) * purchaseAmt);
+			if (price < 1)price = 1;
 		}
 	return price;
 }
@@ -4727,6 +4736,7 @@ function calculatePercentageBuildingCost(what, resourceToCheck, costModifier, re
 	var res = game.resources[resourceToCheck];
 	var dif = struct.purchased - struct.owned;
 	var max = (replaceMax) ? replaceMax : res.max;
+	if(struct.owned >= 995 && replaceMax === undefined)return Infinity;
 	return Math.floor(costModifier * max * Math.pow(struct.increase.by, dif));
 }
 
@@ -5542,7 +5552,9 @@ function prestigeEquipment(what, fromLoad, noInc) {
 	else stat = (typeof equipment.health !== 'undefined') ? "health" : "attack";
 	if (!fromLoad) game.global[stat] -= (equipment[stat + "Calculated"] * equipment.level);
 	if (!fromLoad) game.global.difs[stat] -= (equipment[stat + "Calculated"] * equipment.level);
-    equipment[stat + "Calculated"] = Math.round(equipment[stat] * Math.pow(1.19, (Math.max(0,equipment.prestige - 1 - game.global.druopitinityDefeated) * game.global.prestige[stat]) + 1));
+	if(equipment.prestige - 1 - game.global.druopitinityDefeated < 0)equipment[stat + "Calculated"] = 1;
+    else if(equipment.prestige - 1 - game.global.druopitinityDefeated == 0)equipment[stat + "Calculated"] = equipment[stat];
+    else equipment[stat + "Calculated"] = Math.round(equipment[stat] * Math.pow(1.19, (equipment.prestige - 1 - game.global.druopitinityDefeated) * game.global.prestige[stat] + 1));
 	//No need to touch level if it's newNum
 	if (fromLoad) return;
 	equipment.level = 0;
@@ -5567,7 +5579,8 @@ function getNextPrestigeValue(what){
 	var stat;
 	if (equipment.blockNow) stat = "block";
 	else stat = (typeof equipment.health !== 'undefined') ? "health" : "attack";
-	if(equipment.prestige<=game.global.druopitinityDefeated)return equipment[stat];
+	if(equipment.prestige<game.global.druopitinityDefeated)return 1;
+	if(equipment.prestige==game.global.druopitinityDefeated)return equipment[stat];
 	var toReturn = Math.round(equipment[stat] * Math.pow(1.19, ((equipment.prestige) * game.global.prestige[stat]) + 1));
 	if (stat == "block"){
 		stat = "格挡";
@@ -12572,7 +12585,7 @@ function checkIfLiquidZone(){
 		return true;
 	}
 	if (game.global.challengeActive == "Liquified") return true;
-	if (game.options.menu.liquification.enabled == 0 || ((game.global.challengeActive == "Obliterated" || game.global.challengeActive == "Eradicated" || game.global.challengeActive == "Finale") && !Fluffy.isRewardActive("FluffyE20"))) return false;
+	if (game.options.menu.liquification.enabled == 0 || ((game.global.challengeActive == "Obliterated" || game.global.challengeActive == "Eradicated" || game.global.challengeActive == "Finale") && !Fluffy.isRewardActive("FluffyE21"))) return false;
 	var spireCount = game.global.spiresCompleted;
 	if (game.talents.liquification.purchased) spireCount++;
 	if (game.talents.liquification2.purchased) spireCount++;
@@ -13216,8 +13229,18 @@ function deadInSpire(){
 				game.global.spireActive = false;
 				game.global.spireRows++;
 				game.global.lastSpireCleared = 8;
-				setNonMapBox();
-				handleExitSpireBtn();
+				var cell = getCurrentWorldCell();
+				if (cell){
+					cell.health = cell.origHealth;
+					cell.attack = cell.origAttack;
+					cell.maxHealth = cell.origHealth;
+					document.getElementById('grid').className = "";
+					var elem = document.getElementById("actualBadName");
+					if (elem && cell.name == "Druopitinity") elem.innerHTML = elem.innerHTML.replace("Druopitinity", "Obsidimp");
+					clearSpireMetals();
+					setNonMapBox();
+					handleExitSpireBtn();
+				}
 				message("Since you defeated Druopitinity at least once, you get the Reward of Cell 100. (Your Trimps dealt " + prettify(game.global.gridArray[99].maxHealth-game.global.gridArray[99].health) + " damage to Druopitinity).", "Story");
 				return;
 			}
@@ -17957,7 +17980,7 @@ var Fluffy = {
 	damageModifiers: [1, 1.1, 1.3, 1.6, 2, 2.5, 3.1, 3.8, 4.6, 5.5, 6.5],
 	damageModifiers2: [1, 1.1, 1.3, 1.6, 2, 2.5, 3.1, 3.8, 4.6, 5.5, 25.5, 30.5, 38, 48, 61, 111, 171, 241, 321, 411, 511, 621, 741, 871, 1011, 1161, 1321, 1501, 1701, 2001, 2501, 3201, 4001, 5001, 6001, 7001, 8001, 9001, 10001, 10001, 10001, 10001, 10001, 10001, 10001, 10001],
 	rewards: ["stickler", "helium", "liquid", "purifier", "lucky", "void", "helium", "liquid", "eliminator", "overkiller"],
-	prestigeRewards: ["dailies", "voidance", "overkiller", "critChance", "megaCrit", "superVoid", "voidelicious", "naturesWrath", "voidSiphon", "plaguebrought", "FluffyE10", "critChance", "scruffBurst", "FluffyE13", "FluffyE14", "FluffyE15", "FluffyE16", "FluffyE17", "FluffyE18", "FluffyE19", "FluffyE20"],
+	prestigeRewards: ["dailies", "voidance", "overkiller", "critChance", "megaCrit", "superVoid", "voidelicious", "naturesWrath", "voidSiphon", "plaguebrought", "FluffyE10", "critChance", "scruffBurst", "FluffyE13", "FluffyE14", "FluffyE15", "FluffyE16", "FluffyE17", "FluffyE18", "FluffyE19", "scruffBurst", "FluffyE21"],
 	rewardsU2: ["trapper", "prism", "heirloopy", "radortle", "healthy", "wealthy", "critChance", "gatherer", "dailies", "exotic", "shieldlayer", "tenacity", "megaCrit", "critChance", "smithy", "biggerbetterheirlooms", "shieldlayer", "void", "moreVoid", "tenacity", "SADailies", "Scruffy21", "Scruffy22", "scruffBurst", "overkiller", "voidelicious", "Scruffy26", "overkiller", "Scruffy28", "Scruffy29", "Scruffy30", "overkiller", "Scruffy32", "justdam", "justdam", "justdam"],
 	prestigeRewardsU2: [],
 	checkU2Allowed: function(){
@@ -18422,7 +18445,7 @@ var Fluffy = {
 		if (!big) return topText;
 		//clicked
 
-		if (Fluffy.currentLevel == 10 && this.getCurrentPrestige() < ((game.global.challengeActive == "Finale" || game.global.universe == 2)? 0 : game.global.finaleChallDone ? 20 : 10))
+		if (Fluffy.currentLevel == 10 && this.getCurrentPrestige() < ((game.global.challengeActive == "Finale" || game.global.universe == 2)? 0 : game.global.finaleChallDone ? 21 : 10))
 			topText += "<span class='fluffyEvolveText'>" + name + "做好了进化的准备！进化后，它的攻击力加成和大部分技能将回到初始水平，但成长起来以后它将变得比之前更强大。您可以在任何时候取消进化，回到上一次进化的等级10。<br/><span class='btn btn-md btn-success' onclick='Fluffy.prestige(); Fluffy.refreshTooltip(true);'>Evolve!</span></span><br/>";
 		if (Fluffy.canGainExp() && game.global.world >= minZoneForExp && (!showCruffys || fluffyInfo[0] < 19)) {
 			topText += "- " + name + "通过每个区域获得的经验值等于：";
@@ -18711,7 +18734,7 @@ var Fluffy = {
 		FluffyE19: {
 			description: "回收尖塔化挑战中区域300及以后掉落的尖塔核心获得的尖塔石变为3倍。回收尖塔化挑战中区域300及以后的真正的尖塔掉落的尖塔核心获得的尖塔石再次变为3倍。终幕挑战中每个尖塔石增加1%绒绒攻击力。"
 		},
-		FluffyE20: {
+		FluffyE21: {
 			description: "抹杀、灭绝和终幕挑战中可以启用液化。"
 		},
 

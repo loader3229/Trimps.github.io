@@ -919,6 +919,7 @@ var toReturn = {
 					var packMod = getPerkLevel("Packrat") * game.portal.Packrat.modifier;
 					var newTotal = resObj.owned + amt;
 					while (newTotal > calcHeirloomBonus("Shield", "storageSize", tempMax + (tempMax * packMod))){
+						if(storageBuilding.owned >= 995)break;
 						var nextCost = calculatePercentageBuildingCost(storage[x], resName, 0.25, tempMax);
 						if (newTotal < nextCost) break;
 						newTotal -= nextCost;
@@ -934,6 +935,9 @@ var toReturn = {
 					rewarded[x] = amt;
 					if (amt < 0) hasNeg = true;
 					if (!previewOnly) resObj.owned += amt;
+						
+					var absMax = 500*Math.pow(2,995)*(1 + game.portal.Packrat.modifier * getPerkLevel("Packrat"))*(1+game.heirlooms.Shield.storageSize.currentBonus/100);
+					if (resObj.owned > absMax)resObj.owned = absMax;
 				}
 				var text = prettify(rewarded[0]) + "食物，" + prettify(rewarded[1]) + "木头，" + prettify(rewarded[2]) + "金属，并将建造" + purchased[0] + "谷仓，" + purchased[1] + "窝棚，" + purchased[2] + "锻造厂。"
 				if (hasNeg && previewOnly) text += "<br/><br/>A negative number for a resource means that resources would be wasted if another storage is not purchased, but purchasing that last storage leaves you with fewer of that resource than you have now. This can be resolved by emptying your storage before Worshipping."
@@ -2663,12 +2667,18 @@ var toReturn = {
 			requires: "tier11d"
 		},
 		tier11f: {
-			description: "培养挑战完成之后，朽朽会一直留在您的维度。",
+			get description(){ return "培养挑战完成之后，朽朽会一直留在您的维度。 After Nurture challenge ends, gain a multiplier to Radon based on Cruffys' Radon multiplier before Nurture challenge ends and Dark Essence. Currently: "+prettify(this.getRadonMult())+"x"},
 			name: "Cruffys",
 			tier: 11,
 			purchased: false,
 			icon: "road",
-			requires: "tier11e"
+			requires: "tier11e",
+			effPow(){
+				return 1-Math.pow(0.9,Math.pow(1.5,Math.log10(game.global.essence+1e65)-65)/10);
+			},
+			getRadonMult(){
+				return Math.pow(game.challenges.Nurture.getRadonMult(),this.effPow());
+			},
 		},
 		tier12a: {
 			get description(){
@@ -8420,7 +8430,8 @@ var toReturn = {
 			storageSize: {
 				name: "存储上限",
 				currentBonus: 0,
-				steps: [[32,64,4],[32,64,4],[32,64,4],[64,128,4],[128,256,8],[256,512,16],[512,768,16],[768,1024,16],[1024,1280,16],-1,-1,-1]
+				steps: [[32,64,4],[32,64,4],[32,64,4],[64,128,4],[128,256,8],[256,512,16],[512,768,16],[768,1024,16],[1024,1280,16],-1,-1,-1],
+				max: [10000,10000,10000,10000,10000,10000,10000,10000,10000,10000,10000,10000]
 			},
 			breedSpeed: {
 				name: "脆皮繁殖速度",
@@ -12849,6 +12860,7 @@ var toReturn = {
 				equipment.blockNow = true;
 				equipment.tooltip = game.equipment.Shield.blocktip;
 				equipment.blockCalculated = Math.round(equipment.block * Math.pow(1.19, (Math.max(0,equipment.prestige - 1 - game.global.druopitinityDefeated) * game.global.prestige.block) + 1));
+				if(equipment.prestige - 1 - game.global.druopitinityDefeated < 0)equipment.blockCalculated = 1;
 				levelEquipment("Shield", 1);
 			}
 		},

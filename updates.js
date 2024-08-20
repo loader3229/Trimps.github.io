@@ -3788,6 +3788,10 @@ function getLootBd(what) {
 		var mult = game.challenges.Nurture.getRadonMult();
 		currentCalc *= mult;
 		textString += "<tr><td class='bdTitle'>Cruffys</td><td>等级" + game.challenges.Nurture.getLevel() + "</td><td></td><td>× " + prettify(mult) + "</td><td>" + prettify(currentCalc) + "</td></tr>";
+	}else if (game.talents.tier11f.purchased && what == "Helium" && game.challenges.Nurture.getLevel()){
+		var mult = game.talents.tier11f.getRadonMult();
+		currentCalc *= mult;
+		textString += "<tr><td class='bdTitle'>Cruffys</td><td>等级" + game.challenges.Nurture.getLevel() + "</td><td>" + prettify(game.talents.tier11f.effPow()*100) + "%效果</td><td>× " + prettify(mult) + "</td><td>" + prettify(currentCalc) + "</td></tr>";
 	}
 	//Bonus from Domination challenge, keep right above Corruption/Healthy stuff, as regular boss bonus does not affect it
 	if (game.global.challengeActive == "Domination" && what == "Helium"){
@@ -4788,6 +4792,13 @@ function resetGame(keepPortal, resetting) {
 		game.buildings.Warpstation.craftTime = 0;
 		unlockBuilding("Hub");
 	}
+	if (game.global.druopitinityDefeated){
+		for(var i in game.equipment){
+			if(game.equipment[i].health)game.equipment[i].healthCalculated=1;
+			if(game.equipment[i].attack)game.equipment[i].attackCalculated=1;
+			if(game.equipment[i].block)game.equipment[i].blockCalculated=1;
+		}
+	}
 	if (bwRewardUnlocked("Foremany")) game.bwRewards.Foremany.fire();
 	if (oldUniverse != game.global.universe){
 		var oldSetting;
@@ -5564,7 +5575,7 @@ function updatePs(jobObj, trimps, jobName){ //trimps is true/false, send PS as f
 
 		}
 		if (game.options.menu.useAverages.enabled) psText = parseFloat(psText) + getAvgLootSecond(jobObj.increase);
-		psText = Math.min(psText, 1e300);
+		psText = Math.min(psText, 500*Math.pow(2,995)*(1 + game.portal.Packrat.modifier * getPerkLevel("Packrat"))*(1+game.heirlooms.Shield.storageSize.currentBonus/100));
 		psText = prettify(psText);
 		psText = "+" + psText + "/秒";
 		elem.textContent = psText;
