@@ -4,6 +4,33 @@
 //Contact me via reddit, /u/brownprobe, or trimpsgame@gmail.com
 "use strict";
 
+// Override Decimal toJSON for proper serialization
+Decimal.prototype.toJSON = function () { return { __decimal__: true, v: this.toString() }; };
+function decimalReviver(key, value) {
+    if (value && typeof value === 'object' && value.__decimal__ === true) {
+        return new Decimal(value.v);
+    }
+    return value;
+}
+function ensureDecimal(obj, key) {
+    if (obj[key] !== null && obj[key] !== undefined && !(obj[key] instanceof Decimal)) {
+        obj[key] = new Decimal(obj[key]);
+    }
+}
+function ensureDecimals() {
+    // Convert plain numbers/strings to Decimal for backward compat with old saves
+    var gFields = ['timeLeftOnCraft','timeLeftOnTrap','soldierHealth','soldierHealthMax','soldierHealthRemaining','soldierCurrentAttack','soldierCurrentBlock','health','attack','block','autoCraftModifier','playerModifier'];
+    for (var i=0;i<gFields.length;i++) ensureDecimal(game.global, gFields[i]);
+    for (var r in game.resources) { ensureDecimal(game.resources[r],'owned'); ensureDecimal(game.resources[r],'max'); }
+    ['working','employed','soldiers','maxSoldiers','potency'].forEach(function(k){ensureDecimal(game.resources.trimps,k);});
+    for (var e in game.equipment) { ensureDecimal(game.equipment[e],'modifier'); ensureDecimal(game.equipment[e],'level'); if('health'in game.equipment[e])ensureDecimal(game.equipment[e],'health'); if('attack'in game.equipment[e])ensureDecimal(game.equipment[e],'attack'); }
+    for (var b in game.buildings) { ensureDecimal(game.buildings[b],'owned'); ensureDecimal(game.buildings[b],'purchased'); if(game.buildings[b].increase) ensureDecimal(game.buildings[b].increase,'by'); }
+    for (var j in game.jobs) { ensureDecimal(game.jobs[j],'owned'); ensureDecimal(game.jobs[j],'modifier'); }
+    for (var c in game.global.gridArray) { ensureDecimal(game.global.gridArray[c],'maxHealth'); ensureDecimal(game.global.gridArray[c],'health'); ensureDecimal(game.global.gridArray[c],'attack'); }
+    for (var c2 in game.global.mapGridArray) { ensureDecimal(game.global.mapGridArray[c2],'maxHealth'); ensureDecimal(game.global.mapGridArray[c2],'health'); ensureDecimal(game.global.mapGridArray[c2],'attack'); }
+    for (var m in game.global.mapsOwnedArray) { ensureDecimal(game.global.mapsOwnedArray[m],'difficulty'); ensureDecimal(game.global.mapsOwnedArray[m],'loot'); }
+}
+
 function toggleSave(updateOnly) {
     var elem = document.getElementById("toggleBtn");
     if (updateOnly) game.global.autoSave = (game.global.autoSave) ? false : true;
@@ -27,7 +54,7 @@ function autoSave() {
 
 function save(exportThis) {
     var saveString = JSON.stringify(game);
-    var saveGame = JSON.parse(saveString);
+    var saveGame = JSON.parse(saveString, decimalReviver);
     saveGame.worldUnlocks = null;
     saveGame.badGuys = null;
     saveGame.mapConfig = null;
@@ -54,8 +81,8 @@ function save(exportThis) {
     saveString = LZString.compressToBase64(JSON.stringify(saveGame));
     if (exportThis) return saveString;
 	try{
-		localStorage.setItem("trimpSave1",saveString);
-		if (localStorage.getItem("trimpSave1") == saveString){
+		localStorage.setItem("trimpsBESave1",saveString);
+		if (localStorage.getItem("trimpsBESave1") == saveString){
 			message("Game Saved!", "Notices");
 		}
 		else {
@@ -69,10 +96,10 @@ function save(exportThis) {
 function load(saveString, autoLoad) {
     var savegame;
     if (saveString) {
-        savegame = JSON.parse(LZString.decompressFromBase64(document.getElementById("importBox").value));
+        savegame = JSON.parse(LZString.decompressFromBase64(document.getElementById("importBox").value), decimalReviver);
         tooltip('hide');
-    } else if (localStorage.getItem("trimpSave1") !== null) {
-        savegame = JSON.parse(LZString.decompressFromBase64(localStorage.getItem("trimpSave1")));
+    } else if (localStorage.getItem("trimpsBESave1") !== null) {
+        savegame = JSON.parse(LZString.decompressFromBase64(localStorage.getItem("trimpsBESave1")), decimalReviver);
     }
     if (typeof savegame === 'undefined' || savegame === null || typeof savegame.global === 'undefined') return;
     resetGame();
@@ -117,8 +144,8 @@ function load(saveString, autoLoad) {
             else
                 for (var c in midGame) { //purchased, cost, etc
                     if (a == "equipment" && c == "cost") {
-                        if (typeof midGame[c].metal !== 'undefined') midGame[c].metal[0] *= (topSave[b].prestige > 1) ? ((topSave[b].prestige - 1) * game.global.prestigeCostMod) : 1;
-                        if (typeof midGame[c].wood !== 'undefined') midGame[c].wood[0] *= (topSave[b].prestige > 1) ? ((topSave[b].prestige - 1) * game.global.prestigeCostMod) : 1;
+                        if (typeof midGame[c].metal !== 'undefined') midGame[c].metal[0] *= (topSave[b].prestige > 1) ? ((topSave[b].prestige - 1) * game.global.prestigeCostMod.toNumber()) : 1;
+                        if (typeof midGame[c].wood !== 'undefined') midGame[c].wood[0] *= (topSave[b].prestige > 1) ? ((topSave[b].prestige - 1) * game.global.prestigeCostMod.toNumber()) : 1;
                         continue;
                     }
                     if (c == "cost") continue;
@@ -129,6 +156,7 @@ function load(saveString, autoLoad) {
                 }
         }
     }
+    ensureDecimals();
 
     if (game.buildings.Gym.locked === 0) document.getElementById("blockDiv").style.visibility = "visible";
     if (game.global.gridArray.length > 0) {
@@ -148,7 +176,7 @@ function load(saveString, autoLoad) {
             document.getElementById("mapCell" + y).style.backgroundColor = "green";
         }
     } else if (game.global.mapGridArray.length === 0 && game.global.mapsActive) game.global.mapsActive = false;
-    if (game.resources.trimps.owned > 0 || game.buildings.Trap.owned > 0) game.buildings.Trap.first();
+    if (game.resources.trimps.owned.gt(0) || game.buildings.Trap.owned.gt(0)) game.buildings.Trap.first();
     if (game.global.autoBattle) {
         document.getElementById("pauseFight").style.visibility = "visible";
         pauseFight(true);
@@ -171,8 +199,8 @@ function load(saveString, autoLoad) {
     checkTriggers(true);
     setGather(game.global.playerGathering);
     numTab(1);
-    if (game.global.autoCraftModifier > 0)
-        document.getElementById("foremenCount").innerHTML = (game.global.autoCraftModifier * 2) + " Foremen";
+    if (game.global.autoCraftModifier.gt(0))
+        document.getElementById("foremenCount").innerHTML = (game.global.autoCraftModifier.mul(2)).toNumber() + " Foremen";
     if (game.global.fighting) startFight();
     toggleSave(true);
 }
@@ -198,18 +226,18 @@ function rewardResource(what, baseAmt, level, checkMapLootScale) {
     }
     if (what == "gems") level -= 600;
     level += 1122;
-    var amt = Math.round(baseAmt * Math.pow(1.0046, level));
+    var amt = Decimal.mul(baseAmt, Decimal.pow(1.0046, level)).round();
     //var amt = Math.round(baseAmt * (Math.pow(1.02, level)));
     //var otherAmt = Math.round(baseAmt * level);
     //if (otherAmt > amt) amt = otherAmt;
-    if (checkMapLootScale) amt = Math.round(amt * map.loot);
+    if (checkMapLootScale) amt = amt.mul(map.loot).round();
     addResCheckMax(what, amt);
     return amt;
 }
 
 function addResCheckMax(what, number) {
     var res = game.resources[what];
-    if (res.owned + number <= res.max || res.max == -1) res.owned += number;
+    if (res.max.eq(-1) || res.owned.plus(number).lte(res.max)) res.owned = res.owned.plus(number);
     else res.owned = res.max;
 }
 
@@ -261,19 +289,19 @@ function setGatherTextAs(what, on) {
 
 function gather() {
     var what = game.global.playerGathering;
-    var whatPs = 0;
+    var whatPs = new Decimal(0);
     var amount;
     for (var job in game.jobs) {
-        if (game.jobs[job].owned < 1) continue;
-        var perSec = (game.jobs[job].owned * game.jobs[job].modifier);
+        if (game.jobs[job].owned.lt(1)) continue;
+        var perSec = game.jobs[job].owned.mul(game.jobs[job].modifier);
         var increase = game.jobs[job].increase;
         if (increase == "custom") continue;
-        amount = perSec / game.settings.speed;
-        if ((game.resources[increase].max != -1) && ((game.resources[increase].owned + amount) > game.resources[increase].max)) game.resources[increase].owned = game.resources[increase].max;
-        else game.resources[increase].owned += amount;
+        amount = perSec.div(game.settings.speed);
+        if (!game.resources[increase].max.eq(-1) && game.resources[increase].owned.plus(amount).gt(game.resources[increase].max)) game.resources[increase].owned = game.resources[increase].max;
+        else game.resources[increase].owned = game.resources[increase].owned.plus(amount);
         if (what == increase) {
             whatPs = perSec;
-            perSec += game.global.playerModifier;
+            perSec = perSec.plus(game.global.playerModifier);
         }
     }
     if (what === "" || what == "buildings") return;
@@ -283,9 +311,9 @@ function gather() {
     }
     var toGather = game.resources[what];
     if (typeof toGather === 'undefined') return;
-    amount = (game.global.playerModifier) / game.settings.speed;
-    if ((toGather.max != -1) && ((toGather.owned + amount) > toGather.max)) toGather.owned = toGather.max;
-    else toGather.owned += amount;
+    amount = game.global.playerModifier.div(game.settings.speed);
+    if (!toGather.max.eq(-1) && toGather.owned.plus(amount).gt(toGather.max)) toGather.owned = toGather.max;
+    else toGather.owned = toGather.owned.plus(amount);
 }
 
 function checkTriggers(force) {
@@ -320,8 +348,8 @@ function canAffordTwoLevel(whatObj, takeEm) {
             var cost = whatObjCost[res];
             if (typeof cost === 'function') cost = cost();
             if (typeof cost[1] !== 'undefined') cost = resolvePow(cost, whatObj);
-            if (group[res].owned < cost) return false;
-            if (takeEm) group[res].owned -= cost;
+            if (group[res].owned.lt(cost)) return false;
+            if (takeEm) group[res].owned = group[res].owned.minus(cost);
         }
     }
     return true;
@@ -334,7 +362,8 @@ function resolvePow(cost, whatObj, addOwned) {
     if (typeof whatObj.level !== 'undefined') compare = 'level';
     if (typeof whatObj.owned !== 'undefined') compare = 'owned';
 	if (typeof whatObj.purchased !== 'undefined') compare = 'purchased';
-    return (Math.floor(cost[0] * Math.pow(cost[1], (whatObj[compare] + addOwned))));
+    var baseValue = (whatObj[compare] instanceof Decimal) ? whatObj[compare] : new Decimal(whatObj[compare]);
+    return Decimal.mul(cost[0], Decimal.pow(cost[1], baseValue.plus(addOwned))).floor();
 }
 
 function canAffordBuilding(what, take, buildCostString){
@@ -343,26 +372,26 @@ function canAffordBuilding(what, take, buildCostString){
 	if (typeof toBuy === 'undefined') console.log(what);
 	for (var costItem in toBuy.cost) {
 		var color = "green";
-		var price = 0;
+		var price = new Decimal(0);
 		price = getBuildingItemPrice(toBuy, costItem)
-		if (price > game.resources[costItem].owned) {
+		if (price.gt(game.resources[costItem].owned)) {
 			if (buildCostString) color = "red";
 			else return false;
 		}
 		if (buildCostString) costString += '<span class="' + color + '">' + costItem + ':&nbsp;' + prettify(price) + '</span>, ';
-		if (take) game.resources[costItem].owned -= price;
+		if (take) game.resources[costItem].owned = game.resources[costItem].owned.minus(price);
 	}
 	if (buildCostString) return costString;
 	return true;
 }
 
 function getBuildingItemPrice(toBuy, costItem){
-	var price = 0;
+	var price = new Decimal(0);
 	var thisCost = toBuy.cost[costItem];
 		if (typeof thisCost[1] !== 'undefined'){
 			if (thisCost.lastCheckCount != game.global.buyAmt || thisCost.lastCheckOwned != toBuy.purchased){
 				for (var x = 0; x < game.global.buyAmt; x++){
-						price += resolvePow(thisCost, toBuy, x);
+						price = price.plus(resolvePow(thisCost, toBuy, x));
 				}
 				thisCost.lastCheckCount = game.global.buyAmt;
 				thisCost.lastCheckAmount = price;
@@ -374,7 +403,7 @@ function getBuildingItemPrice(toBuy, costItem){
 			price = thisCost();
 		}
 		else {
-			price = thisCost * game.global.buyAmt;
+			price = Decimal.mul(thisCost, game.global.buyAmt);
 		}
 	return price;
 }
@@ -386,7 +415,7 @@ function buyBuilding(what) {
 	if (canAfford){
 		canAffordBuilding(what, true);
 		for (var x = 0; x < game.global.buyAmt; x++){
-			game.buildings[what].purchased++;
+			game.buildings[what].purchased = game.buildings[what].purchased.plus(1);
 			startQueue(what);
 			if (game.buildings[what].percent) break;
 		}
@@ -399,12 +428,12 @@ function cancelQueueItem(what) {
     var index = queue.indexOf(what);
     removeQueueItem(what);
     what = what.split('.')[0];
-    game.buildings[what].purchased--;
+    game.buildings[what].purchased = game.buildings[what].purchased.minus(1);
     refundQueueItem(what);
     queue.splice(index, 1);
     if (index === 0) {
         game.global.crafting = "";
-        game.global.timeLeftOnCraft = 0;
+        game.global.timeLeftOnCraft = new Decimal(0);
         document.getElementById("buildingsBar").style.width = "0%";
     }
 }
@@ -412,8 +441,8 @@ function cancelQueueItem(what) {
 function refundQueueItem(what) {
     var struct = game.buildings[what];
     for (var costItem in struct.cost) {
-        game.resources[costItem].owned += (typeof struct.cost[costItem] === 'function') ? struct.cost[costItem]() : struct.cost[costItem];
-		var test = (typeof struct.cost[costItem] === 'function') ? struct.cost[costItem]() : struct.cost[costItem];
+        var refundAmt = (typeof struct.cost[costItem] === 'function') ? struct.cost[costItem]() : struct.cost[costItem];
+        game.resources[costItem].owned = game.resources[costItem].owned.plus(refundAmt);
     }
 }
 
@@ -438,18 +467,18 @@ function craftBuildings(makeUp) {
     if (game.global.crafting === "" && game.global.buildingsQueue.length > 0) {
         setNewCraftItem();
     }
-    if ((game.global.autoCraftModifier <= 0 && game.global.playerGathering != "buildings") || game.global.crafting === "") {
+    if ((game.global.autoCraftModifier.lte(0) && game.global.playerGathering != "buildings") || game.global.crafting === "") {
         speedElem.innerHTML = "";
         return;
     }
-    var modifier = (game.global.autoCraftModifier > 0) ? game.global.autoCraftModifier : 0;
-    if (game.global.playerGathering == "buildings") modifier += game.global.playerModifier;
+    var modifier = (game.global.autoCraftModifier.gt(0)) ? game.global.autoCraftModifier : new Decimal(0);
+    if (game.global.playerGathering == "buildings") modifier = modifier.plus(game.global.playerModifier);
     if (!makeUp) {
-        speedElem.innerHTML = Math.floor(modifier * 100) + "%";
-        game.global.timeLeftOnCraft -= ((1 / game.settings.speed) * modifier);
-        buildingsBar.style.width = (100 - ((game.global.timeLeftOnCraft / game.buildings[game.global.crafting].craftTime) * 100)) + "%";
-        buildingsBar.innerHTML = (game.global.timeLeftOnCraft / modifier).toFixed(1) + " Seconds";
-        if (game.global.timeLeftOnCraft > 0) return;
+        speedElem.innerHTML = modifier.mul(100).floor().toNumber() + "%";
+        game.global.timeLeftOnCraft = game.global.timeLeftOnCraft.minus(Decimal.div(1, game.settings.speed).mul(modifier));
+        buildingsBar.style.width = (100 - game.global.timeLeftOnCraft.div(game.buildings[game.global.crafting].craftTime).mul(100).toNumber()) + "%";
+        buildingsBar.innerHTML = game.global.timeLeftOnCraft.div(modifier).toFixed(1) + " Seconds";
+        if (game.global.timeLeftOnCraft.gt(0)) return;
         buildingsBar.innerHTML = "";
         buildingsBar.style.width = "0%";
     }
@@ -463,31 +492,31 @@ function craftBuildings(makeUp) {
     }
     var nextCraft = game.global.buildingsQueue[0].split('.')[0];
     game.global.crafting = nextCraft;
-    game.global.timeLeftOnCraft = game.buildings[nextCraft].craftTime;
+    game.global.timeLeftOnCraft = new Decimal(game.buildings[nextCraft].craftTime);
 }
 
 function buildBuilding(what) {
     var building = game.buildings[what];
     var toIncrease;
-    building.owned++;
-    if (building.owned == 1 && typeof building.first !== 'undefined') building.first();
+    building.owned = building.owned.plus(1);
+    if (building.owned.eq(1) && typeof building.first !== 'undefined') building.first();
     if (document.getElementById(what + "Owned") === null) return;
-    document.getElementById(what + "Owned").innerHTML = building.owned;
+    document.getElementById(what + "Owned").innerHTML = building.owned.toNumber();
     if (typeof building.increase === 'undefined') return;
     var buildingSplit = building.increase.what.split('.');
     if (buildingSplit[0] == "global") toIncrease = game.global;
     else
         toIncrease = game.resources[buildingSplit[0]];
-    if (buildingSplit[2] == "mult") Math.floor(toIncrease[buildingSplit[1]] *= building.increase.by);
+    if (buildingSplit[2] == "mult") toIncrease[buildingSplit[1]] = toIncrease[buildingSplit[1]].mul(building.increase.by).floor();
     else
-        toIncrease[buildingSplit[1]] += building.increase.by;
+        toIncrease[buildingSplit[1]] = toIncrease[buildingSplit[1]].plus(building.increase.by);
     numTab();
 }
 
 function setNewCraftItem() {
     var queueItem = game.global.buildingsQueue[0].split('.')[0];
     game.global.crafting = queueItem;
-    game.global.timeLeftOnCraft = game.buildings[queueItem].craftTime;
+    game.global.timeLeftOnCraft = new Decimal(game.buildings[queueItem].craftTime);
     document.getElementById("buildingsBar").style.width = "0%";
 }
 
@@ -495,48 +524,48 @@ function calculatePercentageBuildingCost(what, resourceToCheck, costModifier){
 	var struct = game.buildings[what];
 	var res = game.resources[resourceToCheck];
 	var resSim = res.max;
-	var dif = struct.purchased - struct.owned;
+	var dif = struct.purchased.minus(struct.owned).toNumber();
 	for (var x = 0; x < dif; x++){
-		resSim = Math.floor(resSim * struct.increase.by);
+		resSim = resSim.mul(struct.increase.by).floor();
 	}
-	return Math.floor(resSim * costModifier);
+	return resSim.mul(costModifier).floor();
 }
 
 function trapThings() {
     var trap = game.buildings.Trap;
     var trimps = game.resources.trimps;
-    if (game.global.timeLeftOnTrap == -1) {
-        if (trimps.owned < trimps.max && trap.owned >= 1)
-            game.global.timeLeftOnTrap = trimps.speed;
+    if (game.global.timeLeftOnTrap.eq(-1)) {
+        if (trimps.owned.lt(trimps.max) && trap.owned.gte(1))
+            game.global.timeLeftOnTrap = new Decimal(trimps.speed);
         else {
             document.getElementById("trappingBar").style.width = "0%";
-            document.getElementById("TrapOwned").innerHTML = trap.owned;
+            document.getElementById("TrapOwned").innerHTML = trap.owned.toNumber();
             return;
         }
     }
-    game.global.timeLeftOnTrap -= ((1 / game.settings.speed) * game.global.playerModifier);
-    if (game.global.timeLeftOnTrap <= 0 && trimps.owned < trimps.max && trap.owned >= 1) {
-        trap.owned--;
-        trimps.owned++;
-        game.global.timeLeftOnTrap = -1;
-        document.getElementById("TrapOwned").innerHTML = trap.owned;
+    game.global.timeLeftOnTrap = game.global.timeLeftOnTrap.minus(Decimal.div(1, game.settings.speed).mul(game.global.playerModifier));
+    if (game.global.timeLeftOnTrap.lte(0) && trimps.owned.lt(trimps.max) && trap.owned.gte(1)) {
+        trap.owned = trap.owned.minus(1);
+        trimps.owned = trimps.owned.plus(1);
+        game.global.timeLeftOnTrap = new Decimal(-1);
+        document.getElementById("TrapOwned").innerHTML = trap.owned.toNumber();
     }
-    document.getElementById("trappingBar").style.width = (100 - ((game.global.timeLeftOnTrap / trimps.speed) * 100)) + "%";
+    document.getElementById("trappingBar").style.width = (100 - game.global.timeLeftOnTrap.div(trimps.speed).mul(100).toNumber()) + "%";
 }
 
 function buyJob(what) {
 	if (game.global.firing){
-		if (game.jobs[what].owned < 1) return;
-		game.resources.trimps.employed -= (game.jobs[what].owned < game.global.buyAmt) ? game.jobs[what].owned : game.global.buyAmt;
-		game.jobs[what].owned -= game.global.buyAmt;
-		if (game.jobs[what].owned < 0) game.jobs[what].owned = 0;
-		if (game.resources.trimps.employed < 0) game.resources.trimps.employed = 0;
+		if (game.jobs[what].owned.lt(1)) return;
+		game.resources.trimps.employed = game.resources.trimps.employed.minus((game.jobs[what].owned.lt(game.global.buyAmt)) ? game.jobs[what].owned : game.global.buyAmt);
+		game.jobs[what].owned = game.jobs[what].owned.minus(game.global.buyAmt);
+		if (game.jobs[what].owned.lt(0)) game.jobs[what].owned = new Decimal(0);
+		if (game.resources.trimps.employed.lt(0)) game.resources.trimps.employed = new Decimal(0);
 		return;
 	}
 	if (!canAffordJob(what)) return;
 	canAffordJob(what, true);
-	game.jobs[what].owned += game.global.buyAmt;
-	game.resources.trimps.employed += game.global.buyAmt;
+	game.jobs[what].owned = game.jobs[what].owned.plus(game.global.buyAmt);
+	game.resources.trimps.employed = game.resources.trimps.employed.plus(game.global.buyAmt);
 	tooltip(what, "jobs", "update");
 }
 
@@ -553,8 +582,8 @@ function getTooltipJobText(what) {
 
 function canAffordJob(what, take) {
     var trimps = game.resources.trimps;
-    if (Math.ceil(trimps.max / 2) < trimps.employed + game.global.buyAmt) return false;
-    if (trimps.owned - trimps.employed - game.global.buyAmt < 0) return false;
+    if (trimps.max.div(2).ceil().lt(trimps.employed.plus(game.global.buyAmt))) return false;
+    if (trimps.owned.minus(trimps.employed).minus(game.global.buyAmt).lt(0)) return false;
     var job = game.jobs[what];
     for (var costItem in job.cost) {
         if (!checkJobItem(what, take, costItem)) return false;
@@ -565,10 +594,10 @@ function canAffordJob(what, take) {
 function checkJobItem(what, take, costItem, amtOnly) {
     var job = game.jobs[what];
     var cost = job.cost[costItem];
-    var price = 0;
+    var price = new Decimal(0);
 	if (cost.lastCheckCount != game.global.buyAmt || cost.lastCheckOwned != job.owned){
 		for (var x = 0; x < game.global.buyAmt; x++) {
-			price += Math.floor(cost[0] * Math.pow(cost[1], (job.owned + x)));
+			price = price.plus(Decimal.mul(cost[0], Decimal.pow(cost[1], job.owned.plus(x))).floor());
 		}
 		cost.lastCheckCount = game.global.buyAmt;
 		cost.lastCheckAmount = price;
@@ -579,17 +608,17 @@ function checkJobItem(what, take, costItem, amtOnly) {
 	}
     if (amtOnly) return price;
     if (take) {
-        game.resources[costItem].owned -= price;
+        game.resources[costItem].owned = game.resources[costItem].owned.minus(price);
         return true;
     }
-    if (game.resources[costItem].owned < price) {
+    if (game.resources[costItem].owned.lt(price)) {
         return false;
     }
     return true;
 }
 
 function buyUpgrade(what) {
-    if (what == "Coordination" && (Math.ceil(game.resources.trimps.max / 2) < (game.resources.trimps.maxSoldiers * 2))) {
+    if (what == "Coordination" && (game.resources.trimps.max.div(2).ceil().lt(game.resources.trimps.maxSoldiers.mul(2)))) {
         message("You should probably expand your territory a bit first.", "Notices");
         return;
     }
@@ -614,36 +643,36 @@ function buyUpgrade(what) {
 
 function breed() {
     var trimps = game.resources.trimps;
-    var breeding = trimps.owned - trimps.employed;
-    if (breeding < 2) {
+    var breeding = trimps.owned.minus(trimps.employed);
+    if (breeding.lt(2)) {
         updatePs(0, true);
         return;
     }
-    if (trimps.owned >= trimps.max) {
+    if (trimps.owned.gte(trimps.max)) {
         trimps.owned = trimps.max;
         return;
     }
-    breeding = breeding * trimps.potency;
+    breeding = breeding.mul(trimps.potency);
     updatePs(breeding, true);
-    trimps.owned += breeding / game.settings.speed;
+    trimps.owned = trimps.owned.plus(breeding.div(game.settings.speed));
 }
 
 function prestigeEquipment(what) {
     var equipment = game.equipment[what];
     if (typeof equipment.cost.wood !== 'undefined') {
-        equipment.cost.wood[0] *= game.global.prestigeCostMod;
+        equipment.cost.wood[0] *= game.global.prestigeCostMod.toNumber();
     } else
-        equipment.cost.metal[0] *= game.global.prestigeCostMod;
+        equipment.cost.metal[0] *= game.global.prestigeCostMod.toNumber();
     if (typeof equipment.health !== 'undefined') {
-        game.global.health -= (equipment.health * equipment.level);
-        equipment.health *= game.global.prestigeValueMod;
+        game.global.health = game.global.health.minus(equipment.health.mul(equipment.level));
+        equipment.health = equipment.health.mul(game.global.prestigeValueMod);
 
     } else {
-        game.global.attack -= (equipment.attack * equipment.level);
-        equipment.attack *= game.global.prestigeValueMod;
+        game.global.attack = game.global.attack.minus(equipment.attack.mul(equipment.level));
+        equipment.attack = equipment.attack.mul(game.global.prestigeValueMod);
 
     }
-    equipment.level = 0;
+    equipment.level = new Decimal(0);
     equipment.prestige++;
     if (document.getElementById(what + "Numeral") !== null) document.getElementById(what + "Numeral").innerHTML = romanNumeral(equipment.prestige);
 }
@@ -661,9 +690,9 @@ function createMap() {
 		location: mapName[1],
         clears: 0,
         level: world,
-        difficulty: getRandomMapValue("difficulty"),
+        difficulty: new Decimal(getRandomMapValue("difficulty")),
         size: getRandomMapValue("size"),
-        loot: getRandomMapValue("loot")
+        loot: new Decimal(getRandomMapValue("loot"))
     });
     message("You just made " + mapName[0] + "!", "Notices");
     unlockMap(game.global.mapsOwnedArray.length - 1);
@@ -692,9 +721,9 @@ function buildMapGrid(mapId) {
     for (var i = 0; i < map.size; i++) {
         array.push({
             level: i + 1,
-            maxHealth: -1,
-            health: -1,
-            attack: -1,
+            maxHealth: new Decimal(-1),
+            health: new Decimal(-1),
+            attack: new Decimal(-1),
             special: "",
             text: "",
             name: getRandomBadGuy(map.location)
@@ -716,9 +745,9 @@ function buildGrid() {
     for (var i = 0; i < 100; i++) {
         array.push({
             level: i + 1,
-            maxHealth: -1,
-            health: -1,
-            attack: -1,
+            maxHealth: new Decimal(-1),
+            health: new Decimal(-1),
+            attack: new Decimal(-1),
             special: "",
             text: "",
             name: getRandomBadGuy()
@@ -889,7 +918,7 @@ function recycleMap() {
     game.global.currentMapId = "";
     game.global.mapsOwned--;
     game.global.lastClearedMapCell = -1;
-    game.resources.fragments.owned++;
+    game.resources.fragments.owned = game.resources.fragments.owned.plus(1);
     document.getElementById("selectedMapName").innerHTML = "Select a Map!";
     document.getElementById("selectedMapStats").innerHTML = "";
     document.getElementById("selectMapBtn").style.visibility = "hidden";
@@ -898,8 +927,8 @@ function recycleMap() {
 }
 
 function buyMap() {
-	if (game.resources.fragments.owned >= 3){
-		game.resources.fragments.owned -= 3;
+	if (game.resources.fragments.owned.gte(3)){
+		game.resources.fragments.owned = game.resources.fragments.owned.minus(3);
 		createMap();
 	}
 }
@@ -969,7 +998,7 @@ function selectMap(mapId, force) {
     var map = getMapIndex(mapId);
     map = game.global.mapsOwnedArray[map];
     document.getElementById("selectedMapName").innerHTML = map.name;
-    document.getElementById("selectedMapStats").innerHTML = "Size: " + Math.floor(map.size) + ". Difficulty: " + Math.floor(map.difficulty * 100) + "%. Loot Bonus: " + Math.floor(map.loot * 100) + "%.<br/>There are " + addSpecials(true, true, map) + " items to be earned from level " + map.level + "+ maps.";
+    document.getElementById("selectedMapStats").innerHTML = "Size: " + Math.floor(map.size) + ". Difficulty: " + map.difficulty.mul(100).floor().toNumber() + "%. Loot Bonus: " + map.loot.mul(100).floor().toNumber() + "%.<br/>There are " + addSpecials(true, true, map) + " items to be earned from level " + map.level + "+ maps.";
     if (typeof game.global.mapsOwnedArray[getMapIndex(game.global.lookingAtMap)] !== 'undefined') document.getElementById(game.global.lookingAtMap).style.border = "1px solid white";
     document.getElementById(mapId).style.border = "1px solid red";
     game.global.lookingAtMap = mapId;
@@ -1006,7 +1035,7 @@ function battleCoordinator(makeUp) {
 
 function battle(force) {
     if (game.global.fighting) return;
-    if ((game.global.switchToMaps || game.global.switchToWorld) && game.resources.trimps.soldiers === 0) {
+    if ((game.global.switchToMaps || game.global.switchToWorld) && game.resources.trimps.soldiers.eq(0)) {
         mapsSwitch();
         return;
     }
@@ -1015,23 +1044,23 @@ function battle(force) {
     if (!game.global.autoBattle && !force) return;
     if (pause) return;
     var trimps = game.resources.trimps;
-    if (trimps.soldiers >= trimps.maxSoldiers) {
+    if (trimps.soldiers.gte(trimps.maxSoldiers)) {
         startFight();
         return;
     }
-    var breeding = (trimps.owned - trimps.employed);
-    if (breeding < trimps.maxSoldiers) return;
+    var breeding = (trimps.owned.minus(trimps.employed));
+    if (breeding.lt(trimps.maxSoldiers)) return;
     if (force) {
         trimps.soldiers = trimps.maxSoldiers;
-        trimps.owned -= trimps.maxSoldiers;
+        trimps.owned = trimps.owned.minus(trimps.maxSoldiers);
     } else {
-        var max = Math.ceil((trimps.max - trimps.employed) * 0.05);
-        if ((trimps.owned) >= (trimps.max - max)) {
+        var max = trimps.max.minus(trimps.employed).mul(0.05).ceil().toNumber();
+        if ((trimps.owned).gte(trimps.max.minus(max))) {
             trimps.soldiers = trimps.maxSoldiers;
-            trimps.owned -= trimps.maxSoldiers;
+            trimps.owned = trimps.owned.minus(trimps.maxSoldiers);
         }
     }
-    if (game.resources.trimps.soldiers < trimps.maxSoldiers) {
+    if (game.resources.trimps.soldiers.lt(trimps.maxSoldiers)) {
         return;
     }
     startFight();
@@ -1053,13 +1082,13 @@ function startFight() {
         cellElem = document.getElementById("cell" + cellNum);
     }
     cellElem.style.backgroundColor = "yellow";
-    if (cell.maxHealth == -1) {
+    if (cell.maxHealth.eq(-1)) {
         cell.attack = game.global.getEnemyAttack(cell.level, cell.name);
         cell.health = game.global.getEnemyHealth(cell.level, cell.name);
         if (game.global.mapsActive) {
             var difficulty = game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)].difficulty;
-            cell.attack *= difficulty;
-            cell.health *= difficulty;
+            cell.attack = cell.attack.mul(difficulty);
+            cell.health = cell.health.mul(difficulty);
         }
         cell.maxHealth = cell.health;
         document.getElementById("badGuyBar").style.width = "100%";
@@ -1067,12 +1096,12 @@ function startFight() {
         document.getElementById("badGuyBar").style.backgroundColor = "blue";
         document.getElementById("badGuyAttack").innerHTML = calculateDamage(cell.attack, true);
     }
-    if (game.global.soldierHealth === 0) {
+    if (game.global.soldierHealth.eq(0)) {
         var trimpsFighting = game.resources.trimps.maxSoldiers;
-        game.global.soldierHealthMax = (game.global.health * trimpsFighting);
+        game.global.soldierHealthMax = game.global.health.mul(trimpsFighting);
         game.global.soldierHealth = game.global.soldierHealthMax;
-        game.global.soldierCurrentAttack = (game.global.attack * trimpsFighting);
-        game.global.soldierCurrentBlock = Math.floor((game.global.block * (game.jobs.Trainer.owned * (game.jobs.Trainer.modifier / 100)) + game.global.block) * trimpsFighting);
+        game.global.soldierCurrentAttack = game.global.attack.mul(trimpsFighting);
+        game.global.soldierCurrentBlock = game.global.block.mul(game.jobs.Trainer.owned.mul(game.jobs.Trainer.modifier.div(100)).plus(game.global.block)).mul(trimpsFighting).floor();
         document.getElementById("trimpsFighting").innerHTML = prettify(trimpsFighting, 0);
         document.getElementById("goodGuyBar").style.width = "100%";
         document.getElementById("goodGuyBlock").innerHTML = prettify(game.global.soldierCurrentBlock);
@@ -1091,10 +1120,11 @@ function startFight() {
 function calculateDamage(number, buildString) { //number = base attack
     var fluctuation = 20; //%fluctuation
     var multiplier = (fluctuation / 100);
-    var min = Math.floor(number * (1 - multiplier));
-    var max = Math.ceil(number + (number * multiplier));
+    if (!(number instanceof Decimal)) number = new Decimal(number);
+    var min = number.mul(1 - multiplier).floor();
+    var max = number.plus(number.mul(multiplier)).ceil();
     if (buildString) return prettify(min, 0) + "-" + prettify(max, 0);
-    number = Math.floor(Math.random() * ((max + 1) - min)) + min;
+    number = Decimal.mul(Math.random(), max.plus(1).minus(min)).plus(min).floor();
     return number;
 }
 
@@ -1110,11 +1140,11 @@ function nextWorld() {
 }
 
 function fight(makeUp) {
-    if (game.global.soldierHealth <= 0) {
-        var s = (game.resources.trimps.maxSoldiers > 1) ? "s" : "";
-        message(game.resources.trimps.maxSoldiers + " Trimp" + s + " just bit the dust.", "Combat");
+    if (game.global.soldierHealth.lte(0)) {
+        var s = (game.resources.trimps.maxSoldiers.gt(1)) ? "s" : "";
+        message(game.resources.trimps.maxSoldiers.toNumber() + " Trimp" + s + " just bit the dust.", "Combat");
         game.global.fighting = false;
-        game.resources.trimps.soldiers = 0;
+        game.resources.trimps.soldiers = new Decimal(0);
         return;
     }
     var cellNum;
@@ -1129,7 +1159,7 @@ function fight(makeUp) {
         cell = game.global.gridArray[cellNum];
         cellElem = document.getElementById("cell" + cellNum);
     }
-    if (cell.health <= 0) {
+    if (cell.health.lte(0)) {
         message("You killed a " + cell.name + "!", "Combat");
         //if (cell.level % 2 === 0) ga('send', 'event', 'Killed Bad Guy', 'W: ' + game.global.world + ' L:' + cell.level);
         cellElem.style.backgroundColor = "green";
@@ -1164,25 +1194,25 @@ function fight(makeUp) {
         battle(true);
         return;
     }
-    var attackAndBlock = (calculateDamage(cell.attack) - game.global.soldierCurrentBlock);
+    var attackAndBlock = calculateDamage(cell.attack).minus(game.global.soldierCurrentBlock);
     if (game.badGuys[cell.name].fast) {
-        game.global.soldierHealth -= (attackAndBlock > 0) ? attackAndBlock : 0;
-        if (game.global.soldierHealth > 0) cell.health -= calculateDamage(game.global.soldierCurrentAttack);
+        game.global.soldierHealth = game.global.soldierHealth.minus(attackAndBlock.gt(0) ? attackAndBlock : 0);
+        if (game.global.soldierHealth.gt(0)) cell.health = cell.health.minus(calculateDamage(game.global.soldierCurrentAttack));
         else
-            game.global.soldierHealth = 0;
-        if (cell.health < 0) cell.health = 0;
+            game.global.soldierHealth = new Decimal(0);
+        if (cell.health.lt(0)) cell.health = new Decimal(0);
     } else {
-        cell.health -= calculateDamage(game.global.soldierCurrentAttack);
-        if (cell.health > 0) game.global.soldierHealth -= (attackAndBlock > 0) ? attackAndBlock : 0;
+        cell.health = cell.health.minus(calculateDamage(game.global.soldierCurrentAttack));
+        if (cell.health.gt(0)) game.global.soldierHealth = game.global.soldierHealth.minus(attackAndBlock.gt(0) ? attackAndBlock : 0);
         else
-            cell.health = 0;
-        if (game.global.soldierHealth < 0) game.global.soldierHealth = 0;
+            cell.health = new Decimal(0);
+        if (game.global.soldierHealth.lt(0)) game.global.soldierHealth = new Decimal(0);
     }
     game.global.lastFightUpdate = new Date();
     if (makeUp) return;
     document.getElementById("badGuyHealth").innerHTML = prettify(cell.health, 0);
     updateGoodBar();
-    var percent = ((cell.health / cell.maxHealth) * 100);
+    var percent = (cell.health.div(cell.maxHealth).mul(100)).toNumber();
     document.getElementById("badGuyBar").style.width = percent + "%";
     document.getElementById("badGuyBar").style.backgroundColor = getBarColor(percent);
     /*	if (game.jobs.Medic.owned >= 1) setTimeout(heal, 500); */
@@ -1198,7 +1228,7 @@ function fight(makeUp) {
 
 function updateGoodBar() {
     document.getElementById("goodGuyHealth").innerHTML = prettify(game.global.soldierHealth, 0);
-    var percent = ((game.global.soldierHealth / game.global.soldierHealthMax) * 100);
+    var percent = (game.global.soldierHealth.div(game.global.soldierHealthMax).mul(100)).toNumber();
     document.getElementById("goodGuyBar").style.width = percent + "%";
     document.getElementById("goodGuyBar").style.backgroundColor = getBarColor(percent);
 }
@@ -1208,10 +1238,10 @@ function buyEquipment(what) {
     if (!canAfford) return;
     if (canAfford) affordOneTier(what, "resources", true);
     var obj = game.equipment[what];
-    if (typeof obj.attack !== 'undefined') game.global.attack += obj.attack;
-    if (typeof obj.health !== 'undefined') game.global.health += obj.health;
-    obj.level++;
-    document.getElementById(what + "Owned").innerHTML = obj.level;
+    if (typeof obj.attack !== 'undefined') game.global.attack = game.global.attack.plus(obj.attack);
+    if (typeof obj.health !== 'undefined') game.global.health = game.global.health.plus(obj.health);
+    obj.level = obj.level.plus(1);
+    document.getElementById(what + "Owned").innerHTML = obj.level.toNumber();
     tooltip(what, "equipment", "update");
 }
 
@@ -1224,8 +1254,8 @@ function affordOneTier(what, whereFrom, take) {
         var cost;
         if (typeof toBuy.cost[item] === 'function') cost = toBuy.cost[item]();
         if (typeof toBuy.cost[item][1] !== 'undefined') cost = resolvePow(toBuy.cost[item], toBuy);
-        if (cost > buyFrom[item].owned) return false;
-        if (take) buyFrom[item].owned -= cost;
+        if (cost.gt(buyFrom[item].owned)) return false;
+        if (take) buyFrom[item].owned = buyFrom[item].owned.minus(cost);
     }
     return true;
 }
@@ -1248,8 +1278,8 @@ function fadeIn(elem, speed) {
 }
 
 function cheatALittle() {
-    if (game.global.playerModifier <= 2) {
-        game.global.playerModifier = 2;
+    if (game.global.playerModifier.lt(2)) {
+        game.global.playerModifier = new Decimal(2);
         document.getElementById("cheatTd").style.display = "none";
         message("Your player modifier has been boosted to 200%!", "Notices");
         return;

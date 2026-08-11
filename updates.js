@@ -42,7 +42,7 @@ function tooltip(what, isItIn, event) {
 					if (typeof price[1] !== 'undefined') price = resolvePow(price, toTip);
 					var itemToCheck = game[cost];
 					if (typeof itemToCheck[item] !== 'undefined'){
-						canAfford = (itemToCheck[item].owned >= price) ? "green" : "red";
+						canAfford = (itemToCheck[item].owned.gte(price)) ? "green" : "red";
 						costText += '<span class="' + canAfford + '">' + item + ':&nbsp;' + prettify(price) + '</span>, ';
 					}
 					else
@@ -53,7 +53,7 @@ function tooltip(what, isItIn, event) {
 			price = (typeof toTip.cost[cost] === 'function') ? toTip.cost[cost]() : toTip.cost[cost];
 			if (typeof price[1] !== 'undefined') price = resolvePow(price, toTip);
 			if (typeof game.resources[cost] !== 'undefined'){
-				canAfford = (game.resources[cost].owned >= price) ? "green" : "red";
+				canAfford = (game.resources[cost].owned.gte(price)) ? "green" : "red";
 				costText += '<span class="' + canAfford + '">' + cost + ':&nbsp;' + prettify(price) + '</span>, ';				
 			}
 			else
@@ -70,8 +70,8 @@ function tooltip(what, isItIn, event) {
 	}
 	if (what == "Fight"){
 		tooltipText = "Send your poor Trimps to certain doom in the battlefield. You'll get cool stuff though, they'll understand.";
-		costText = (game.resources.trimps.maxSoldiers > 1) ? "s" : "";
-		costText = game.resources.trimps.maxSoldiers + " Trimp" + costText;
+		costText = (game.resources.trimps.maxSoldiers.gt(1)) ? "s" : "";
+		costText = game.resources.trimps.maxSoldiers.toNumber() + " Trimp" + costText;
 	}
 	if (what == "AutoFight"){
 		tooltipText = "Allow the Trimps to start fighting on their own whenever their town gets overcrowded";
@@ -154,10 +154,11 @@ function unlockTooltip(){
 }
 
 function prettify(number) {
-	number = Math.round(number * 1000000) / 1000000;
+	if (!(number instanceof Decimal)) number = new Decimal(number);
+	number = number.mul(1000000).round().div(1000000);
 	var base = 0;
-	while (number >= 1000){
-		number /= 1000;
+	while (number.gte(1000)){
+		number = number.div(1000);
 		base++;
 	}
 	if (base === 0) return prettifySub(number);
@@ -470,11 +471,11 @@ function updateLabels() { //Tried just updating as something changes, but seems 
 	//Resources (food, wood, metal, trimps, science). All but science have max and a bar. Per second will be handled in separate function, and called from job loop.
 	for (var item in game.resources){
 		toUpdate = game.resources[item];
-		document.getElementById(item + "Owned").innerHTML = prettify(Math.floor(toUpdate.owned), true);
-		if (toUpdate.max == -1) continue;
+		document.getElementById(item + "Owned").innerHTML = prettify(toUpdate.owned.floor(), true);
+		if (toUpdate.max.eq(-1)) continue;
 		document.getElementById(item + "Max").innerHTML = prettify(toUpdate.max);
 		var bar = document.getElementById(item + "Bar");
-		var percentToMax = ((toUpdate.owned / toUpdate.max) * 100);
+		var percentToMax = (toUpdate.owned.div(toUpdate.max).mul(100)).toNumber();
 		bar.style.backgroundColor = getBarColor(100 - percentToMax);
 		bar.style.width = percentToMax + "%";
 	}
@@ -488,10 +489,10 @@ function updateLabels() { //Tried just updating as something changes, but seems 
 			unlockBuilding(itemA);
 			elem = document.getElementById(itemA + "Owned");
 		}
-		elem.innerHTML = toUpdate.owned;
+		elem.innerHTML = toUpdate.owned.toNumber();
 		if (itemA == "Trap") {
-		document.getElementById("trimpTrapText").innerHTML = toUpdate.owned;
-		document.getElementById("trimpTrapText2").innerHTML = toUpdate.owned;
+		document.getElementById("trimpTrapText").innerHTML = toUpdate.owned.toNumber();
+		document.getElementById("trimpTrapText2").innerHTML = toUpdate.owned.toNumber();
 		}
 	}
 	//Jobs, check PS here and stuff. Trimps per second is handled by breed() function
@@ -499,13 +500,13 @@ function updateLabels() { //Tried just updating as something changes, but seems 
 		toUpdate = game.jobs[itemB];
 		if (toUpdate.locked == 1 && toUpdate.increase == "custom") continue;
 		if (toUpdate.locked == 1) {
-			if (game.resources[toUpdate.increase].owned > 0)
+			if (game.resources[toUpdate.increase].owned.gt(0))
 			updatePs(toUpdate);
 			continue;
 		}
 		if (document.getElementById(itemB) === null) unlockJob(itemB);
-		document.getElementById(itemB + "Owned").innerHTML = toUpdate.owned;
-		var perSec = (toUpdate.owned * toUpdate.modifier);
+		document.getElementById(itemB + "Owned").innerHTML = toUpdate.owned.toNumber();
+		var perSec = (toUpdate.owned.mul(toUpdate.modifier));
 		updatePs(toUpdate);
 	}
 	//Upgrades, owned will only exist if 'allowed' exists on object
@@ -519,7 +520,7 @@ function updateLabels() { //Tried just updating as something changes, but seems 
 		toUpdate = game.equipment[itemD];
 		if (toUpdate.locked == 1) continue;
 		if (document.getElementById(itemD) === null) unlockEquipment(itemD);
-		document.getElementById(itemD + "Owned").innerHTML = toUpdate.level;
+		document.getElementById(itemD + "Owned").innerHTML = toUpdate.level.toNumber();
 	}
 }
 
@@ -533,17 +534,17 @@ function updatePs(jobObj, trimps){ //trimps is true/false, send PS as first if t
 		}
 		else{
 			var increase = jobObj.increase;
-			psText = (jobObj.owned * jobObj.modifier);
-			if (game.global.playerGathering == increase) psText += game.global.playerModifier;
+			psText = jobObj.owned.mul(jobObj.modifier);
+			if (game.global.playerGathering == increase) psText = psText.plus(game.global.playerModifier);
 			elem = document.getElementById(increase + "Ps");
-			if (game.resources[increase].owned >= game.resources[increase].max && game.resources[increase].max != -1) psText = 0;
+			if (game.resources[increase].owned.gte(game.resources[increase].max) && !game.resources[increase].max.eq(-1)) psText = new Decimal(0);
 			psText = psText.toFixed(1);
 		}
 		psText = prettify(psText);
 /*		var color = (psText < 0) ? "red" : "green";
 		if (psText == 0) color = "black"; */
 		var color = "white";
-		psText = (psText < 0) ? "-" + psText : "+" + psText;
+		psText = (psText.charAt(0) == '-') ? "-" + psText : "+" + psText;
 		psText += "/sec";
 		elem.innerHTML = psText;
 		elem.style.color = color;
@@ -552,11 +553,11 @@ function updatePs(jobObj, trimps){ //trimps is true/false, send PS as first if t
 function updateSideTrimps(){
 	var trimps = game.resources.trimps;
 	document.getElementById("trimpsEmployed").innerHTML = prettify(trimps.employed);
-	var breedCount = (trimps.owned - trimps.employed > 2) ? prettify(Math.floor(trimps.owned - trimps.employed)) : 0;
+	var breedCount = (trimps.owned.minus(trimps.employed).gt(2)) ? prettify(trimps.owned.minus(trimps.employed).floor()) : 0;
 	document.getElementById("trimpsUnemployed").innerHTML = breedCount;
-	document.getElementById("maxEmployed").innerHTML = prettify(Math.ceil(trimps.max / 2));
-	var free = (Math.ceil(trimps.max / 2) - trimps.employed);
-	free = (free > Math.floor(trimps.owned))  ? Math.floor(trimps.owned - trimps.employed) : free;
+	document.getElementById("maxEmployed").innerHTML = prettify(trimps.max.div(2).ceil());
+	var free = (trimps.max.div(2).ceil().minus(trimps.employed));
+	free = (free.gt(trimps.owned.floor()))  ? trimps.owned.minus(trimps.employed).floor() : free;
 	document.getElementById("jobsTitleUnemployed").innerHTML = prettify(free) + " free";
 }
 
@@ -639,7 +640,7 @@ function checkButtons(what) {
 			var costItem = where[itemB].cost[cost];
 			var numCost = (typeof costItem === 'function') ? costItem() : costItem;
 			if (typeof costItem[1] !== 'undefined') numCost = resolvePow(costItem, where[itemB]);
-			if (game.resources[cost].owned < numCost) {
+			if (game.resources[cost].owned.lt(numCost)) {
 				canAfford = false;
 				break;
 			}
@@ -654,7 +655,7 @@ function checkButtons(what) {
 
 function updateButtonColor(what, canAfford, isJob) {
 	var color = (canAfford) ? "black" : "grey";
-	if (isJob && game.global.firing === true) color = (game.jobs[what].owned >= 1) ? "red" : "grey";
+	if (isJob && game.global.firing === true) color = (game.jobs[what].owned.gte(1)) ? "red" : "grey";
 	document.getElementById(what).style.backgroundColor = color;
 }
 

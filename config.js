@@ -5,11 +5,11 @@ var toReturn = {
 		version: 0.08,
 		killSavesBelow: 0.05,
 		playerGathering: "",
-		playerModifier: 1,
+		playerModifier: new Decimal(1),
 		buildingsQueue: [],
-		timeLeftOnCraft: 0,
+		timeLeftOnCraft: new Decimal(0),
 		crafting: "",
-		timeLeftOnTrap: -1,
+		timeLeftOnTrap: new Decimal(-1),
 		world: 1,
 		gridArray: [],
 		mapGridArray: [],
@@ -18,17 +18,17 @@ var toReturn = {
 		lastClearedCell: -1,
 		lastClearedMapCell: -1,
 		pauseFight: true,
-		soldierHealth: 0,
-		soldierHealthMax: 0,
-		soldierHealthRemaining: 0,
-		soldierCurrentAttack: 0,
-		soldierCurrentBlock: 0,
+		soldierHealth: new Decimal(0),
+		soldierHealthMax: new Decimal(0),
+		soldierHealthRemaining: new Decimal(0),
+		soldierCurrentAttack: new Decimal(0),
+		soldierCurrentBlock: new Decimal(0),
 		fighting: false,
-		health: 50,
-		attack: 6,
-		block: 0,
+		health: new Decimal(50),
+		attack: new Decimal(6),
+		block: new Decimal(0),
 		autoBattle: false,
-		autoCraftModifier: 0,
+		autoCraftModifier: new Decimal(0),
 		autoSave: true,
 		start: new Date().getTime(),
 		time: 0,
@@ -43,8 +43,8 @@ var toReturn = {
 		mapsOwned: 0,
 		totalMapsEarned: 0,
 		tab: "All",
-		prestigeValueMod: 12,
-		prestigeCostMod: 30,
+		prestigeValueMod: new Decimal(12),
+		prestigeCostMod: new Decimal(30),
 		buyAmt: 1,
 		numTab: 1,
 		spreadsheetMode: false,
@@ -68,39 +68,37 @@ var toReturn = {
 			Equipment: true,
 		},
 		getEnemyAttack: function (level, name) {
-			var world = getCurrentMapObject();
-			var amt = 0;
-			world = (game.global.mapsActive) ? world.level : game.global.world;
+			var map = getCurrentMapObject();
+			var world = (game.global.mapsActive) ? map.level : game.global.world;
 			var adjWorld = ((world - 1) * 100) + level;
-			amt += 50 * Math.sqrt(world * Math.pow(3.27, world));
-			amt -= 10;
+			var amt = Decimal.mul(50, Decimal.sqrt(Decimal.mul(world, Decimal.pow(3.27, world))));
+			amt = amt.minus(10);
 			if (world == 1){
-				amt *= .4;
-				amt = (amt * .25) + ((amt * .75) * (level / 100));			
+				amt = amt.mul(0.4);
+				amt = amt.mul(0.25).plus(amt.mul(0.75).mul(level / 100));
 			}
 			else if (world == 2){
-				amt *= .7;
-				amt = (amt * .32) + ((amt * .68) * (level / 100));
+				amt = amt.mul(0.7);
+				amt = amt.mul(0.32).plus(amt.mul(0.68).mul(level / 100));
 			}
 			else
-			amt = (amt * .4) + ((amt * .7) * (level / 100));
-			
-			return Math.floor(amt);
+			amt = amt.mul(0.4).plus(amt.mul(0.7).mul(level / 100));
+
+			return amt.floor();
 		},
 		getEnemyHealth: function (level, name) {
-			var world = getCurrentMapObject();
-			world = (game.global.mapsActive) ? world.level : game.global.world;
-			var amt = 0;
-			amt += 130 * Math.sqrt(world * Math.pow(3.265, world));
-			amt -= 110;
+			var map = getCurrentMapObject();
+			var world = (game.global.mapsActive) ? map.level : game.global.world;
+			var amt = Decimal.mul(130, Decimal.sqrt(Decimal.mul(world, Decimal.pow(3.265, world))));
+			amt = amt.minus(110);
 			if (world == 1 || world == 2 && level < 10){
-				amt *= .6;
-			amt = (amt * .25) + ((amt * .75) * (level / 100));
+				amt = amt.mul(0.6);
+			amt = amt.mul(0.25).plus(amt.mul(0.75).mul(level / 100));
 			}
 			else
-			amt = (amt * .5) + ((amt * .5) * (level / 100));
-			
-			return Math.floor(amt);
+			amt = amt.mul(0.5).plus(amt.mul(0.5).mul(level / 100));
+
+			return amt.floor();
 		}
 	},
 	
@@ -113,38 +111,38 @@ var toReturn = {
 	
 	resources: {
 		food: {
-			owned: 0,
-			max: 500
+			owned: new Decimal(0),
+			max: new Decimal(500)
 		},
 		wood: {
-			owned: 0,
-			max: 500
+			owned: new Decimal(0),
+			max: new Decimal(500)
 		},
 		metal: {
-			owned: 0,
-			max: 500
+			owned: new Decimal(0),
+			max: new Decimal(500)
 		},
 		trimps: {
-			owned: 0,
-			max: 10,
-			working: 0,
+			owned: new Decimal(0),
+			max: new Decimal(10),
+			working: new Decimal(0),
 			speed: 5,
-			employed: 0,
-			soldiers: 0,
-			maxSoldiers: 1,
-			potency: 0.0085
+			employed: new Decimal(0),
+			soldiers: new Decimal(0),
+			maxSoldiers: new Decimal(1),
+			potency: new Decimal(0.0085)
 		},
 		science: {
-			owned: 0,
-			max: -1
+			owned: new Decimal(0),
+			max: new Decimal(-1)
 		},
 		gems: {
-			owned: 0,
-			max: -1
+			owned: new Decimal(0),
+			max: new Decimal(-1)
 		},
 		fragments: {
-			owned: 0,
-			max: -1
+			owned: new Decimal(0),
+			max: new Decimal(-1)
 		}
 	},
 	
@@ -152,126 +150,126 @@ var toReturn = {
 		Shield: {
 			locked: 1,
 			tooltip: "A big, wooden shield. Adds $health$ health to each soldier per level.",
-			modifier: 1,
-			level: 0,
+			modifier: new Decimal(1),
+			level: new Decimal(0),
 			cost: {
 				wood: [3, 1.3]
 			},
-			health: 1,
+			health: new Decimal(1),
 			prestige: 1
 		},
 		Dagger: {
 			locked: 1,
 			tooltip: "Better than nothing. Adds $attack$ attack to each soldier per level",
-			modifier: 1,
-			level: 0,
+			modifier: new Decimal(1),
+			level: new Decimal(0),
 			cost: {
 				metal: [40, 1.3]
 			},
-			attack: 2,
+			attack: new Decimal(2),
 			prestige: 1
 		},
 		Boots: {
 			locked: 1,
 			tooltip: "At least their feet will be safe. Adds $health$ health to each soldier per level",
-			modifier: 1,
-			level: 0,
+			modifier: new Decimal(1),
+			level: new Decimal(0),
 			cost: {
 				metal: [55, 1.3]
 			},
-			health: 4,
+			health: new Decimal(4),
 			prestige: 1
 		},
 		//2
 		Mace: {
 			locked: 1,
 			tooltip: "It's kind of heavy for your Trimps, but they'll manage. Adds $attack$ attack to each soldier per level",
-			modifier: 1,
-			level: 0,
+			modifier: new Decimal(1),
+			level: new Decimal(0),
 			cost: {
 				metal: [80, 1.3]
 			},
-			attack: 3,
+			attack: new Decimal(3),
 			prestige: 1
 		},
 		Helmet: {
 			locked: 1,
 			tooltip: "Provides a decent amount of protection to the Trimps' heads, adding $health$ health to each soldier per level.",
-			modifier: 1,
-			level: 0,
+			modifier: new Decimal(1),
+			level: new Decimal(0),
 			cost: {
 				metal: [100, 1.3]
 			},
-			health: 8,
+			health: new Decimal(8),
 			prestige: 1
 		},
 		//3
 		Polearm: {
 			locked: 1,
 			tooltip: "This thing is big and pointy. It adds $attack$ attack to each soldier per level",
-			modifier: 1,
-			level: 0,
+			modifier: new Decimal(1),
+			level: new Decimal(0),
 			cost: {
 				metal: [140, 1.3]
 			},
-			attack: 4,
+			attack: new Decimal(4),
 			prestige: 1
 		},
 		Pants: {
 			locked: 1,
 			tooltip: "Pants designed specificially for the little Trimps! Adds $health$ health to each soldier per level.",
-			modifier: 1,
-			level: 0,
+			modifier: new Decimal(1),
+			level: new Decimal(0),
 			cost: {
 				metal: [160, 1.3]
 			},
-			health: 14,
+			health: new Decimal(14),
 			prestige: 1
 		},
 		//4
 		Battleaxe: {
 			locked: 1,
 			tooltip: "This weapon is pretty intimidating, but your Trimps think they can handle it. Adds $attack$ attack to each soldier per level",
-			modifier: 1,
-			level: 0,
+			modifier: new Decimal(1),
+			level: new Decimal(0),
 			cost: {
 				metal: [230, 1.3]
 			},
-			attack: 6,
+			attack: new Decimal(6),
 			prestige: 1
 		},
 		Shoulderguards: {
 			locked: 1,
 			tooltip: "These shoulderguards will help keep your Trimps' necks and shoulders safe, and they look cool too. Adds $health$ health to each soldier per level",
-			modifier: 1,
-			level: 0,
+			modifier: new Decimal(1),
+			level: new Decimal(0),
 			cost: {
 				metal: [275, 1.3]
 			},
-			health: 23,
+			health: new Decimal(23),
 			prestige: 1
 		},
 		//5
 		Greatsword: {
 			locked: 1,
 			tooltip: "This sword looks sweet. Seriously, if you could see it you'd think it looked sweet. Trust me. Adds $attack$ attack to each soldier per level",
-			modifier: 1,
-			level: 0,
+			modifier: new Decimal(1),
+			level: new Decimal(0),
 			cost: {
 				metal: [375, 1.3]
 			},
-			attack: 9,
+			attack: new Decimal(9),
 			prestige: 1
 		},
 		Breastplate: {
 			locked: 1,
 			tooltip: "Some real, heavy duty armor. Everyone looks badass in heavy duty armor. Adds $health$ health to each soldier per level",
-			modifier: 1,
-			level: 0,
+			modifier: new Decimal(1),
+			level: new Decimal(0),
 			cost: {
 				metal: [415, 1.3]
 			},
-			health: 35,
+			health: new Decimal(35),
 			prestige: 1
 		}
 	},
@@ -751,10 +749,10 @@ var toReturn = {
 			icon: "user",
 			title: "Foreman",
 			fire: function () {
-				game.global.autoCraftModifier += 0.5;
-				document.getElementById("foremenCount").innerHTML = (game.global.autoCraftModifier * 2) + " Foremen";
+				game.global.autoCraftModifier = game.global.autoCraftModifier.plus(0.5);
+				document.getElementById("foremenCount").innerHTML = (game.global.autoCraftModifier.mul(2)).toNumber() + " Foremen";
 			}
-			
+
 		},
 		Anger: {
 			message: "All you see before you is Ocean. There is no where left to travel. You look down and see a red gem that seems to stare back. You pick it up and feel adrenaline surge through your body. Probably best to bring this back to the lab for some research.",
@@ -796,7 +794,7 @@ var toReturn = {
 			repeat: 10,
 			icon: "th",
 			fire: function() {
-				game.resources.fragments.owned++;
+				game.resources.fragments.owned = game.resources.fragments.owned.plus(1);
 			}
 		},
 		fiveTrimpMax: {
@@ -805,7 +803,7 @@ var toReturn = {
 			icon: "gift",
 			repeat: 45,
 			fire: function () {
-				game.resources.trimps.max += 5;
+				game.resources.trimps.max = game.resources.trimps.max.plus(5);
 				message("<span class='glyphicon glyphicon-gift'></span>You have cleared enough land to support 5 more Trimps!", "Loot");
 			}
 		},
@@ -844,8 +842,8 @@ var toReturn = {
 	buildings: {
 		Trap: {
 			locked: 1,
-			owned: 0,
-			purchased: 0,
+			owned: new Decimal(0),
+			purchased: new Decimal(0),
 			craftTime: 5,
 			tooltip: "Each Trap allows you to catch one thing",
 			cost: {
@@ -858,8 +856,8 @@ var toReturn = {
 		},
 		Hut: {
 			locked: 1,
-			owned: 0,
-			purchased: 0,
+			owned: new Decimal(0),
+			purchased: new Decimal(0),
 			craftTime: 10,
 			tooltip: "Has room for $incby$ more lovely Trimps",
 			cost: {
@@ -868,13 +866,13 @@ var toReturn = {
 			},
 			increase: {
 				what: "trimps.max",
-				by: 3
+				by: new Decimal(3)
 			}
 		},
 		Barn: {
 			locked: 1,
-			owned: 0,
-			purchased: 0,
+			owned: new Decimal(0),
+			purchased: new Decimal(0),
 			craftTime: 10,
 			tooltip: "Increases your maximum food by 50%",
 			percent: true,
@@ -885,13 +883,13 @@ var toReturn = {
 			},
 			increase: {
 				what: "food.max.mult",
-				by: 1.5
+				by: new Decimal(1.5)
 			}
 		},
 		Shed: {
 			locked: 1,
-			owned: 0,
-			purchased: 0,
+			owned: new Decimal(0),
+			purchased: new Decimal(0),
 			craftTime: 10,
 			percent: true,
 			tooltip: "Increases your maximum wood by 50%",
@@ -902,13 +900,13 @@ var toReturn = {
 			},
 			increase: {
 				what: "wood.max.mult",
-				by: 1.5
+				by: new Decimal(1.5)
 			}
 		},
 		Forge: {
 			locked: 1,
-			owned: 0,
-			purchased: 0,
+			owned: new Decimal(0),
+			purchased: new Decimal(0),
 			craftTime: 10,
 			percent: true,
 			tooltip: "Increases your maximum metal by 50%",
@@ -919,13 +917,13 @@ var toReturn = {
 			},
 			increase: {
 				what: "metal.max.mult",
-				by: 1.5
+				by: new Decimal(1.5)
 			}
 		},
 		Gym: {
 			locked: 1,
-			owned: 0,
-			purchased: 0,
+			owned: new Decimal(0),
+			purchased: new Decimal(0),
 			craftTime: 20,
 			tooltip: "A building where your Trimps can work out. Each Gym increases the amount of damage each trimp can block by $incby$.",
 			cost: {
@@ -933,13 +931,13 @@ var toReturn = {
 			},
 			increase: {
 			what: "global.block",
-			by: 4
+			by: new Decimal(4)
 			}
 		},
 		House: {
 			locked: 1,
-			owned: 0,
-			purchased: 0,
+			owned: new Decimal(0),
+			purchased: new Decimal(0),
 			craftTime: 20,
 			tooltip: "A better house for your Trimps! Each house supports up to $incby$ more Trimps.",
 			cost: {
@@ -949,13 +947,13 @@ var toReturn = {
 			},
 			increase: {
 				what: "trimps.max",
-				by: 5
+				by: new Decimal(5)
 			}
 		},
 		Mansion: {
 			locked: 1,
-			owned: 0,
-			purchased: 0,
+			owned: new Decimal(0),
+			purchased: new Decimal(0),
 			craftTime: 60,
 			tooltip: "A pretty sick mansion for your Trimps to live in. Each Mansion supports $incby$ more Trimps.",
 			cost: {
@@ -965,13 +963,13 @@ var toReturn = {
 			},
 			increase: {
 				what: "trimps.max",
-				by: 8
+				by: new Decimal(8)
 			}
 		},
 		Hotel: {
 			locked: 1,
-			owned: 0,
-			purchased: 0,
+			owned: new Decimal(0),
+			purchased: new Decimal(0),
 			craftTime: 120,
 			tooltip: "A fancy hotel for many Trimps to live in. Complete with room service and a mini bar. Supports $incby$ Trimps.",
 			cost: {
@@ -982,13 +980,13 @@ var toReturn = {
 			},
 			increase: {
 				what: "trimps.max",
-				by: 20
+				by: new Decimal(20)
 			}
 		},
 		Resort: {
 			locked: 1,
-			owned: 0,
-			purchased: 0,
+			owned: new Decimal(0),
+			purchased: new Decimal(0),
 			craftTime: 240,
 			tooltip: "A huge resort for your Trimps to live in. Sucks for the ones still stuck in huts. Supports $incby$ Trimps.",
 			cost: {
@@ -999,7 +997,7 @@ var toReturn = {
 			},
 			increase: {
 				what: "trimps.max",
-				by: 50
+				by: new Decimal(50)
 			}
 		},
 	},
@@ -1007,27 +1005,27 @@ var toReturn = {
 	jobs: {
 		Farmer: {
 			locked: 1,
-			owned: 0,
+			owned: new Decimal(0),
 			tooltip: "Train one of your Trimps in the ancient art of farming. Each Farmer earns $modifier$ food per second",
 			cost: {
 				food: [5, 1.005]
 			},
 			increase: "food",
-			modifier: 0.25
+			modifier: new Decimal(0.25)
 		},
 		Lumberjack: {
 			locked: 1,
-			owned: 0,
+			owned: new Decimal(0),
 			tooltip: "Show a Trimp how to cut one of those weird trees down. Each Lumberjack hauls back $modifier$ logs per second.",
 			cost: {
 				food: [5, 1.005]
 			},
 			increase: "wood",
-			modifier: 0.25
+			modifier: new Decimal(0.25)
 		},
 		Miner: {
 			locked: 1,
-			owned: 0,
+			owned: new Decimal(0),
 			tooltip: "Send your misbehaving Trimps to the mines for some therapeutic work. Each Miner can find and smelt $modifier$ bars of metal per second",
 			cost: {
 				food: [20, 1.005],
@@ -1035,27 +1033,27 @@ var toReturn = {
 				metal: [15, 1.005]
 			},
 			increase: "metal",
-			modifier: 0.1
+			modifier: new Decimal(0.1)
 		},
 		Scientist: {
 			locked: 1,
-			owned: 0,
+			owned: new Decimal(0),
 			tooltip: "It takes some patience, but you can teach these Trimps to do some research for you. Each Scientist records $modifier$ units of pure science each second.",
 			cost: {
 				food: [100, 1.005]
 			},
 			increase: "science",
-			modifier: 0.25
+			modifier: new Decimal(0.25)
 		},
 		Trainer: {
 			locked: 1,
-			owned: 0,
+			owned: new Decimal(0),
 			tooltip: "Each trainer will increase the amount your soldiers can block by $modifier$%",
 			cost: {
 				food: [750, 1.1]
 			},
 			increase: "custom",
-			modifier: 20
+			modifier: new Decimal(20)
 		}
 		
 
@@ -1112,7 +1110,7 @@ var toReturn = {
 				}
 			},
 			fire: function () {
-				game.resources.trimps.maxSoldiers = Math.ceil(1.1 * game.resources.trimps.maxSoldiers);
+				game.resources.trimps.maxSoldiers = Decimal.mul(1.1, game.resources.trimps.maxSoldiers).ceil();
 			}
 		},
 		Blockmaster: {
@@ -1128,8 +1126,8 @@ var toReturn = {
 				}
 			},
 			fire: function () {
-				game.global.block = Math.ceil(1.5 * game.global.block);
-				game.buildings.Gym.increase.by = Math.ceil(1.5 * game.buildings.Gym.increase.by);
+				game.global.block = Decimal.mul(1.5, game.global.block).ceil();
+				game.buildings.Gym.increase.by = Decimal.mul(1.5, game.buildings.Gym.increase.by).ceil();
 			}
 		},
 		Blockbetter: {
@@ -1145,8 +1143,8 @@ var toReturn = {
 				}
 			},
 			fire: function () {
-				game.global.block = Math.ceil(2 * game.global.block);
-				game.buildings.Gym.increase.by = Math.ceil(2 * game.buildings.Gym.increase.by);
+				game.global.block = Decimal.mul(2, game.global.block).ceil();
+				game.buildings.Gym.increase.by = Decimal.mul(2, game.buildings.Gym.increase.by).ceil();
 			}
 		},
 		Miners: {
@@ -1207,8 +1205,8 @@ var toReturn = {
 				}
 			},
 			fire: function () {
-				game.jobs.Lumberjack.modifier = (game.jobs.Lumberjack.modifier * 1.5).toFixed(2);
-			}			
+				game.jobs.Lumberjack.modifier = game.jobs.Lumberjack.modifier.mul(1.5);
+			}
 		},
 		Speedfarming: {
 			locked: 1,
@@ -1222,8 +1220,8 @@ var toReturn = {
 				}
 			},
 			fire: function () {
-				game.jobs.Farmer.modifier = (game.jobs.Farmer.modifier * 1.5).toFixed(2);
-			}			
+				game.jobs.Farmer.modifier = game.jobs.Farmer.modifier.mul(1.5);
+			}
 		},
 		Speedminer: {
 			locked: 1,
@@ -1237,8 +1235,8 @@ var toReturn = {
 				}
 			},
 			fire: function () {
-				game.jobs.Miner.modifier = (game.jobs.Miner.modifier * 2);
-			}			
+				game.jobs.Miner.modifier = game.jobs.Miner.modifier.mul(2);
+			}
 		},
 		Speedscience: {
 			locked: 1,
@@ -1251,8 +1249,8 @@ var toReturn = {
 				}
 			},
 			fire: function () {
-				game.jobs.Scientist.modifier = (game.jobs.Scientist.modifier * 2);
-			}			
+				game.jobs.Scientist.modifier = game.jobs.Scientist.modifier.mul(2);
+			}
 		},
 		Efficiency: {
 			locked: 1,
@@ -1268,7 +1266,7 @@ var toReturn = {
 				}
 			},
 			fire: function () {
-				game.global.playerModifier *= 2;
+				game.global.playerModifier = game.global.playerModifier.mul(2);
 			}			
 		},
 		Potency: {
@@ -1283,7 +1281,7 @@ var toReturn = {
 				}
 			},
 			fire: function () {
-				game.resources.trimps.potency *= 1.05;
+				game.resources.trimps.potency = game.resources.trimps.potency.mul(1.05);
 			}
 		},
 		UberHotel: {
@@ -1299,8 +1297,8 @@ var toReturn = {
 				}
 			},
 			fire: function () {
-				game.resources.trimps.max += ((game.buildings.House.owned) * game.buildings.House.increase.by);
-				game.buildings.House.increase.by *= 2;
+				game.resources.trimps.max = game.resources.trimps.max.plus(game.buildings.House.owned.mul(game.buildings.House.increase.by));
+				game.buildings.House.increase.by = game.buildings.House.increase.by.mul(2);
 			}
 		},
 		UberResort: {
@@ -1316,8 +1314,8 @@ var toReturn = {
 				}
 			},
 			fire: function () {
-				game.resources.trimps.max += ((game.buildings.Resort.owned * 2) * game.buildings.Resort.increase.by);
-				game.buildings.Resort.increase.by *= 2;
+				game.resources.trimps.max = game.resources.trimps.max.plus(game.buildings.Resort.owned.mul(2).mul(game.buildings.Resort.increase.by));
+				game.buildings.Resort.increase.by = game.buildings.Resort.increase.by.mul(2);
 			}
 		},
 		Anger: {
@@ -1340,9 +1338,9 @@ var toReturn = {
 					location: "Hell",
 					clears: 0,
 					level: 51,
-					difficulty: 250,
+					difficulty: new Decimal(250),
 					size: 100,
-					loot: 300,
+					loot: new Decimal(300),
 				});
 				unlockMap(game.global.mapsOwnedArray.length - 1);
 				message("You just made a map to the Dimension of Anger! Should be fun!", "Notices");
@@ -1368,7 +1366,7 @@ var toReturn = {
 				}
 			},
 			fire: function () {
-				game.jobs.Trainer.modifier = Math.ceil(game.jobs.Trainer.modifier * 1.5);
+				game.jobs.Trainer.modifier = game.jobs.Trainer.modifier.mul(1.5).ceil();
 			}
 		},
 		Supershield: {
@@ -1689,7 +1687,7 @@ var toReturn = {
 			message: "Apparently the Trimps breed if they're not working. Doesn't look pleasant.",
 			cost: {
 				special: function () {
-					return (game.resources.trimps.owned - game.resources.trimps.employed >= 2) ? true : false;
+					return (game.resources.trimps.owned.minus(game.resources.trimps.employed).gte(2)) ? true : false;
 				}
 			},
 			fire: function () {
@@ -1713,7 +1711,7 @@ var toReturn = {
 			message: "You found your first map fragment! You can create a map with 3 fragments.",
 			cost: {
 				special: function () {
-					return (game.resources.fragments.owned >= 1 || game.resources.fragments.locked != 1) ? true : false;
+					return (game.resources.fragments.owned.gte(1) || game.resources.fragments.locked != 1) ? true : false;
 				}
 			},
 			fire: function () {
